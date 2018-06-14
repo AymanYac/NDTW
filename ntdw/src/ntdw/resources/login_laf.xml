@@ -1,0 +1,46 @@
+<synth>
+	<style id="basicStyle">
+		<font name="Calibri" size="16" style="BOLD" />
+	</style>
+	<bind style="basicStyle" type="region" key=".*" />
+
+	<style id="inputStyle">
+		<opaque value="true" />
+		<state>
+			<color type="BACKGROUND" value="#FFFFFF" />
+		</state>
+	</style>
+	<bind style="inputStyle" type="REGION" key="TextField" />
+	<bind style="inputStyle" type="REGION" key="PasswordField" />
+
+	<style id="bgAuthenticationStyle">
+		<opaque value="true" />
+		<imagePainter path="/ntdw/resources/images/bg.png"
+			sourceInsets="0 0 0 0" paintCenter="true" stretch="true" />
+	</style>
+	<bind style="bgAuthenticationStyle" type="name" key="pnl_authentication" />
+
+	<style id="bgStyle">
+		<opaque value="true" />
+		<state>
+			<imagePainter path="/ntdw/resources/images/bg_homeR.jpg"
+				center="true" />
+		</state>
+	</style>
+	<bind style="bgStyle" type="name" key="contentPane" />
+
+	<style id="logoStyle">
+		<opaque value="true" />
+		<imagePainter path="/ntdw/resources/images/NEONEC_Logo_White.png"
+			sourceInsets="0 0 0 0" paintCenter="true" stretch="true" />
+	</style>
+	<bind style="logoStyle" type="name" key="pnl_logo" />
+
+	<style id="labelStyle">
+		<state>
+			<color type="FOREGROUND" value="#FFFFFF" />
+		</state>
+	</style>
+	<bind style="labelStyle" type="region" key="Label" />
+
+</synth>

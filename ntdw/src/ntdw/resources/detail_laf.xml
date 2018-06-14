@@ -1,0 +1,130 @@
+<synth>
+
+	<style id="basicStyle">
+		<font name="Calibri" size="12" />
+	</style>
+	<bind style="basicStyle" type="region" key=".*" />
+
+	<style id="labelStyle">
+		<font name="Calibri" size="12" style="BOLD" />
+		<state>
+			<color type="FOREGROUND" value="#FFFFFF" />
+		</state>
+	</style>
+	<bind style="labelStyle" type="region" key="Label" />
+
+	<style id="bgStyle">
+		<opaque value="true" />
+		<state>
+			<imagePainter path="/ntdw/resources/images/Image-Desc.jpg"
+				center="true" />
+		</state>
+
+	</style>
+	<bind style="bgStyle" type="name" key="contentPane" />
+
+	<style id="pnlHeaderStyle">
+		<opaque value="true" />
+		<state>
+			<color type="BACKGROUND" value="#99b4d1" />
+			<color type="FOREGROUND" value="#445469" />
+		</state>
+	</style>
+	<bind style="pnlHeaderStyle" type="name" key="pnl_controlflex" />
+	<bind style="pnlHeaderStyle" type="name" key="panelCenter" />
+	<bind style="pnlHeaderStyle" type="name" key="panelRigth" />
+	<bind style="pnlHeaderStyle" type="REGION" key="List" />
+
+	<style id="buttonArrowLeftStyle">
+		<opaque value="true" />
+		<state>
+			<imagePainter method="buttonBackground"
+				path="/ntdw/resources/images/arrow_left.png" sourceInsets="0 0 0 0"
+				paintCenter="true" stretch="true" />
+		</state>
+	</style>
+	<bind style="buttonArrowLeftStyle" type="name" key="btnArrowLeft" />
+
+	<style id="buttonArrowRightStyle">
+		<opaque value="true" />
+		<state>
+			<imagePainter method="buttonBackground"
+				path="/ntdw/resources/images/arrow_right.png" sourceInsets="0 0 0 0"
+				paintCenter="true" stretch="true" />
+		</state>
+	</style>
+	<bind style="buttonArrowRightStyle" type="name" key="btnArrowRight" />
+
+	<style id="lblHeaderStyle">
+		<opaque value="true" />
+		<state>
+			<color type="FOREGROUND" value="#445469" />
+		</state>
+	</style>
+
+	<bind style="lblHeaderStyle" type="name" key="lb_controlflex" />
+	<bind style="lblHeaderStyle" type="name" key="lbl_val" />
+	<bind style="lblHeaderStyle" type="name" key="lbl_flexor" />
+
+	<style id="textAreaStyle">
+		<opaque value="true" />
+		<state>
+			<color type="BACKGROUND" value="#FFFFFF" />
+		</state>
+	</style>
+	<bind style="textAreaStyle" type="REGION" key="TextArea" />
+	<bind style="textAreaStyle" type="REGION" key="TextField" />
+
+
+	<style id="comboBoxStyle">
+		<opaque value="true" />
+		<state>
+			<color type="BACKGROUND" value="#FFFFFF" />
+		</state>
+		<state value="SELECTED">
+			<color type="BACKGROUND" value="#445469" />
+		</state>
+	</style>
+	<bind style="comboBoxStyle" type="REGION" key="ComboBox" />
+
+	<style id="buttonStyle">
+		<font name="Calibri" size="12" style="BOLD" />
+		<opaque value="true" />
+		<state>
+			<imagePainter method="buttonBackground" path="/ntdw/resources/images/btn_bg.png"
+				sourceInsets="0 0 0 0" paintCenter="true" stretch="true" />
+			<insets top="3" left="20" bottom="2" right="20" />
+			<color type="FOREGROUND" value="#FFFFFF" />
+		</state>
+	</style>
+	<bind style="buttonStyle" type="name" key="btnApplyClassification" />
+	<bind style="buttonStyle" type="name" key="btnCancelClassification" />
+
+	<style id="scrollPaneStyle">
+		<opaque value="true" />
+		<state>
+			<color type="BACKGROUND" value="#BFBFBF" />
+		</state>
+	</style>
+	<style id="scrollBarMarginStyle">
+		<opaque value="true" />
+		<state>
+			<insets top="5" left="2" bottom="2" />
+		</state>
+	</style>
+	<bind style="scrollPaneStyle" type="REGION" key="ScrollPane" />
+	<bind style="scrollPaneStyle" type="REGION" key="ScrollBarTrack" />
+	<bind style="scrollPaneStyle" type="REGION" key="ScrollBar" />
+	<bind style="scrollPaneStyle" type="name" key="pnlComment" />
+
+	<bind style="scrollPaneStyle" type="REGION" key="ScrollBar" />
+
+	<style id="scrollBarThumbStyle">
+		<opaque value="true" />
+		<state>
+			<color value="#737572" type="BACKGROUND" />
+		</state>
+	</style>
+	<bind style="scrollBarThumbStyle" type="REGION" key="ScrollBarThumb" />
+
+</synth>

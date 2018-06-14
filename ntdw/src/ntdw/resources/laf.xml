@@ -1,0 +1,123 @@
+<synth>
+	<style id="basicStyle">
+		<font name="Calibri" size="12" />
+	</style>
+	<bind style="basicStyle" type="region" key=".*" />
+
+	<style id="bgStyle">
+		<imagePainter path="/ntdw/resources/images/Image-Desc.jpg"
+			center="true" />
+	</style>
+	<bind style="bgStyle" type="name" key="contentPane" />
+
+	<style id="labelStyle">
+		<state>
+			<color type="FOREGROUND" value="#FFFFFF" />
+		</state>
+	</style>
+	<bind style="labelStyle" type="region" key="Label" />
+
+	<style id="buttonStyle">
+		<font name="Calibri" size="12" style="BOLD" />
+		<opaque value="true" />
+		<state>
+			<imagePainter method="buttonBackground" path="/ntdw/resources/images/btn_bg.png"
+				sourceInsets="0 0 0 0" paintCenter="true" stretch="true" />
+			<insets top="3" left="20" bottom="2" right="20" />
+			<color type="FOREGROUND" value="#FFFFFF" />
+		</state>
+	</style>
+	<bind style="buttonStyle" type="region" key="Button" />
+
+	<style id="tableStyle">
+		<opaque value="true" />
+		<state>
+			<color type="BACKGROUND" value="#FFFFFF" />
+			<color type="FOREGROUND" value="#737572" />
+		</state>
+	</style>
+	<bind style="tableStyle" type="region" key="Table" />
+
+	<style id="tableHeaderStyle">
+		<opaque value="true" />
+		<font name="Calibri" size="12" style="BOLD" />
+		<state>
+			<color type="BACKGROUND" value="#445469" />
+			<color type="FOREGROUND" value="#FFFFFF" />
+		</state>
+	</style>
+	<bind style="tableHeaderStyle" type="region" key="TableHeader" />
+
+	<style id="scrollPaneStyle">
+		<opaque value="true" />
+		<state>
+			<color type="BACKGROUND" value="#BFBFBF" />
+		</state>
+	</style>
+	<style id="scrollBarMarginStyle">
+		<opaque value="true" />
+		<state>
+			<insets top="5" left="2" bottom="2" />
+		</state>
+	</style>
+	<bind style="scrollPaneStyle" type="REGION" key="ScrollPane" />
+	<bind style="scrollPaneStyle" type="REGION" key="ScrollBarTrack" />
+	<bind style="scrollPaneStyle" type="REGION" key="ScrollBar" />
+
+	<bind style="scrollBarMarginStyle" type="REGION" key="ScrollBar" />
+
+	<style id="scrollBarThumbStyle">
+		<opaque value="true" />
+		<state>
+			<color value="#737572" type="BACKGROUND" />
+		</state>
+	</style>
+	<bind style="scrollBarThumbStyle" type="REGION" key="ScrollBarThumb" />
+
+	<style id="pnlHeaderStyle">
+		<opaque value="true" />
+		<state>
+			<color type="BACKGROUND" value="#BFBFBF" />
+			<color type="FOREGROUND" value="#445469" />
+		</state>
+	</style>
+
+	<bind style="pnlHeaderStyle" type="name" key="pnl_user_name" />
+	<bind style="pnlHeaderStyle" type="name" key="pnl_target" />
+	<bind style="pnlHeaderStyle" type="name" key="pnl_completed_week" />
+	<bind style="pnlHeaderStyle" type="name" key="pnl_completed_day" />
+
+	<style id="lblHeaderStyle">
+		<opaque value="true" />
+		<state>
+			<color type="FOREGROUND" value="#445469" />
+		</state>
+	</style>
+
+	<bind style="lblHeaderStyle" type="name" key="lbl_completed_day_value" />
+	<bind style="lblHeaderStyle" type="name" key="lbl_completed_day" />
+	<bind style="lblHeaderStyle" type="name" key="lbl_completed_week_value" />
+	<bind style="lblHeaderStyle" type="name" key="lbl_completed_week" />
+	<bind style="lblHeaderStyle" type="name" key="lbl_week_target_value" />
+	<bind style="lblHeaderStyle" type="name" key="lbl_week_target" />
+	<bind style="lblHeaderStyle" type="name" key="lbl_user_name" />
+
+	<style id="tickableStyle">
+		<opaque value="true" />
+		<state>
+			<color type="FOREGROUND" value="#445469" />
+		</state>
+	</style>
+	<style id="checkBoxStyle">
+		<imageIcon id="check_off" path="/ntdw/resources/images/check_off.png" />
+		<imageIcon id="check_on" path="/ntdw/resources/images/check_on.png" />
+		<property key="CheckBox.icon" value="check_off" />
+		<state value="SELECTED">
+			<property key="CheckBox.icon" value="check_on" />
+		</state>
+	</style>
+	<bind style="checkBoxStyle" type="region" key="Checkbox" />
+	<bind style="tickableStyle" type="REGION" key="PopupMenu" />
+	<bind style="tickableStyle" type="REGION" key="PopupMenuSeparator" />
+
+</synth>

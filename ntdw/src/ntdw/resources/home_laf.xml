@@ -1,0 +1,34 @@
+<synth>
+	<style id="btnDescribePartsStyle">
+		<font name="Calibri" size="30" style="BOLD" />
+		<opaque value="true" />
+		<state>
+			<imagePainter method="buttonBackground" path="/ntdw/resources/images/btn_home_page.png"
+				sourceInsets="0 0 0 0" paintCenter="true" stretch="true" />
+			<color type="FOREGROUND" value="#FFFFFF" />
+		</state>
+	</style>
+	<bind style="btnDescribePartsStyle" type="name" key="btnDescribeParts" />
+	
+	
+	<style id="btnReviewPartsStyle">
+		<font name="Calibri" size="30" style="BOLD" />
+		<opaque value="true" />
+		<state>
+			<imagePainter method="buttonBackground" path="/ntdw/resources/images/btn_home_page_review.png"
+				sourceInsets="0 0 0 0" paintCenter="true" stretch="true" />
+			<color type="FOREGROUND" value="#FFFFFF" />
+		</state>
+	</style>
+	<bind style="btnReviewPartsStyle" type="name" key="btnReviewParts" />
+
+	<style id="bgStyle">
+		<opaque value="true" />
+		<state>
+			<imagePainter path="/ntdw/resources/images/bg_homeR.jpg"
+				center="true" />
+		</state>
+	</style>
+	<bind style="bgStyle" type="name" key="contentPane" />
+
+</synth>
