@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -83,60 +84,60 @@ import java.time.LocalDate;
 
 public class PartDetail extends JFrame {
 
-	private JPanel contentPane;
+	private JPanel contentPane = new JPanel();
 	private int height;
 	private int width;
 	
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	private JTextArea textArea;
-	private JTextArea textArea_1;
-	private JTextArea textArea_2;
-	private JTextArea textArea_3;
-	private JTextArea textArea_4;
+	private JTextField textField = new JTextField();
+	private JTextField textField_1 = new JTextField();
+	private JTextField textField_2 = new JTextField();
+	private JTextField textField_3 = new JTextField();
+	private JTextField textField_4 = new JTextField();
+	private JTextField textField_5 = new JTextField();
+	private JTextArea textArea = new JTextArea();
+	private JTextArea textArea_1 = new JTextArea();
+	private JTextArea textArea_2 = new JTextArea();
+	private JTextArea textArea_3 = new JTextArea();
+	private JTextArea textArea_4 = new JTextArea();
 	
-	public GridBagLayout gbl_contentPane; 
-	public JPanel pnl_controlflex; 
-	public GridBagConstraints gbc_pnl_controlflex; 
-	public JLabel lblNewLabel; 
-	public JPanel panelCenter; 
-	public GridBagConstraints gbc_panelCenter; 
-	public JLabel lblVal; 
-	public JPanel panelRigth; 
-	public GridBagConstraints gbc_panelRigth; 
-	public JLabel lblFlexor; 
-	public JPanel pnlDescription; 
-	public GridBagConstraints gbc_pnlDescription; 
-	public GridBagLayout gbl_pnlDescription; 
-	public JPanel panel; 
-	public GridBagConstraints gbc_panel; 
-	public GroupLayout gl_panel; 
-	public JPanel pnlClassification; 
-	public GridBagConstraints gbc_pnlClassification; 
-	public GridBagLayout gbl_pnlClassification; 
-	public JLabel lblNewLabel_4; 
-	public GridBagConstraints gbc_textField; 
-	public GridBagConstraints gbc_lblNewLabel_4; 
-	public GridBagConstraints gbc_textField_1; 
-	public GridBagConstraints gbc_textField_2; 
-	public GridBagConstraints gbc_textField_3 ;
+	public GridBagLayout gbl_contentPane = new GridBagLayout(); 
+	public JPanel pnl_controlflex = new JPanel(); 
+	public GridBagConstraints gbc_pnl_controlflex = new GridBagConstraints(); 
+	public JLabel lblNewLabel = new JLabel(); 
+	public JPanel panelCenter = new JPanel(); 
+	public GridBagConstraints gbc_panelCenter = new GridBagConstraints(); 
+	public JLabel lblVal = new JLabel(); 
+	public JPanel panelRigth = new JPanel(); 
+	public GridBagConstraints gbc_panelRigth = new GridBagConstraints(); 
+	public JLabel lblFlexor = new JLabel(); 
+	public JPanel pnlDescription = new JPanel(); 
+	public GridBagConstraints gbc_pnlDescription = new GridBagConstraints(); 
+	public GridBagLayout gbl_pnlDescription = new GridBagLayout(); 
+	public JPanel panel = new JPanel(); 
+	public GridBagConstraints gbc_panel = new GridBagConstraints(); 
+	//public GroupLayout gl_panel; 
+	public JPanel pnlClassification = new JPanel(); 
+	public GridBagConstraints gbc_pnlClassification = new GridBagConstraints(); 
+	public GridBagLayout gbl_pnlClassification = new GridBagLayout(); 
+	public JLabel lblNewLabel_4 = new JLabel(); 
+	public GridBagConstraints gbc_textField = new GridBagConstraints(); 
+	public GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints(); 
+	public GridBagConstraints gbc_textField_1 = new GridBagConstraints(); 
+	public GridBagConstraints gbc_textField_2 = new GridBagConstraints(); 
+	public GridBagConstraints gbc_textField_3 = new GridBagConstraints();
 	
 	
 	CharacMockDataService characService = CharacMockDataService.getInstance();
 	CharacValueRenderer characValueRenderer = new CharacValueRenderer();
-	private JTextField textField_6;
+	private JTextField textField_6 = new JTextField();
 	protected boolean click=false;
 	private String originalcid;
 	private String originalDomain;
 	private String originalGroup;
 	private String originalfamily;
 	private String originalclass;
-	private List<CharacValue> modelLeft;
-	private List<CharacValue> modelRight;
+	private List<CharacValue> modelLeft = new LinkedList<CharacValue>();
+	private List<CharacValue> modelRight = new LinkedList<CharacValue>();
 	private JPanel pnlCharacLeft = new JPanel();
 	private JPanel pnlCharacRigth= new JPanel();
 	private HashMap<String,String> currentFamily = new HashMap<String,String>();
@@ -148,62 +149,62 @@ public class PartDetail extends JFrame {
 	private Connection conn1;
 	private ResultSet rs1;
 	private PreparedStatement st1;
-	private String url;
-	private Properties props;
-	private JPanel pnlCharValues;
-	private JPanel pnlComment;
-	private JLabel lblQuestion;
-	private JLabel lblNewLabel_11;
-	private JButton btnArrowRigth;
-	private JButton btnArrowLeft;
-	private JLabel lblNewLabel_1;
-	private JButton btnApplyClassification;
-	private JLabel lblNewLabel_2;
-	private JLabel lblNewLabel_3;
-	private GridBagConstraints gbc_btnApplyClassification;
-	private JButton btnApplyCancel;
-	private GridBagConstraints gbc_btnApplyCancel;
-	private JLabel lblNewLabel_5;
-	private GridBagConstraints gbc_lblNewLabel_5;
-	private GridBagConstraints gbc_textField_4;
-	private JLabel lblNewLabel_6;
-	private GridBagConstraints gbc_lblNewLabel_6;
-	private GridBagConstraints gbc_textField_5;
-	private JLabel lblNewLabel_7;
-	private GridBagConstraints gbc_lblNewLabel_7;
-	private GridBagConstraints gbc_textArea_3;
-	private GridBagConstraints gbc_pnlCharValues;
-	private GridBagLayout gbl_pnlCharValues;
-	private JScrollPane scrollPane;
-	private GridBagConstraints gbc_scrollPane;
-	private JPanel panelCharVals;
-	private GridBagLayout gbl_panelCharVals;
-	private GridBagConstraints gbc_panel_1;
-	private JPanel panel_1;
-	private JLabel lblNewLabel_8;
-	private GridBagConstraints gbc_lblNewLabel_8;
-	private GridBagLayout gbl_panel_1;
-	private JLabel lblNewLabel_9;
-	private GridBagConstraints gbc_lblNewLabel_9;
-	private GridBagConstraints gbc_panel_2;
-	private GridBagLayout gbl_panel_2;
-	private JPanel panel_2;
-	private JLabel lblNewLabel_10;
-	private GridBagConstraints gbc_lblNewLabel_10;
-	private JLabel lblNewLabel_12;
-	private GridBagConstraints gbc_lblNewLabel_12;
-	private GridBagConstraints gbc_pnlCharacLeft;
-	private GridBagLayout gbl_pnlCharacLeft;
-	private GridBagConstraints gbc_pnlCharacRigth;
-	private GridBagLayout gbl_pnlCharacRigth;
-	private GridBagConstraints gbc_pnlComment;
-	private GridBagLayout gbl_pnlComment;
-	private GridBagConstraints gbc_lblQuestion;
-	private GridBagConstraints gbc_lblNewLabel_11;
-	private GridBagConstraints gbc_textField_6;
-	private GridBagConstraints gbc_textArea_4;
+	private String url = new String();
+	private Properties props = new Properties();
+	private JPanel pnlCharValues = new JPanel();
+	private JPanel pnlComment = new JPanel();
+	private JLabel lblQuestion = new JLabel();
+	private JLabel lblNewLabel_11 = new JLabel();
+	private JButton btnArrowRigth = new JButton();
+	private JButton btnArrowLeft = new JButton();
+	private JLabel lblNewLabel_1 = new JLabel();
+	private JButton btnApplyClassification = new JButton();
+	private JLabel lblNewLabel_2 = new JLabel();
+	private JLabel lblNewLabel_3 = new JLabel();
+	private GridBagConstraints gbc_btnApplyClassification = new GridBagConstraints();
+	private JButton btnApplyCancel = new JButton();
+	private GridBagConstraints gbc_btnApplyCancel = new GridBagConstraints();
+	private JLabel lblNewLabel_5 = new JLabel();
+	private GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
+	private GridBagConstraints gbc_textField_4 = new GridBagConstraints();
+	private JLabel lblNewLabel_6 = new JLabel();
+	private GridBagConstraints gbc_lblNewLabel_6 = new GridBagConstraints();
+	private GridBagConstraints gbc_textField_5 = new GridBagConstraints();
+	private JLabel lblNewLabel_7 = new JLabel();
+	private GridBagConstraints gbc_lblNewLabel_7 = new GridBagConstraints();
+	private GridBagConstraints gbc_textArea_3 = new GridBagConstraints();
+	private GridBagConstraints gbc_pnlCharValues = new GridBagConstraints();
+	private GridBagLayout gbl_pnlCharValues = new GridBagLayout();
+	private JScrollPane scrollPane = new JScrollPane();
+	private GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+	private JPanel panelCharVals = new JPanel();
+	private GridBagLayout gbl_panelCharVals = new GridBagLayout();
+	private GridBagConstraints gbc_panel_1 = new GridBagConstraints();
+	private JPanel panel_1 = new JPanel();
+	private JLabel lblNewLabel_8 = new JLabel();
+	private GridBagConstraints gbc_lblNewLabel_8 = new GridBagConstraints();
+	private GridBagLayout gbl_panel_1 = new GridBagLayout();
+	private JLabel lblNewLabel_9 = new JLabel();
+	private GridBagConstraints gbc_lblNewLabel_9 = new GridBagConstraints();
+	private GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+	private GridBagLayout gbl_panel_2 = new GridBagLayout();
+	private JPanel panel_2 = new JPanel();
+	private JLabel lblNewLabel_10 = new JLabel();
+	private GridBagConstraints gbc_lblNewLabel_10 = new GridBagConstraints();
+	private JLabel lblNewLabel_12 = new JLabel();
+	private GridBagConstraints gbc_lblNewLabel_12 = new GridBagConstraints();
+	private GridBagConstraints gbc_pnlCharacLeft = new GridBagConstraints();
+	private GridBagLayout gbl_pnlCharacLeft = new GridBagLayout();
+	private GridBagConstraints gbc_pnlCharacRigth = new GridBagConstraints();
+	private GridBagLayout gbl_pnlCharacRigth = new GridBagLayout();
+	private GridBagConstraints gbc_pnlComment = new GridBagConstraints();
+	private GridBagLayout gbl_pnlComment = new GridBagLayout();
+	private GridBagConstraints gbc_lblQuestion = new GridBagConstraints();
+	private GridBagConstraints gbc_lblNewLabel_11 = new GridBagConstraints();
+	private GridBagConstraints gbc_textField_6 = new GridBagConstraints();
+	private GridBagConstraints gbc_textArea_4 = new GridBagConstraints();
 	private MouseAdapter classApply;
-	private CharacValue test;
+	
 	
 
 	/**
@@ -273,15 +274,13 @@ public class PartDetail extends JFrame {
 			props.setProperty("socketTimeout", "0");
 			//props.setProperty("ssl","true");
 			
-			load_item_data(conn, url, props, st, url, rs, fedate);
-			load_ui_elements(btnApplyClassification,btnArrowRigth,btnArrowLeft,lblNewLabel_1,dll, url,gbl_contentPane,pnl_controlflex,gbc_pnl_controlflex,lblNewLabel,panelCenter,gbc_panelCenter,lblVal,panelRigth,gbc_panelRigth,lblFlexor,pnlDescription,gbc_pnlDescription,gbl_pnlDescription,panel,gbc_panel,gl_panel,pnlClassification,gbc_pnlClassification,gbl_pnlClassification,lblNewLabel_4,gbc_textField,gbc_lblNewLabel_4,gbc_textField_1,gbc_textField_2,gbc_textField_3);
+			load_item_data(/*conn, url, props, st, url, rs, fedate*/ selectedAID, fedate);
+			load_ui_elements(selectedAID/*btnApplyClassification,btnArrowRigth,btnArrowLeft,lblNewLabel_1,dll, url,gbl_contentPane,pnl_controlflex,gbc_pnl_controlflex,lblNewLabel,panelCenter,gbc_panelCenter,lblVal,panelRigth,gbc_panelRigth,lblFlexor,pnlDescription,gbc_pnlDescription,gbl_pnlDescription,panel,gbc_panel,gl_panel,pnlClassification,gbc_pnlClassification,gbl_pnlClassification,lblNewLabel_4,gbc_textField,gbc_lblNewLabel_4,gbc_textField_1,gbc_textField_2,gbc_textField_3*/);
 			load_chars(rs.getString("cid"),false,selectedAID);
-			load_class(url, props, conn1);
+			load_class(/*url, props, conn1*/);
 			
 			
-			test = new CharacValue();
-			
-			load_static_data(url, props, selectedAID, pane);
+			load_static_data(/*url, props,*/ selectedAID, pane);
 
 			closing_procedure(login, pane, selectedAID, start);
 			
@@ -317,7 +316,7 @@ public class PartDetail extends JFrame {
 					}
 					return;
 				}
-				String allow = allow_next(modelLeft,modelRight);
+				String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()));
 				if(allow.equals("KO")){
 					return;
 				}
@@ -333,61 +332,60 @@ public class PartDetail extends JFrame {
 					//props.setProperty("ssl","true");
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);        
-					//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
-							+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
+							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
 					if(modelLeft!=null) {
 					for(CharacValue element:modelLeft) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"DESCRIPTION");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					for(CharacValue element:modelRight) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"DESCRIPTION");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					}
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF");
 					prepStmt.setString(3,textField_4.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4, "DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF_REF");
 					prepStmt.setString(3,textField_5.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4, "DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "URL");
 					prepStmt.setString(3,textArea_3.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4, "DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "QUESTION");
 					prepStmt.setString(3,textField_6.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4, "DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "COMMENT");
 					prepStmt.setString(3,textArea_4.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4, "DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.executeBatch();
@@ -398,7 +396,7 @@ public class PartDetail extends JFrame {
 					conn0 = DriverManager.getConnection(url, props);
 					Date end = new Date ();
 					if(fedate!=null) {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(modelLeft,modelRight)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
+						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()))+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
 						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
 						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
 						if(textField_6.getText().length()>=5) {
@@ -410,7 +408,7 @@ public class PartDetail extends JFrame {
 						prepStmt.setString(6, selectedAID);
 						prepStmt.setObject(5, LocalDate.now());
 					}else {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(modelLeft,modelRight)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ?, fedate = ? WHERE aid = ?");
+						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()))+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ?, fedate = ? WHERE aid = ?");
 						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
 						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
 						if(textField_6.getText().length()>=5) {
@@ -479,7 +477,7 @@ public class PartDetail extends JFrame {
 					}
 					return;
 				}
-				String allow = allow_next(modelLeft,modelRight);
+				String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()));
 				if(allow.equals("KO")){
 					return;
 				}
@@ -496,60 +494,60 @@ public class PartDetail extends JFrame {
 					//props.setProperty("ssl","true");
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);        
-					//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
-							+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
+							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
 					if(modelLeft != null) {
 					for(CharacValue element:modelLeft) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"DESCRIPTION");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					for(CharacValue element:modelRight) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"DESCRIPTION");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					}
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF");
 					prepStmt.setString(3,textField_4.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF_REF");
 					prepStmt.setString(3,textField_5.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "URL");
 					prepStmt.setString(3,textArea_3.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "QUESTION");
 					prepStmt.setString(3,textField_6.getText());
-					prepStmt.setString(4, "DESCRIPTION");
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "COMMENT");
 					prepStmt.setString(3,textArea_4.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.executeBatch();
@@ -561,7 +559,7 @@ public class PartDetail extends JFrame {
 					conn0 = DriverManager.getConnection(url, props);
 					Date end = new Date();
 					if(fedate!=null) {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(modelLeft,modelRight)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
+						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()))+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
 						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
 						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
 						if(textField_6.getText().length()>=5) {
@@ -573,7 +571,7 @@ public class PartDetail extends JFrame {
 						prepStmt.setObject(5, LocalDate.now());
 						prepStmt.setString(6, selectedAID);
 					}else {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(modelLeft,modelRight)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ?, fedate = ? WHERE aid = ?");
+						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()))+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ?, fedate = ? WHERE aid = ?");
 						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
 						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
 						if(textField_6.getText().length()>=5) {
@@ -653,61 +651,60 @@ public class PartDetail extends JFrame {
 					//props.setProperty("ssl","true");
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);
-					//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
-							+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
+							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
 					if(modelLeft!=null) {
 					for(CharacValue element:modelLeft) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"DESCRIPTION");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					for(CharacValue element:modelRight) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"DESCRIPTION");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					}
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF");
 					prepStmt.setString(3,textField_4.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF_REF");
 					prepStmt.setString(3,textField_5.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "URL");
 					prepStmt.setString(3,textArea_3.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "QUESTION");
 					prepStmt.setString(3,textField_6.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "COMMENT");
 					prepStmt.setString(3,textArea_4.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.executeBatch();
@@ -835,7 +832,7 @@ public class PartDetail extends JFrame {
 	    });
 	}
 
-	private void load_class(String url, Properties props, Connection conn1) throws SQLException {
+	private void load_class(/*String url, Properties props, Connection conn1*/) throws SQLException {
 
 		MouseAdapter classCancel = new MouseAdapter() {
 			@SuppressWarnings("unchecked")
@@ -963,9 +960,13 @@ public class PartDetail extends JFrame {
 		textField_3.setText(rs1.getString("class"));
 		originalclass = (rs1.getString("class"));
 		
+		rs1.close();
+		st1.close();
+		conn1.close();
+		
 	}
 
-	private void load_ui_elements(JButton btnApplyClassification ,JButton btnArrowRigth, JButton btnArrowLeft, JLabel lblNewLabel_1, DLL dll, String selectedAID,GridBagLayout gbl_contentPane,JPanel pnl_controlflex,GridBagConstraints gbc_pnl_controlflex,JLabel lblNewLabel,JPanel panelCenter,GridBagConstraints gbc_panelCenter,JLabel lblVal,JPanel panelRigth,GridBagConstraints gbc_panelRigth,JLabel lblFlexor,JPanel pnlDescription,GridBagConstraints gbc_pnlDescription,GridBagLayout gbl_pnlDescription,JPanel panel,GridBagConstraints gbc_panel,GroupLayout gl_panel,JPanel pnlClassification,GridBagConstraints gbc_pnlClassification,GridBagLayout gbl_pnlClassification,JLabel lblNewLabel_4,GridBagConstraints gbc_textField,GridBagConstraints gbc_lblNewLabel_4,GridBagConstraints gbc_textField_1,GridBagConstraints gbc_textField_2,GridBagConstraints gbc_textField_3) throws SQLException {
+	private void load_ui_elements(/*JButton btnApplyClassification ,JButton btnArrowRigth, JButton btnArrowLeft, JLabel lblNewLabel_1, DLL dll, String selectedAID,GridBagLayout gbl_contentPane,JPanel pnl_controlflex,GridBagConstraints gbc_pnl_controlflex,JLabel lblNewLabel,JPanel panelCenter,GridBagConstraints gbc_panelCenter,JLabel lblVal,JPanel panelRigth,GridBagConstraints gbc_panelRigth,JLabel lblFlexor,JPanel pnlDescription,GridBagConstraints gbc_pnlDescription,GridBagLayout gbl_pnlDescription,JPanel panel,GridBagConstraints gbc_panel,GroupLayout gl_panel,JPanel pnlClassification,GridBagConstraints gbc_pnlClassification,GridBagLayout gbl_pnlClassification,JLabel lblNewLabel_4,GridBagConstraints gbc_textField,GridBagConstraints gbc_lblNewLabel_4,GridBagConstraints gbc_textField_1,GridBagConstraints gbc_textField_2,GridBagConstraints gbc_textField_3*/String selectedAID) throws SQLException {
     	
     	setTitle("TECHNICAL ITEM DESCRIPTION");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(PartDetail.class.getResource("/ntdw/resources/images/Neonec-white-logo only.png")));
@@ -1094,7 +1095,7 @@ public class PartDetail extends JFrame {
 		
 		btnApplyClassification.setText("APPLY CLASSIFICATION CHANGE");
 		
-		
+		GroupLayout gl_panel = new GroupLayout(panel);
 		textArea_2.setSelectionColor(Color.LIGHT_GRAY);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
@@ -1518,7 +1519,7 @@ public class PartDetail extends JFrame {
 		
 	}
 
-	private void load_item_data(Connection conn, String url, Properties props, PreparedStatement st, String selectedAID, ResultSet rs, Date fedate) throws SQLException {
+	private void load_item_data(/*Connection conn, String url, Properties props, PreparedStatement st, String selectedAID, ResultSet rs, Date fedate*/String selectedAID,Date fedate) throws SQLException {
     	conn = DriverManager.getConnection(url, props);
 		st = conn.prepareStatement("select * from public.\"items\" WHERE \"aid\" = ?");
 		st.setString(1, selectedAID);
@@ -1530,7 +1531,7 @@ public class PartDetail extends JFrame {
 		
 	}
 
-	private void load_static_data(String url, Properties props, String selectedAID, JOptionPane pane) throws SQLException {
+	private void load_static_data(/*String url, Properties props, */String selectedAID, JOptionPane pane) throws SQLException {
     	Connection conn9 = DriverManager.getConnection(url, props);
 		PreparedStatement st9 = conn9.prepareStatement("select * from public.\"data\" WHERE \"aid\" = ? ");
 		//st9.setString(2, "REVIEW");
@@ -1556,11 +1557,11 @@ public class PartDetail extends JFrame {
 			}
 			
 			rs.close();
-			rs1.close();
+			
 			st.close();
-			st1.close();
+			
 			conn.close();
-			conn1.close();
+			
 			setVisible(true);
 			currentFamily.clear();
 			currentFamily.put(originalclass, originalcid);
@@ -1627,7 +1628,7 @@ public class PartDetail extends JFrame {
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
-	protected String allow_next(List<CharacValue> modelLeft, List<CharacValue> modelRight) {
+	protected String allow_next(/*List<CharacValue> modelLeft, List<CharacValue> modelRight, */String question, String cid) {
     	LinkedHashSet<String> critics = new LinkedHashSet<String>();
     	LinkedHashSet<String> nus = new LinkedHashSet<String>();
     	HashSet<String> allowed = new HashSet<String>(Arrays.asList("0", "1","2","3","4","5","6","7","8","9","/","\\","-","_",",",";"," ","."));

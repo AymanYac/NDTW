@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -83,61 +84,61 @@ import java.time.LocalDate;
 
 public class ReviewDetail extends JFrame {
 
-	private JPanel contentPane;
+	private JPanel contentPane = new JPanel();
 	private int height;
 	private int width;
 	
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	private JTextArea textArea;
-	private JTextArea textArea_1;
-	private JTextArea textArea_2;
-	private JTextArea textArea_3;
-	private JTextArea textArea_4;
+	private JTextField textField = new JTextField();
+	private JTextField textField_1 = new JTextField();
+	private JTextField textField_2 = new JTextField();
+	private JTextField textField_3 = new JTextField();
+	private JTextField textField_4 = new JTextField();
+	private JTextField textField_5 = new JTextField();
+	private JTextArea textArea = new JTextArea();
+	private JTextArea textArea_1 = new JTextArea();
+	private JTextArea textArea_2 = new JTextArea();
+	private JTextArea textArea_3 = new JTextArea();
+	private JTextArea textArea_4 = new JTextArea();
 	
-	public GridBagLayout gbl_contentPane; 
-	public JPanel pnl_controlflex; 
-	public GridBagConstraints gbc_pnl_controlflex; 
-	public JLabel lblNewLabel; 
-	public JPanel panelCenter; 
-	public GridBagConstraints gbc_panelCenter; 
-	public JLabel lblVal; 
-	public JPanel panelRigth; 
-	public GridBagConstraints gbc_panelRigth; 
-	public JLabel lblFlexor; 
-	public JPanel pnlDescription; 
-	public GridBagConstraints gbc_pnlDescription; 
-	public GridBagLayout gbl_pnlDescription; 
-	public JPanel panel; 
-	public GridBagConstraints gbc_panel; 
-	public GroupLayout gl_panel; 
-	public JPanel pnlClassification; 
-	public GridBagConstraints gbc_pnlClassification; 
-	public GridBagLayout gbl_pnlClassification; 
-	public JLabel lblNewLabel_4; 
-	public GridBagConstraints gbc_textField; 
-	public GridBagConstraints gbc_lblNewLabel_4; 
-	public GridBagConstraints gbc_textField_1; 
-	public GridBagConstraints gbc_textField_2; 
-	public GridBagConstraints gbc_textField_3 ;
+	public GridBagLayout gbl_contentPane = new GridBagLayout(); 
+	public JPanel pnl_controlflex = new JPanel(); 
+	public GridBagConstraints gbc_pnl_controlflex = new GridBagConstraints(); 
+	public JLabel lblNewLabel = new JLabel(); 
+	public JPanel panelCenter = new JPanel(); 
+	public GridBagConstraints gbc_panelCenter = new GridBagConstraints(); 
+	public JLabel lblVal = new JLabel(); 
+	public JPanel panelRigth = new JPanel(); 
+	public GridBagConstraints gbc_panelRigth = new GridBagConstraints(); 
+	public JLabel lblFlexor = new JLabel(); 
+	public JPanel pnlDescription = new JPanel(); 
+	public GridBagConstraints gbc_pnlDescription = new GridBagConstraints(); 
+	public GridBagLayout gbl_pnlDescription = new GridBagLayout(); 
+	public JPanel panel = new JPanel(); 
+	public GridBagConstraints gbc_panel = new GridBagConstraints(); 
+	//public GroupLayout gl_panel = new GroupLayout(); 
+	public JPanel pnlClassification = new JPanel(); 
+	public GridBagConstraints gbc_pnlClassification = new GridBagConstraints(); 
+	public GridBagLayout gbl_pnlClassification = new GridBagLayout(); 
+	public JLabel lblNewLabel_4 = new JLabel(); 
+	public GridBagConstraints gbc_textField = new GridBagConstraints(); 
+	public GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints(); 
+	public GridBagConstraints gbc_textField_1 = new GridBagConstraints(); 
+	public GridBagConstraints gbc_textField_2 = new GridBagConstraints(); 
+	public GridBagConstraints gbc_textField_3  = new GridBagConstraints();
 
 	
 
 	CharacMockDataService characService = CharacMockDataService.getInstance();
 	CharacValueRenderer characValueRenderer = new CharacValueRenderer();
-	private JTextField textField_6;
+	private JTextField textField_6 = new JTextField();
 	protected boolean click=false;
 	private String originalcid;
 	private String originalDomain;
 	private String originalGroup;
 	private String originalfamily;
 	private String originalclass;
-	private List<CharacValue> modelLeft;
-	private List<CharacValue> modelRight;
+	private List<CharacValue> modelLeft = new LinkedList<CharacValue>();
+	private List<CharacValue> modelRight = new LinkedList<CharacValue>();
 	private JPanel pnlCharacLeft = new JPanel();
 	private JPanel pnlCharacRigth= new JPanel();
 	private HashMap<String,String> currentFamily = new HashMap<String,String>();
@@ -146,64 +147,64 @@ public class ReviewDetail extends JFrame {
 	private PreparedStatement st;
 	private Connection conn;
 	private MouseAdapter classApply;
-	private JLabel lblNewLabel_6;
-	private JLabel lblNewLabel_7;
-	private JPanel pnlCharValues;
-	private JPanel pnlComment;
-	private JLabel lblQuestion;
-	private JLabel lblNewLabel_11;
+	private JLabel lblNewLabel_6 = new JLabel();
+	private JLabel lblNewLabel_7 = new JLabel();
+	private JPanel pnlCharValues = new JPanel();
+	private JPanel pnlComment = new JPanel();
+	private JLabel lblQuestion = new JLabel();
+	private JLabel lblNewLabel_11 = new JLabel();
 	private ResultSet rs1;
 	private PreparedStatement st1;
 	private Connection conn1;
 	protected String url;
-	protected Properties props;
-	private JButton btnApplyClassification;
-	private JButton btnApplyCancel;
-	private JLabel lblNewLabel_5;
-	private CharacValue test;
-	private JButton btnArrowLeft;
-	private JButton btnArrowRigth;
-	private AbstractButton lblNewLabel_1;
-	private JLabel lblNewLabel_2;
-	private JLabel lblNewLabel_3;
-	private GridBagConstraints gbc_btnApplyClassification;
-	private GridBagConstraints gbc_btnApplyCancel;
-	private GridBagConstraints gbc_lblNewLabel_5;
-	private GridBagConstraints gbc_textField_4;
-	private GridBagConstraints gbc_lblNewLabel_6;
-	private GridBagConstraints gbc_textField_5;
-	private GridBagConstraints gbc_lblNewLabel_7;
-	private GridBagConstraints gbc_textArea_3;
-	private GridBagConstraints gbc_pnlCharValues;
-	private GridBagLayout gbl_pnlCharValues;
-	private JScrollPane scrollPane;
-	private JPanel panelCharVals;
-	private JPanel panel_1;
-	private GridBagConstraints gbc_panel_1;
-	private GridBagLayout gbl_panel_1;
-	private JLabel lblNewLabel_8;
-	private GridBagConstraints gbc_lblNewLabel_8;
-	private JLabel lblNewLabel_9;
-	private GridBagConstraints gbc_lblNewLabel_9;
-	private JPanel panel_2;
-	private GridBagConstraints gbc_panel_2;
-	private GridBagLayout gbl_panel_2;
-	private JLabel lblNewLabel_10;
-	private GridBagConstraints gbc_lblNewLabel_10;
-	private JLabel lblNewLabel_12;
-	private GridBagConstraints gbc_lblNewLabel_12;
-	private GridBagConstraints gbc_pnlCharacLeft;
-	private GridBagLayout gbl_pnlCharacLeft;
-	private GridBagConstraints gbc_pnlCharacRigth;
-	private GridBagLayout gbl_pnlCharacRigth;
-	private GridBagConstraints gbc_pnlComment;
-	private GridBagLayout gbl_pnlComment;
-	private GridBagConstraints gbc_lblQuestion;
-	private GridBagConstraints gbc_lblNewLabel_11;
-	private GridBagConstraints gbc_textField_6;
-	private GridBagConstraints gbc_textArea_4;
-	private GridBagConstraints gbc_scrollPane;
-	private GridBagLayout gbl_panelCharVals;
+	protected Properties props = new Properties();
+	private JButton btnApplyClassification = new JButton();
+	private JButton btnApplyCancel = new JButton();
+	private JLabel lblNewLabel_5 = new JLabel();
+
+	private JButton btnArrowLeft = new JButton();
+	private JButton btnArrowRigth = new JButton();
+	private JLabel lblNewLabel_1 = new JLabel();
+	private JLabel lblNewLabel_2 = new JLabel();
+	private JLabel lblNewLabel_3 = new JLabel();
+	private GridBagConstraints gbc_btnApplyClassification = new GridBagConstraints();
+	private GridBagConstraints gbc_btnApplyCancel = new GridBagConstraints();
+	private GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
+	private GridBagConstraints gbc_textField_4 = new GridBagConstraints();
+	private GridBagConstraints gbc_lblNewLabel_6 = new GridBagConstraints();
+	private GridBagConstraints gbc_textField_5 = new GridBagConstraints();
+	private GridBagConstraints gbc_lblNewLabel_7 = new GridBagConstraints();
+	private GridBagConstraints gbc_textArea_3 = new GridBagConstraints();
+	private GridBagConstraints gbc_pnlCharValues = new GridBagConstraints();
+	private GridBagLayout gbl_pnlCharValues = new GridBagLayout();
+	private JScrollPane scrollPane = new JScrollPane();
+	private JPanel panelCharVals = new JPanel();
+	private JPanel panel_1 = new JPanel();
+	private GridBagConstraints gbc_panel_1 = new GridBagConstraints();
+	private GridBagLayout gbl_panel_1 = new GridBagLayout();
+	private JLabel lblNewLabel_8 = new JLabel();
+	private GridBagConstraints gbc_lblNewLabel_8 = new GridBagConstraints();
+	private JLabel lblNewLabel_9 = new JLabel();
+	private GridBagConstraints gbc_lblNewLabel_9 = new GridBagConstraints();
+	private JPanel panel_2 = new JPanel();
+	private GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+	private GridBagLayout gbl_panel_2 = new GridBagLayout();
+	private JLabel lblNewLabel_10 = new JLabel();
+	private GridBagConstraints gbc_lblNewLabel_10 = new GridBagConstraints();
+	private JLabel lblNewLabel_12 = new JLabel();
+	private GridBagConstraints gbc_lblNewLabel_12 = new GridBagConstraints();
+	private GridBagConstraints gbc_pnlCharacLeft = new GridBagConstraints();
+	private GridBagLayout gbl_pnlCharacLeft = new GridBagLayout();
+	private GridBagConstraints gbc_pnlCharacRigth = new GridBagConstraints();
+	private GridBagLayout gbl_pnlCharacRigth = new GridBagLayout();
+	private GridBagConstraints gbc_pnlComment = new GridBagConstraints();
+	private GridBagLayout gbl_pnlComment = new GridBagLayout();
+	private GridBagConstraints gbc_lblQuestion = new GridBagConstraints();
+	private GridBagConstraints gbc_lblNewLabel_11 = new GridBagConstraints();
+	private GridBagConstraints gbc_textField_6 = new GridBagConstraints();
+	private GridBagConstraints gbc_textArea_4 = new GridBagConstraints();
+	private GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+	private GridBagLayout gbl_panelCharVals = new GridBagLayout();
 	
 
 	/**
@@ -273,15 +274,13 @@ public class ReviewDetail extends JFrame {
 			props.setProperty("socketTimeout", "0");
 			//props.setProperty("ssl","true");
 			
-			load_item_data(conn, url, props, st, selectedAID, rs);
-			load_ui_elements(dll,selectedAID,btnApplyClassification,btnApplyCancel,lblNewLabel_5);
+			load_item_data(selectedAID/*conn, url, props, st, selectedAID, rs*/);
+			load_ui_elements(selectedAID/*,btnApplyClassification,btnApplyCancel,lblNewLabel_5*/,dll);
 			load_chars(rs.getString("cid"),false,selectedAID);
-			load_class(btnApplyClassification,btnApplyCancel);
+			load_class(/*btnApplyClassification,btnApplyCancel*/);
 						
 			
-			test = new CharacValue();
-			
-			load_static_data(url, props, selectedAID,pane);
+			load_static_data(/*url, props,*/ selectedAID,pane);
 			
 			closing_procedure(login, pane, selectedAID, start);
 			
@@ -333,60 +332,60 @@ public class ReviewDetail extends JFrame {
 					//props.setProperty("ssl","true");
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);        
-					//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
-							+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
+							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
 					if(modelLeft != null) {
 					for(CharacValue element:modelLeft) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					for(CharacValue element:modelRight) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					}
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF");
 					prepStmt.setString(3,textField_4.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF_REF");
 					prepStmt.setString(3,textField_5.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "URL");
 					prepStmt.setString(3,textArea_3.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "QUESTION");
 					prepStmt.setString(3,textField_6.getText());
-					prepStmt.setString(4, "REVIEW");
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "COMMENT");
 					prepStmt.setString(3,textArea_4.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.executeBatch();
@@ -462,7 +461,7 @@ public class ReviewDetail extends JFrame {
 	}
 
 	
-private void previous_procedure(DLL dll,String selectedAID,JOptionPane pane,Date start,String login,Clock clock) {
+	private void previous_procedure(DLL dll,String selectedAID,JOptionPane pane,Date start,String login,Clock clock) {
 		lblNewLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -496,69 +495,68 @@ private void previous_procedure(DLL dll,String selectedAID,JOptionPane pane,Date
 					//props.setProperty("ssl","true");
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);
-					//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
-							+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
+							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
 					if(modelLeft!=null) {
 					for(CharacValue element:modelLeft) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					for(CharacValue element:modelRight) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					}
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF");
 					prepStmt.setString(3,textField_4.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF_REF");
 					prepStmt.setString(3,textField_5.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "URL");
 					prepStmt.setString(3,textArea_3.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "QUESTION");
 					prepStmt.setString(3,textField_6.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "QUESTION");
 					prepStmt.setString(3,textField_6.getText());
-					prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "COMMENT");
 					prepStmt.setString(3,textArea_4.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.executeBatch();
@@ -653,61 +651,60 @@ private void previous_procedure(DLL dll,String selectedAID,JOptionPane pane,Date
 					//props.setProperty("ssl","true");
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);        
-					//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
-							+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
+							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
 					if(modelLeft!=null) {
 					for(CharacValue element:modelLeft) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					for(CharacValue element:modelRight) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
 						prepStmt.setString(3, element.getvalue());
-						prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(5,element.getComp());
+						//prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(4,element.getComp());
 						prepStmt.addBatch();
 		        	}
 					}
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF");
 					prepStmt.setString(3,textField_4.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "MANUF_REF");
 					prepStmt.setString(3,textField_5.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "URL");
 					prepStmt.setString(3,textArea_3.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "QUESTION");
 					prepStmt.setString(3,textField_6.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.setString(1,selectedAID);
 					prepStmt.setString(2, "COMMENT");
 					prepStmt.setString(3,textArea_4.getText());
-					prepStmt.setString(4, "REVIEW");
-					prepStmt.setString(5,null);
+					//prepStmt.setString(4,"REVIEW");
+					prepStmt.setString(4,null);
 					prepStmt.addBatch();
 					
 					prepStmt.executeBatch();
@@ -835,7 +832,7 @@ private void previous_procedure(DLL dll,String selectedAID,JOptionPane pane,Date
 	}
 
 	
-private void load_class(JButton btnApplyClassification,JButton btnApplyCancel) throws SQLException {
+	private void load_class(/*JButton btnApplyClassification,JButton btnApplyCancel*/) throws SQLException {
 		MouseAdapter classCancel = new MouseAdapter() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -965,7 +962,7 @@ private void load_class(JButton btnApplyClassification,JButton btnApplyCancel) t
 	
 
 
-private void load_ui_elements(DLL dll, String selectedAID, JButton btnApplyClassification, JButton btnApplyCancel, JLabel lblNewLabel_5) throws SQLException {
+	private void load_ui_elements(/*DLL dll, String selectedAID, JButton btnApplyClassification, JButton btnApplyCancel, JLabel lblNewLabel_5*/String selectedAID,DLL dll) throws SQLException {
 		setTitle("TECHNICAL ITEM DESCRIPTION");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(PartDetail.class.getResource("/ntdw/resources/images/Neonec-white-logo only.png")));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -1518,7 +1515,7 @@ private void load_ui_elements(DLL dll, String selectedAID, JButton btnApplyClass
 
 	
 
-private void load_item_data(Connection conn, String url, Properties props, PreparedStatement st, String selectedAID, ResultSet rs) throws SQLException {
+	private void load_item_data(/*Connection conn, String url, Properties props, PreparedStatement st,*/ String selectedAID/*, ResultSet rs*/) throws SQLException {
 		conn = DriverManager.getConnection(url, props);
 		st = conn.prepareStatement("select * from public.\"items\" WHERE \"aid\" = ?");
 		st.setString(1, selectedAID);
@@ -1530,7 +1527,7 @@ private void load_item_data(Connection conn, String url, Properties props, Prepa
 
 
 
-private void load_static_data(String url, Properties props, String selectedAID,JOptionPane pane) throws SQLException {
+	private void load_static_data(/*String url, Properties props,*/ String selectedAID,JOptionPane pane) throws SQLException {
 		Connection conn9 = DriverManager.getConnection(url, props);
 		PreparedStatement st9 = conn9.prepareStatement("select * from public.\"data\" WHERE \"aid\" = ?");
 		//st9.setString(2, "REVIEW");
