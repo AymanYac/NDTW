@@ -353,7 +353,7 @@ public class ReviewList extends JFrame {
 		        	JDialog dialog = pane.createDialog(null, "Chargement");
 		        	 dialog.setModal(false);
 		        	 dialog.setVisible(true);
-					ReviewDetail ReviewDetail = new ReviewDetail(dll,selectedAID,login,pane);
+					ReviewDetail ReviewDetail = new ReviewDetail(dll,selectedAID,login,pane,clock);
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
 						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
 						| BadPaddingException | IOException e1) {

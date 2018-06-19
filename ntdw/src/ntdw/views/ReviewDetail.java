@@ -35,6 +35,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -85,13 +86,61 @@ public class ReviewDetail extends JFrame {
 	private JPanel contentPane;
 	private int height;
 	private int width;
+	
 	private JTextField textField;
 	private JTextField textField_1;
 	private JTextField textField_2;
 	private JTextField textField_3;
 	private JTextField textField_4;
 	private JTextField textField_5;
+	private JTextArea textArea;
+	private JTextArea textArea_1;
+	private JTextArea textArea_2;
+	private JTextArea textArea_3;
+	private JTextArea textArea_4;
+	
+	public GridBagLayout gbl_contentPane; 
+	public JPanel pnl_controlflex; 
+	public GridBagConstraints gbc_pnl_controlflex; 
+	public JLabel lblNewLabel; 
+	public JPanel panelCenter; 
+	public GridBagConstraints gbc_panelCenter; 
+	public JLabel lblVal; 
+	public JPanel panelRigth; 
+	public GridBagConstraints gbc_panelRigth; 
+	public JLabel lblFlexor; 
+	public JPanel pnlDescription; 
+	public GridBagConstraints gbc_pnlDescription; 
+	public GridBagLayout gbl_pnlDescription; 
+	public JPanel panel; 
+	public GridBagConstraints gbc_panel; 
+	public GroupLayout gl_panel; 
+	public JPanel pnlClassification; 
+	public GridBagConstraints gbc_pnlClassification; 
+	public GridBagLayout gbl_pnlClassification; 
+	public JLabel lblNewLabel_4; 
+	public GridBagConstraints gbc_textField; 
+	public GridBagConstraints gbc_lblNewLabel_4; 
+	public GridBagConstraints gbc_textField_1; 
+	public GridBagConstraints gbc_textField_2; 
+	public GridBagConstraints gbc_textField_3 ;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	CharacMockDataService characService = CharacMockDataService.getInstance();
+	
+	
+	
 	CharacValueRenderer characValueRenderer = new CharacValueRenderer();
 	private JTextField textField_6;
 	protected boolean click=false;
@@ -106,7 +155,66 @@ public class ReviewDetail extends JFrame {
 	private JPanel pnlCharacRigth= new JPanel();
 	private HashMap<String,String> currentFamily = new HashMap<String,String>();
 	protected boolean viewbutton = true;
-	protected Clock clock;
+	private ResultSet rs;
+	private PreparedStatement st;
+	private Connection conn;
+	private MouseAdapter classApply;
+	private JLabel lblNewLabel_6;
+	private JLabel lblNewLabel_7;
+	private JPanel pnlCharValues;
+	private JPanel pnlComment;
+	private JLabel lblQuestion;
+	private JLabel lblNewLabel_11;
+	private ResultSet rs1;
+	private PreparedStatement st1;
+	private Connection conn1;
+	protected String url;
+	protected Properties props;
+	private JButton btnApplyClassification;
+	private JButton btnApplyCancel;
+	private JLabel lblNewLabel_5;
+	private CharacValue test;
+	private JButton btnArrowLeft;
+	private JButton btnArrowRigth;
+	private AbstractButton lblNewLabel_1;
+	private JLabel lblNewLabel_2;
+	private JLabel lblNewLabel_3;
+	private GridBagConstraints gbc_btnApplyClassification;
+	private GridBagConstraints gbc_btnApplyCancel;
+	private GridBagConstraints gbc_lblNewLabel_5;
+	private GridBagConstraints gbc_textField_4;
+	private GridBagConstraints gbc_lblNewLabel_6;
+	private GridBagConstraints gbc_textField_5;
+	private GridBagConstraints gbc_lblNewLabel_7;
+	private GridBagConstraints gbc_textArea_3;
+	private GridBagConstraints gbc_pnlCharValues;
+	private GridBagLayout gbl_pnlCharValues;
+	private JScrollPane scrollPane;
+	private JPanel panelCharVals;
+	private JPanel panel_1;
+	private GridBagConstraints gbc_panel_1;
+	private GridBagLayout gbl_panel_1;
+	private JLabel lblNewLabel_8;
+	private GridBagConstraints gbc_lblNewLabel_8;
+	private JLabel lblNewLabel_9;
+	private GridBagConstraints gbc_lblNewLabel_9;
+	private JPanel panel_2;
+	private GridBagConstraints gbc_panel_2;
+	private GridBagLayout gbl_panel_2;
+	private JLabel lblNewLabel_10;
+	private GridBagConstraints gbc_lblNewLabel_10;
+	private JLabel lblNewLabel_12;
+	private GridBagConstraints gbc_lblNewLabel_12;
+	private GridBagConstraints gbc_pnlCharacLeft;
+	private GridBagLayout gbl_pnlCharacLeft;
+	private GridBagConstraints gbc_pnlCharacRigth;
+	private GridBagLayout gbl_pnlCharacRigth;
+	private GridBagConstraints gbc_pnlComment;
+	private GridBagLayout gbl_pnlComment;
+	private GridBagConstraints gbc_lblQuestion;
+	private GridBagConstraints gbc_lblNewLabel_11;
+	private GridBagConstraints gbc_textField_6;
+	private GridBagConstraints gbc_textArea_4;
 	
 
 	/**
@@ -117,7 +225,7 @@ public class ReviewDetail extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ReviewDetail frame = new ReviewDetail(null,null,null,null);
+					ReviewDetail frame = new ReviewDetail(null,null,null,null,null);
 				} catch (Exception e) {
 					StringBuilder sb = new StringBuilder(e.toString());
 				    for (StackTraceElement ste : e.getStackTrace()) {
@@ -148,9 +256,8 @@ public class ReviewDetail extends JFrame {
 	 * @throws ClassNotFoundException 
 	 * @throws SQLException 
 	 */
-	public ReviewDetail(DLL dll, String selectedAID, String login, JOptionPane pane) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, ShortBufferException, IllegalBlockSizeException, BadPaddingException, IOException, ClassNotFoundException, SQLException {
+	public ReviewDetail(DLL dll, String selectedAID, String login, JOptionPane pane,Clock clock) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, ShortBufferException, IllegalBlockSizeException, BadPaddingException, IOException, ClassNotFoundException, SQLException {
 		if(selectedAID!=null) {
-			this.clock=clock;
 			try {
 				SynthLookAndFeel laf = new SynthLookAndFeel();
 				laf.load(PartDetail.class.getResourceAsStream("/ntdw/resources/detail_laf.xml"), PartDetail.class);
@@ -168,265 +275,27 @@ public class ReviewDetail extends JFrame {
 			Date start = new Date();
 			String ip = Tools.load_ip();
 			Class.forName("org.postgresql.Driver");
-			String url = "jdbc:postgresql://"+ip+":5432/northwind";
-			Properties props = new Properties();
+			url = "jdbc:postgresql://"+ip+":5432/northwind";
+			
 			props.setProperty("user","postgres");
 			props.setProperty("password","Neonec");
 			props.setProperty("loginTimeout", "20");
 			props.setProperty("connectTimeout", "0");
 			props.setProperty("socketTimeout", "0");
 			//props.setProperty("ssl","true");
-			Connection conn = DriverManager.getConnection(url, props);
-			PreparedStatement st = conn.prepareStatement("select * from public.\"items\" WHERE \"aid\" = ?");
-			st.setString(1, selectedAID);
-			ResultSet rs = st.executeQuery();
-			rs.next();
-			
-			setTitle("TECHNICAL ITEM DESCRIPTION");
-			setIconImage(Toolkit.getDefaultToolkit().getImage(PartDetail.class.getResource("/ntdw/resources/images/Neonec-white-logo only.png")));
-			setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			
-			setBounds(0, 0, 0, 0);
-			contentPane = new JPanel();
-			
-			contentPane.setName("contentPane");
-			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-			setContentPane(contentPane);
-			GridBagLayout gbl_contentPane = new GridBagLayout();
-			gbl_contentPane.columnWidths = new int[]{133,133, 21, 300,99};
-			gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0,0};
-			gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 1.0};
-			gbl_contentPane.rowWeights = new double[]{0.0,0.2, 0.0, 1.0, Double.MIN_VALUE};
-			contentPane.setLayout(gbl_contentPane);
-			
-			Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-			this.height = screenSize.height;
-			this.width = screenSize.width;
-			setPreferredSize(new Dimension(width, height));
-			
-			JPanel pnl_controlflex = new JPanel();
-			pnl_controlflex.setBackground(SystemColor.activeCaption);
-			pnl_controlflex.setName("pnl_controlflex");
-			pnl_controlflex.setForeground(SystemColor.activeCaption);
-			GridBagConstraints gbc_pnl_controlflex = new GridBagConstraints();
-			gbc_pnl_controlflex.anchor = GridBagConstraints.WEST;
-			gbc_pnl_controlflex.fill = GridBagConstraints.VERTICAL;
-			gbc_pnl_controlflex.insets = new Insets(0, 0, 5, 0);
-			gbc_pnl_controlflex.gridx = 0;
-			gbc_pnl_controlflex.gridy = 0;
-			gbc_pnl_controlflex.gridwidth = 1;
-			contentPane.add(pnl_controlflex, gbc_pnl_controlflex);
-			
-			JButton btnArrowLeft = new JButton("        ");
-			btnArrowLeft.setHorizontalAlignment(SwingConstants.LEFT);
-			btnArrowLeft.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-				}
-			});
-			btnArrowLeft.setActionCommand("");
-			btnArrowLeft.setSize(new Dimension(49, 50));
-			btnArrowLeft.setName("btnArrowLeft");
-			
-			JLabel lblNewLabel = new JLabel(dll.getprev(selectedAID));
-			lblNewLabel.setName("lb_controlflex");
-			pnl_controlflex.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-			pnl_controlflex.add(btnArrowLeft);
-			pnl_controlflex.add(lblNewLabel);
-			
-			JPanel panelCenter = new JPanel();
-			panelCenter.setBackground(SystemColor.activeCaption);
-			panelCenter.setName("panelCenter");
-			GridBagConstraints gbc_panelCenter = new GridBagConstraints();
-			gbc_panelCenter.insets = new Insets(0, 0, 5, 0);
-			gbc_panelCenter.fill = GridBagConstraints.BOTH;
-			gbc_panelCenter.gridx = 1;
-			gbc_panelCenter.gridy = 0;
-			gbc_panelCenter.gridwidth = 3;
-			contentPane.add(panelCenter, gbc_panelCenter);
-			
-			JLabel lblVal = new JLabel(selectedAID);
-			lblVal.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					StringSelection stringSelection = new StringSelection(selectedAID + " / " + currentFamily.get((String) textField_3.getText()));
-					Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-					clpbrd.setContents(stringSelection, null);
-				}
-			});
-			panelCenter.add(lblVal);
-			lblVal.setName("lbl_val");
-			
-			JPanel panelRigth = new JPanel();
-			panelRigth.setBackground(SystemColor.activeCaption);
-			panelRigth.setName("panelRigth");
-			GridBagConstraints gbc_panelRigth = new GridBagConstraints();
-			gbc_panelRigth.insets = new Insets(0, 0, 5, 0);
-			gbc_panelRigth.anchor = GridBagConstraints.NORTH;
-			gbc_panelRigth.fill = GridBagConstraints.HORIZONTAL;
-			gbc_panelRigth.gridx = 4;
-			gbc_panelRigth.gridy = 0;
-			contentPane.add(panelRigth, gbc_panelRigth);
-			
-			JLabel lblFlexor = new JLabel(dll.getnext(selectedAID));
-			lblFlexor.setName("lbl_flexor");
-			panelRigth.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-			panelRigth.add(lblFlexor);
-			
-			JButton btnArrowRigth = new JButton("        ");
-			btnArrowRigth.setSize(new Dimension(100, 100));
-			btnArrowRigth.setName("btnArrowRight");
-			panelRigth.add(btnArrowRigth);
-			
-			JPanel pnlDescription = new JPanel();
-			pnlDescription.setName("shortDescription");
-			GridBagConstraints gbc_pnlDescription = new GridBagConstraints();
-			gbc_pnlDescription.insets = new Insets(0, 0, 5, 0);
-			gbc_pnlDescription.fill = GridBagConstraints.BOTH;
-			gbc_pnlDescription.gridx = 0;
-			gbc_pnlDescription.gridy = 1;
-			gbc_pnlDescription.gridwidth = 5;
-			contentPane.add(pnlDescription, gbc_pnlDescription);
-			GridBagLayout gbl_pnlDescription = new GridBagLayout();
-			gbl_pnlDescription.columnWidths = new int[]{0, 0};
-			gbl_pnlDescription.rowHeights = new int[]{0, 0};
-			gbl_pnlDescription.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-			gbl_pnlDescription.rowWeights = new double[]{0.0, 1.0};
-			pnlDescription.setLayout(gbl_pnlDescription);
-			
-			JPanel panel = new JPanel();
-			GridBagConstraints gbc_panel = new GridBagConstraints();
-			gbc_panel.insets = new Insets(0, 0, 5, 0);
-			gbc_panel.fill = GridBagConstraints.BOTH;
-			gbc_panel.gridx = 0;
-			gbc_panel.gridy = 0;
-			pnlDescription.add(panel, gbc_panel);
-			
-			JLabel lblNewLabel_1 = new JLabel("Short description");
-			lblNewLabel_1.setFont(new Font("Calibri", Font.BOLD, 16));
-			
-			JTextArea textArea = new JTextArea();
-			textArea.setSelectionColor(Color.LIGHT_GRAY);
-			JLabel lblNewLabel_2 = new JLabel("Long description");
-			lblNewLabel_2.setFont(new Font("Calibri", Font.BOLD, 16));
-			
-			JTextArea textArea_1 = new JTextArea();
-			textArea_1.setSelectionColor(Color.LIGHT_GRAY);
-			JLabel lblNewLabel_3 = new JLabel("PO text");
-			lblNewLabel_3.setFont(new Font("Calibri", Font.BOLD, 16));
-			
-			JTextArea textArea_2 = new JTextArea();
-			textArea_2.setSelectionColor(Color.LIGHT_GRAY);
-			GroupLayout gl_panel = new GroupLayout(panel);
-			gl_panel.setHorizontalGroup(
-				gl_panel.createParallelGroup(Alignment.LEADING)
-					.addGroup(gl_panel.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-							.addGroup(gl_panel.createSequentialGroup()
-								.addGap(10)
-								.addComponent(lblNewLabel_3))
-							.addComponent(textArea_2, GroupLayout.DEFAULT_SIZE, 1046, Short.MAX_VALUE)
-							.addGroup(gl_panel.createSequentialGroup()
-								.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-									.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 225, GroupLayout.PREFERRED_SIZE)
-									.addGroup(gl_panel.createSequentialGroup()
-										.addGap(9)
-										.addComponent(lblNewLabel_1)))
-								.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-									.addGroup(gl_panel.createSequentialGroup()
-										.addGap(18)
-										.addComponent(textArea_1, GroupLayout.DEFAULT_SIZE, 803, Short.MAX_VALUE))
-									.addGroup(gl_panel.createSequentialGroup()
-										.addGap(35)
-										.addComponent(lblNewLabel_2)))))
-						.addContainerGap())
-			);
-			gl_panel.setVerticalGroup(
-				gl_panel.createParallelGroup(Alignment.LEADING)
-					.addGroup(gl_panel.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-							.addComponent(lblNewLabel_2)
-							.addComponent(lblNewLabel_1))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-							.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE)
-							.addComponent(textArea_1, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(lblNewLabel_3)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(textArea_2, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-			);
-			panel.setLayout(gl_panel);
-			
-			JPanel pnlClassification = new JPanel();
-			pnlClassification.setName("pnlClassification");
-			GridBagConstraints gbc_pnlClassification = new GridBagConstraints();
-			gbc_pnlClassification.gridheight = 3;
-			gbc_pnlClassification.insets = new Insets(0, 0, 0, 5);
-			gbc_pnlClassification.fill = GridBagConstraints.BOTH;
-			gbc_pnlClassification.gridx = 0;
-			gbc_pnlClassification.gridy = 2;
-			contentPane.add(pnlClassification, gbc_pnlClassification);
-			GridBagLayout gbl_pnlClassification = new GridBagLayout();
-			gbl_pnlClassification.columnWidths = new int[]{0, 0};
-			gbl_pnlClassification.rowHeights = new int[]{0, 0};
-			gbl_pnlClassification.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-			gbl_pnlClassification.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
-			pnlClassification.setLayout(gbl_pnlClassification);
-			
-			JLabel lblNewLabel_4 = new JLabel();
-			lblNewLabel_4.setFont(new Font("Calibri", Font.BOLD, 16));
-			GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints();
-			gbc_lblNewLabel_4.fill = GridBagConstraints.HORIZONTAL;
-			gbc_lblNewLabel_4.anchor = GridBagConstraints.NORTH;
-			gbc_lblNewLabel_4.insets = new Insets(0, 15, 5, 0);
-			gbc_lblNewLabel_4.gridx = 0;
-			gbc_lblNewLabel_4.gridy = 0;
-			pnlClassification.add(lblNewLabel_4, gbc_lblNewLabel_4);
-			
-			textField = new JTextField();
-			textField.setEditable(false);
-			GridBagConstraints gbc_textField = new GridBagConstraints();
-			gbc_textField.insets = new Insets(0, 6, 5, 0);
-			gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-			gbc_textField.gridx = 0;
-			gbc_textField.gridy = 1;
-			pnlClassification.add(textField, gbc_textField);
-			//textField.setColumns(10);
-			
-			textField_1 = new JTextField();
-			textField_1.setEditable(false);
-			GridBagConstraints gbc_textField_1 = new GridBagConstraints();
-			gbc_textField_1.insets = new Insets(0, 6, 5, 0);
-			gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
-			gbc_textField_1.gridx = 0;
-			gbc_textField_1.gridy = 2;
-			pnlClassification.add(textField_1, gbc_textField_1);
-			//textField_1.setColumns(10);
-			
-			textField_2 = new JTextField();
-			textField_2.setEditable(false);
-			GridBagConstraints gbc_textField_2 = new GridBagConstraints();
-			gbc_textField_2.insets = new Insets(0, 6, 5, 0);
-			gbc_textField_2.fill = GridBagConstraints.HORIZONTAL;
-			gbc_textField_2.gridx = 0;
-			gbc_textField_2.gridy = 3;
-			pnlClassification.add(textField_2, gbc_textField_2);
-			//textField_2.setColumns(10);
-			
-			textField_3 = new JTextField();
-			GridBagConstraints gbc_textField_3 = new GridBagConstraints();
-			gbc_textField_3.insets = new Insets(0, 6, 5, 0);
-			gbc_textField_3.fill = GridBagConstraints.HORIZONTAL;
-			gbc_textField_3.gridx = 0;
-			gbc_textField_3.gridy = 4;
-			pnlClassification.add(textField_3, gbc_textField_3);
-			//textField_3.setColumns(10);
 			
 			
-			MouseAdapter classApply = new MouseAdapter() {
+			btnApplyClassification.setText("APPLY CLASSIFICATION CHANGE");
+			btnApplyCancel.setText("CANCEL CLASSIFICATION CHANGE");
+			lblNewLabel_5.setText("Manufacturer name");
+			
+			load_item_data(conn, url, props, st, selectedAID, rs);
+			load_ui_elements(dll,selectedAID,btnApplyClassification,btnApplyCancel,lblNewLabel_5);
+			
+			
+			
+			
+				classApply = new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					try {
@@ -444,680 +313,18 @@ public class ReviewDetail extends JFrame {
 					}
 				}};
 			
-			JButton btnApplyClassification = new JButton("APPLY CLASSIFICATION CHANGE");
-			btnApplyClassification.addMouseListener(classApply);
-			btnApplyClassification.setFont(new Font("Calibri", Font.PLAIN, 12));
-			btnApplyClassification.setName("btnApplyClassification");
-			GridBagConstraints gbc_btnApplyClassification = new GridBagConstraints();
-			gbc_btnApplyClassification.insets = new Insets(0, 6, 5, 0);
-			gbc_btnApplyClassification.fill = GridBagConstraints.BOTH;
-			gbc_btnApplyClassification.gridx = 0;
-			gbc_btnApplyClassification.gridy = 5;
-			pnlClassification.add(btnApplyClassification, gbc_btnApplyClassification);
-			
-			JButton btnApplyCancel = new JButton("CANCEL CLASSIFICATION CHANGE");
 			
 			
-			MouseAdapter classCancel = new MouseAdapter() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					textField.setText(originalDomain);
-					//textField_1.removeAllItems();
-					textField_1.setText(originalGroup);
-					//textField_2.removeAllItems();
-					textField_2.setText(originalfamily);
-					//textField_3.removeAllItems();
-					textField_3.setText(originalclass);
-					currentFamily.clear();
-					currentFamily.put(originalclass, originalcid);
-					lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
-					classApply.mouseClicked(e);
-				}};
-				btnApplyCancel.addMouseListener(classCancel);
-				/*btnApplyCancel.addMouseListener(new MouseAdapter() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					textField.setText(originalDomain);
-					//textField_1.removeAllItems();
-					textField_1.setText(originalGroup);
-					//textField_2.removeAllItems();
-					textField_2.setText(originalfamily);
-					//textField_3.removeAllItems();
-					textField_3.setText(originalclass);
-					currentFamily.clear();
-					currentFamily.put(originalclass, originalcid);
-					lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
-					classApply.mouseClicked(e);
-					
-				}});*/
-			btnApplyCancel.setFont(new Font("Calibri", Font.PLAIN, 12));
-			btnApplyCancel.setName("btnCancelClassification");
-			GridBagConstraints gbc_btnApplyCancel = new GridBagConstraints();
-			gbc_btnApplyCancel.insets = new Insets(0, 6, 5, 0);
-			gbc_btnApplyCancel.fill = GridBagConstraints.BOTH;
-			gbc_btnApplyCancel.gridx = 0;
-			gbc_btnApplyCancel.gridy = 6;
-			pnlClassification.add(btnApplyCancel, gbc_btnApplyCancel);
-			
-			JLabel lblNewLabel_5 = new JLabel("Manufacturer name");
-			lblNewLabel_5.setFont(new Font("Calibri", Font.BOLD, 16));
-			GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
-			gbc_lblNewLabel_5.fill = GridBagConstraints.HORIZONTAL;
-			gbc_lblNewLabel_5.insets = new Insets(0, 15, 0, 0);
-			gbc_lblNewLabel_5.gridx = 0;
-			gbc_lblNewLabel_5.gridy = 7;
-			pnlClassification.add(lblNewLabel_5, gbc_lblNewLabel_5);
-			
-			textField_4 = new JTextField();
-			textField_4.setSelectionColor(Color.LIGHT_GRAY);
-			GridBagConstraints gbc_textField_4 = new GridBagConstraints();
-			gbc_textField_4.insets = new Insets(0, 6, 5, 0);
-			gbc_textField_4.fill = GridBagConstraints.HORIZONTAL;
-			gbc_textField_4.gridx = 0;
-			gbc_textField_4.gridy = 8;
-			pnlClassification.add(textField_4, gbc_textField_4);
-			textField_4.setColumns(10);
-			
-			JLabel lblNewLabel_6 = new JLabel("Manufacturer reference");
-			lblNewLabel_6.setFont(new Font("Calibri", Font.BOLD, 16));
-			GridBagConstraints gbc_lblNewLabel_6 = new GridBagConstraints();
-			gbc_lblNewLabel_6.fill = GridBagConstraints.HORIZONTAL;
-			gbc_lblNewLabel_6.insets = new Insets(0, 15, 0, 0);
-			gbc_lblNewLabel_6.gridx = 0;
-			gbc_lblNewLabel_6.gridy = 9;
-			pnlClassification.add(lblNewLabel_6, gbc_lblNewLabel_6);
-			
-			textField_5 = new JTextField();
-			textField_5.setSelectionColor(Color.LIGHT_GRAY);
-			GridBagConstraints gbc_textField_5 = new GridBagConstraints();
-			gbc_textField_5.insets = new Insets(0, 6, 5, 0);
-			gbc_textField_5.fill = GridBagConstraints.HORIZONTAL;
-			gbc_textField_5.gridx = 0;
-			gbc_textField_5.gridy = 10;
-			pnlClassification.add(textField_5, gbc_textField_5);
-			textField_5.setColumns(10);
-			
-			JLabel lblNewLabel_7 = new JLabel("Source URL");
-			lblNewLabel_7.setFont(new Font("Calibri", Font.BOLD, 16));
-			GridBagConstraints gbc_lblNewLabel_7 = new GridBagConstraints();
-			gbc_lblNewLabel_7.fill = GridBagConstraints.HORIZONTAL;
-			gbc_lblNewLabel_7.insets = new Insets(0, 15, 0, 0);
-			gbc_lblNewLabel_7.gridx = 0;
-			gbc_lblNewLabel_7.gridy = 11;
-			pnlClassification.add(lblNewLabel_7, gbc_lblNewLabel_7);
-			
-			JTextArea textArea_3 = new JTextArea();
-			textArea_3.setSelectionColor(Color.LIGHT_GRAY);
-			GridBagConstraints gbc_textArea_3 = new GridBagConstraints();
-			gbc_textArea_3.insets = new Insets(0, 6, 5, 0);
-			gbc_textArea_3.fill = GridBagConstraints.BOTH;
-			gbc_textArea_3.gridx = 0;
-			gbc_textArea_3.gridy = 12;
-			pnlClassification.add(textArea_3, gbc_textArea_3);
-			
-			JPanel pnlCharValues = new JPanel();
-			pnlCharValues.setName("pnlCharValues");
-			GridBagConstraints gbc_pnlCharValues = new GridBagConstraints();
-			gbc_pnlCharValues.gridheight = 3;
-			gbc_pnlCharValues.insets = new Insets(0, 0, 5, 5);
-			gbc_pnlCharValues.fill = GridBagConstraints.BOTH;
-			gbc_pnlCharValues.gridx = 1;
-			gbc_pnlCharValues.gridy = 2;
-			gbc_pnlCharValues.gridwidth = 4;
-			contentPane.add(pnlCharValues, gbc_pnlCharValues);
-			GridBagLayout gbl_pnlCharValues = new GridBagLayout();
-			gbl_pnlCharValues.columnWidths = new int[]{0};
-			gbl_pnlCharValues.rowHeights = new int[]{0,0};
-			gbl_pnlCharValues.columnWeights = new double[]{1.0};
-			gbl_pnlCharValues.rowWeights = new double[]{1.0,0.2};
-			pnlCharValues.setLayout(gbl_pnlCharValues);
-			
-			JScrollPane scrollPane = new JScrollPane();
-			GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-			gbc_scrollPane.fill = GridBagConstraints.BOTH;
-			gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
-			gbc_scrollPane.gridx = 0;
-			gbc_scrollPane.gridy = 0;
-			pnlCharValues.add(scrollPane, gbc_scrollPane);
-			
-			JPanel panelCharVals = new JPanel();
-			scrollPane.setViewportView(panelCharVals);
-			panelCharVals.setName("panelCharVals");
-			GridBagLayout gbl_panelCharVals = new GridBagLayout();
-			gbl_panelCharVals.columnWidths = new int[]{0,0};
-			gbl_panelCharVals.rowHeights = new int[]{0,0};
-			gbl_panelCharVals.columnWeights = new double[]{1.0,1.0};
-			gbl_panelCharVals.rowWeights = new double[]{1.0,1.0};
-			panelCharVals.setLayout(gbl_panelCharVals);
-			
-			JPanel panel_1 = new JPanel();
-			GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-			gbc_panel_1.insets = new Insets(0, 0, 5, 5);
-			gbc_panel_1.fill = GridBagConstraints.BOTH;
-			gbc_panel_1.gridx = 0;
-			gbc_panel_1.gridy = 0;
-			panelCharVals.add(panel_1, gbc_panel_1);
-			GridBagLayout gbl_panel_1 = new GridBagLayout();
-			gbl_panel_1.columnWidths = new int[]{350, 0};
-			gbl_panel_1.rowHeights = new int[]{16, 0, 0};
-			gbl_panel_1.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-			gbl_panel_1.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-			panel_1.setLayout(gbl_panel_1);
-			
-			JLabel lblNewLabel_8 = new JLabel("Characteristic Values");
-			lblNewLabel_8.setForeground(new Color(68, 84, 105));
-			lblNewLabel_8.setFont(new Font("Calibri", Font.BOLD, 12));
-			GridBagConstraints gbc_lblNewLabel_8 = new GridBagConstraints();
-			gbc_lblNewLabel_8.insets = new Insets(0, 62, 5, 0);
-			gbc_lblNewLabel_8.anchor = GridBagConstraints.NORTHWEST;
-			gbc_lblNewLabel_8.gridx = 0;
-			gbc_lblNewLabel_8.gridy = 0;
-			panel_1.add(lblNewLabel_8, gbc_lblNewLabel_8);
-			
-			JLabel lblNewLabel_9 = new JLabel("Value complement");
-			GridBagConstraints gbc_lblNewLabel_9 = new GridBagConstraints();
-			lblNewLabel_9.setForeground(new Color(68, 84, 105));
-			lblNewLabel_9.setFont(new Font("Calibri", Font.BOLD, 12));
-			gbc_lblNewLabel_9.anchor = GridBagConstraints.NORTH;
-			gbc_lblNewLabel_8.insets = new Insets(0, 0, 5, 0);
-			gbc_lblNewLabel_9.gridx = 1;
-			gbc_lblNewLabel_9.gridy = 0;
-			panel_1.add(lblNewLabel_9, gbc_lblNewLabel_9);
-			
-			JPanel panel_2 = new JPanel();
-			GridBagConstraints gbc_panel_2 = new GridBagConstraints();
-			gbc_panel_2.insets = new Insets(0, 0, 5, 5);
-			gbc_panel_2.fill = GridBagConstraints.BOTH;
-			gbc_panel_2.gridx = 1;
-			gbc_panel_2.gridy = 0;
-			panelCharVals.add(panel_2, gbc_panel_2);
-			GridBagLayout gbl_panel_2 = new GridBagLayout();
-			gbl_panel_2.columnWidths = new int[]{350, 0};
-			gbl_panel_2.rowHeights = new int[]{16, 0, 0};
-			gbl_panel_2.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-			gbl_panel_2.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-			panel_2.setLayout(gbl_panel_2);
-			
-			JLabel lblNewLabel_10 = new JLabel("Characteristic Values");
-			lblNewLabel_10.setForeground(new Color(68, 84, 105));
-			lblNewLabel_10.setFont(new Font("Calibri", Font.BOLD, 12));
-			GridBagConstraints gbc_lblNewLabel_10 = new GridBagConstraints();
-			gbc_lblNewLabel_10.insets = new Insets(0, 62, 5, 0);
-			gbc_lblNewLabel_10.anchor = GridBagConstraints.NORTHWEST;
-			gbc_lblNewLabel_10.gridx = 0;
-			gbc_lblNewLabel_10.gridy = 0;
-			panel_2.add(lblNewLabel_10, gbc_lblNewLabel_10);
-			
-			JLabel lblNewLabel_12 = new JLabel("Value complement");
-			lblNewLabel_12.setForeground(new Color(68, 84, 105));
-			lblNewLabel_12.setFont(new Font("Calibri", Font.BOLD, 12));
-			GridBagConstraints gbc_lblNewLabel_12 = new GridBagConstraints();
-			gbc_lblNewLabel_12.anchor = GridBagConstraints.NORTH;
-			gbc_lblNewLabel_8.insets = new Insets(0, 0, 5, 0);
-			gbc_lblNewLabel_12.gridx = 1;
-			gbc_lblNewLabel_12.gridy = 0;
-			panel_2.add(lblNewLabel_12, gbc_lblNewLabel_12);
-			
-			pnlCharacLeft.setName("pnlCharacLeft");
-			GridBagConstraints gbc_pnlCharacLeft = new GridBagConstraints();
-			gbc_pnlCharacLeft.anchor = GridBagConstraints.NORTH;
-			gbc_pnlCharacLeft.insets = new Insets(0, 0, 0, 5);
-			gbc_pnlCharacLeft.fill = GridBagConstraints.HORIZONTAL;
-			gbc_pnlCharacLeft.gridx = 0;
-			gbc_pnlCharacLeft.gridy = 1;
-			panelCharVals.add(pnlCharacLeft, gbc_pnlCharacLeft);
-			GridBagLayout gbl_pnlCharacLeft = new GridBagLayout();
-			gbl_pnlCharacLeft.columnWidths = new int[]{0};
-			gbl_pnlCharacLeft.rowHeights = new int[]{0};
-			gbl_pnlCharacLeft.columnWeights = new double[]{Double.MIN_VALUE};
-			gbl_pnlCharacLeft.rowWeights = new double[]{Double.MIN_VALUE};
-			pnlCharacLeft.setLayout(gbl_pnlCharacLeft);
-			
-			pnlCharacRigth.setName("pnlCharacRigth");
-			GridBagConstraints gbc_pnlCharacRigth = new GridBagConstraints();
-			gbc_pnlCharacRigth.anchor = GridBagConstraints.NORTH;
-			gbc_pnlCharacRigth.fill = GridBagConstraints.HORIZONTAL;
-			gbc_pnlCharacRigth.gridx = 1;
-			gbc_pnlCharacRigth.gridy = 1;
-			panelCharVals.add(pnlCharacRigth, gbc_pnlCharacRigth);
-			GridBagLayout gbl_pnlCharacRigth = new GridBagLayout();
-			gbl_pnlCharacRigth.columnWidths = new int[]{0};
-			gbl_pnlCharacRigth.rowHeights = new int[]{0};
-			gbl_pnlCharacRigth.columnWeights = new double[]{Double.MIN_VALUE};
-			gbl_pnlCharacRigth.rowWeights = new double[]{0};
-			pnlCharacRigth.setLayout(gbl_pnlCharacRigth);
 			
 			load_chars(rs.getString("cid"),false,selectedAID);
+			load_class(btnApplyClassification,btnApplyCancel);
+						
 			
 			
+			test = new CharacValue();
 			
-			
-			
-			JPanel pnlComment = new JPanel();
-			pnlComment.setName("pnlComment");
-			GridBagConstraints gbc_pnlComment = new GridBagConstraints();
-			gbc_pnlComment.fill = GridBagConstraints.BOTH;
-			gbc_pnlComment.gridx = 0;
-			gbc_pnlComment.gridy = 1;
-			pnlCharValues.add(pnlComment, gbc_pnlComment);
-			GridBagLayout gbl_pnlComment = new GridBagLayout();
-			gbl_pnlComment.columnWidths = new int[]{0, 0, 0, 0, 0, 0, -85, 0, 0, 0, 0, 0, 0, 0};
-			gbl_pnlComment.rowHeights = new int[]{0, 0, 0};
-			gbl_pnlComment.columnWeights = new double[]{1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-			gbl_pnlComment.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-			pnlComment.setLayout(gbl_pnlComment);
-			
-			JLabel lblQuestion = new JLabel("Question");
-			lblQuestion.setForeground(new Color(68, 84, 105));
-			lblQuestion.setFont(new Font("Calibri", Font.BOLD, 12));
-			GridBagConstraints gbc_lblQuestion = new GridBagConstraints();
-			gbc_lblQuestion.fill = GridBagConstraints.HORIZONTAL;
-			gbc_lblQuestion.insets = new Insets(0, 0, 5, 5);
-			gbc_lblQuestion.gridx = 0;
-			gbc_lblQuestion.gridy = 0;
-			pnlComment.add(lblQuestion, gbc_lblQuestion);
-			
-			JLabel lblNewLabel_11 = new JLabel("Comment");
-			lblNewLabel_11.setForeground(new Color(68, 84, 105));
-			lblNewLabel_11.setFont(new Font("Calibri", Font.BOLD, 12));
-			GridBagConstraints gbc_lblNewLabel_11 = new GridBagConstraints();
-			gbc_lblNewLabel_11.fill = GridBagConstraints.HORIZONTAL;
-			gbc_lblNewLabel_11.insets = new Insets(0, 0, 5, 5);
-			gbc_lblNewLabel_11.gridx = 1;
-			gbc_lblNewLabel_11.gridy = 0;
-			pnlComment.add(lblNewLabel_11, gbc_lblNewLabel_11);
-			
-			textField_6 = new JTextField();
-			textField_6.setSelectionColor(Color.LIGHT_GRAY);
-			GridBagConstraints gbc_textField_6 = new GridBagConstraints();
-			gbc_textField_6.insets = new Insets(0, 0, 0, 5);
-			gbc_textField_6.fill = GridBagConstraints.BOTH;
-			gbc_textField_6.gridx = 0;
-			gbc_textField_6.gridy = 1;
-			pnlComment.add(textField_6, gbc_textField_6);
-			textField_6.setColumns(10);
-			
-			JTextArea textArea_4 = new JTextArea();
-			textArea_4.setSelectionColor(Color.LIGHT_GRAY);
-			GridBagConstraints gbc_textArea_4 = new GridBagConstraints();
-			gbc_textArea_4.insets = new Insets(0, 0, 0, 5);
-			gbc_textArea_4.fill = GridBagConstraints.BOTH;
-			gbc_textArea_4.gridx = 1;
-			gbc_textArea_4.gridy = 1;
-			pnlComment.add(textArea_4, gbc_textArea_4);
-			
-			Dimension d = gbl_contentPane.minimumLayoutSize(contentPane);
-			setMinimumSize(new Dimension(Double.valueOf(d.getWidth()).intValue(),
-					Double.valueOf(400).intValue()));
-			
-			//textArea.setEditable(false);
-			textArea.setText(rs.getString("sd"));
-			textArea.setLineWrap(true);
-			//textArea_1.setEditable(false);
-			textArea_1.setText(rs.getString("ld"));
-			//textArea_2.setEditable(false);
-			textArea_2.setText(rs.getString("po"));
-			//textField.setEditable(false);
-			
-			/*
-			Connection conn2 = DriverManager.getConnection(url, props);
-			PreparedStatement st2 = conn2.prepareStatement("select * from public.\"class_hierarchy\"");
-			ResultSet rs2 = st2.executeQuery();
-			LinkedHashSet<String> domains = new LinkedHashSet<String>();
-			LinkedHashSet<String> groups = new LinkedHashSet<String>();
-			LinkedHashSet<String> families = new LinkedHashSet<String>();
-			LinkedHashSet<String> classes = new LinkedHashSet<String>();
-			
-			while(rs2.next()) {
-				domains.add(rs2.getString("domain"));
-				
-			}
-			rs2.close();
-			st2.close();
-			conn2.close();
-			for(String domain:domains) {
-				textField.setText(domain);
-			}
-			
-			textField.addMouseListener(new MouseAdapter() {
-		        @Override
-		        public void mouseClicked(MouseEvent e) {
-		            click=true;
-		        }
-		    });
-			textField_1.addMouseListener(new MouseAdapter() {
-		        @Override
-		        public void mouseClicked(MouseEvent e) {
-		            click=true;
-		        }
-		    });
-			textField_2.addMouseListener(new MouseAdapter() {
-		        @Override
-		        public void mouseClicked(MouseEvent e) {
-		            click=true;
-		        }
-		    });
-			textField_3.addMouseListener(new MouseAdapter() {
-		        @Override
-		        public void mouseClicked(MouseEvent e) {
-		            click=true;
-		        }
-		    });
+			load_static_data(url, props, selectedAID);
 
-			textField.addActionListener(new ActionListener() {
-	            public void actionPerformed(ActionEvent event) {
-	            	if(!click) {
-	            		return;
-	            	}
-	            	click=false;
-	            	btnApplyClassification.setVisible(false);
-	                JComboBox comboBox = (JComboBox) event.getSource();
-
-	                String selected = (String) comboBox.getSelectedItem();
-	                try {
-						Connection conn2 = DriverManager.getConnection(url, props);
-		    			PreparedStatement st2 = conn2.prepareStatement("select * from public.\"class_hierarchy\" WHERE \"domain\" = ?");
-		    			st2.setString(1, selected);
-		    			ResultSet rs2 = st2.executeQuery();
-		    			groups.clear();
-		    			while(rs2.next()) {
-		    				groups.add(rs2.getString("groupe"));
-		    			}
-		    			
-		    			textField_1.removeAllItems();
-		    			textField_2.removeAllItems();
-		    			textField_3.removeAllItems();
-		    			
-		    			for(String group:groups) {
-		    				textField_1.addItem(group);
-		    			}
-		    			textField_1.setSelectedIndex(-1);
-		    			rs2.close();
-		    			st2.close();
-		    			conn2.close();
-					} catch (SQLException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					}
-
-	            }
-	        });
-			
-			textField_1.addActionListener(new ActionListener() {
-	            public void actionPerformed(ActionEvent event) {
-	            	if(!click) {
-	            		return;
-	            	}
-	            	click=false;
-	                JComboBox comboBox = (JComboBox) event.getSource();
-
-	                String selected = (String) comboBox.getSelectedItem();
-	                try {
-						Connection conn2 = DriverManager.getConnection(url, props);
-		    			PreparedStatement st2 = conn2.prepareStatement("select * from public.\"class_hierarchy\" WHERE \"groupe\" = ?");
-		    			st2.setString(1, selected);
-		    			ResultSet rs2 = st2.executeQuery();
-		    			families.clear();
-		    			while(rs2.next()) {
-		    				families.add(rs2.getString("family"));
-		    			}
-		    			
-		    			textField_2.removeAllItems();
-		    			textField_3.removeAllItems();
-		    			
-		    			for(String family:families) {
-		    				textField_2.addItem(family);
-		    			}
-		    			textField_2.setSelectedIndex(-1);
-		    			rs2.close();
-		    			st2.close();
-		    			conn2.close();
-					} catch (SQLException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					}
-
-	            }
-	        });
-			
-			textField_2.addActionListener(new ActionListener() {
-	            public void actionPerformed(ActionEvent event) {
-	            	if(!click) {
-	            		return;
-	            	}
-	            	click=false;
-	                JComboBox comboBox = (JComboBox) event.getSource();
-
-	                String selected = (String) comboBox.getSelectedItem();
-	                try {
-						Connection conn2 = DriverManager.getConnection(url, props);
-		    			PreparedStatement st2 = conn2.prepareStatement("select * from public.\"class_hierarchy\" WHERE \"family\" = ?");
-		    			st2.setString(1, selected);
-		    			ResultSet rs2 = st2.executeQuery();
-		    			classes.clear();
-		    			currentFamily.clear();
-		    			while(rs2.next()) {
-		    				currentFamily.put(rs2.getString("class"), rs2.getString("cid"));
-		    				classes.add(rs2.getString("class"));
-		    			}
-		    			textField_3.removeAllItems();
-		    			
-		    			for(String classe:classes) {
-		    				textField_3.addItem(classe);
-		    			}
-		    			textField_3.setSelectedIndex(-1);
-		    			rs2.close();
-		    			st2.close();
-		    			conn2.close();
-					} catch (SQLException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					}
-
-	            }
-	        });
-			
-			textField_3.addActionListener(new ActionListener() {
-	            public void actionPerformed(ActionEvent event) {
-	            	if(click) {
-	            		btnApplyClassification.setVisible(true);
-	            		click=false;
-	            		return;
-	            	}
-
-	            }
-	        });
-			*/
-			Runnable cancelClass = new Runnable() {
-		        @Override
-		        public void run() {
-		        	classCancel.mouseClicked(null); 
-		        }
-		    };
-		    
-			textField_3.getDocument().addDocumentListener(new DocumentListener() {
-
-				public void changedUpdate(DocumentEvent e){
-					
-				}
-
-				public void insertUpdate(DocumentEvent e) {
-					if(!viewbutton ) {
-						btnApplyClassification.setVisible(false);
-					}
-					if(textField_3.getText().split("\\.").length !=4) {
-						return;
-					}else{
-						if(textField_3.getText().split("\\.")[3].length() <3) {
-							return;
-						}
-						try {
-							Connection conn9;
-							conn9 = DriverManager.getConnection(url, props);
-							PreparedStatement st9 = conn9.prepareStatement("select * from public.\"class_hierarchy\" WHERE \"cid\" = ?");
-							String cidlook = textField_3.getText().substring(0, 15);
-							//System.out.println(cidlook);
-							st9.setString(1, cidlook);
-							//st9.setString(1, textField_3.getText());
-							ResultSet rs9 = st9.executeQuery();
-							if(!rs9.isBeforeFirst()) {
-								JOptionPane.showMessageDialog(textField_3, "<html><h2><font color='red'>Unknown Class ID, Canceling changes</font></h2></html>");
-								/*textField.setText("N/A");
-								textField_1.setText("N/A");
-								textField_2.setText("N/A");*/
-								rs9.close();
-								st9.close();
-								conn9.close();
-								SwingUtilities.invokeLater(cancelClass);
-								return;
-							}
-							rs9.next();
-							textField.setText(rs9.getString("domain"));
-							textField_1.setText(rs9.getString("groupe"));
-							textField_2.setText(rs9.getString("family"));
-							Runnable doHighlight = new Runnable() {
-						        @Override
-						        public void run() {
-						        	try {
-						        		String claas = rs9.getString("class");
-										currentFamily.clear();
-						        		//currentFamily.put(claas, textField_3.getText());
-										currentFamily.put(claas, rs9.getString("cid"));
-						        		
-										textField_3.setText(claas);
-										rs9.close();
-										st9.close();
-										conn9.close();
-										viewbutton=true;
-										btnApplyClassification.setVisible(false);
-										lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
-										classApply.mouseClicked(null);
-									} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-						        }
-						    };
-							SwingUtilities.invokeLater(doHighlight);
-							//textField_3.setText(rs9.getString("class"));
-							
-						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-				}
-
-				public void removeUpdate(DocumentEvent e) {
-					btnApplyClassification.setVisible(false);
-				}
-
-			
-			
-			
-			});
-			
-			
-			Connection conn1 = DriverManager.getConnection(url, props);
-			PreparedStatement st1 = conn1.prepareStatement("select * from public.\"class_hierarchy\" WHERE \"cid\" = ?");
-			st1.setString(1, rs.getString("cid"));
-			ResultSet rs1 = st1.executeQuery();
-			rs1.next();
-			originalcid = rs.getString("cid");
-			textField.setText(rs1.getString("domain"));
-			originalDomain = (rs1.getString("domain"));
-			//textField_1.removeAllItems();
-			textField_1.setText(rs1.getString("groupe"));
-			originalGroup = (rs1.getString("groupe"));
-			//textField_2.removeAllItems();
-			textField_2.setText(rs1.getString("family"));
-			originalfamily = (rs1.getString("family"));
-			//textField_3.removeAllItems();
-			textField_3.setText(rs1.getString("class"));
-			originalclass = (rs1.getString("class"));
-			
-			
-			CharacValue test = new CharacValue();
-			
-			if(false/*test.oldVals.containsKey("URL")*/) {
-				textField_4.setText(test.oldVals.get("MANUF"));
-				textField_5.setText(test.oldVals.get("MANUF_REF"));
-				textArea_3.setText(test.oldVals.get("URL"));
-				textField_6.setText(test.oldVals.get("QUESTION"));
-				textArea_4.setText(test.oldVals.get("COMMENT"));
-					
-			}else {
-
-				Connection conn9 = DriverManager.getConnection(url, props);
-				PreparedStatement st9 = conn9.prepareStatement("select * from public.\"data\" WHERE \"aid\" = ? AND \"phase\" = ?");
-				st9.setString(2, "REVIEW");
-				st9.setString(1, selectedAID);
-				ResultSet rs9 = st9.executeQuery();
-				if(rs9.isBeforeFirst()) {
-					while(rs9.next()) {
-						if(rs9.getString("chid").equals("MANUF")) {
-							textField_4.setText(rs9.getString("value"));
-						}
-						if(rs9.getString("chid").equals("MANUF_REF")) {
-							textField_5.setText(rs9.getString("value"));
-						}
-						if(rs9.getString("chid").equals("URL")) {
-							textArea_3.setText(rs9.getString("value"));
-						}
-						if(rs9.getString("chid").equals("QUESTION")) {
-							textField_6.setText(rs9.getString("value"));
-						}
-						if(rs9.getString("chid").equals("COMMENT")) {
-							textArea_4.setText(rs9.getString("value"));
-						}
-					}
-				}else {
-					st9 = conn9.prepareStatement("select * from public.\"data\" WHERE \"aid\" = ? AND \"phase\" = ?");
-					st9.setString(2, "DESCRIPTION");
-					st9.setString(1, selectedAID);
-					rs9 = st9.executeQuery();
-					while(rs9.next()) {
-						if(rs9.getString("chid").equals("MANUF")) {
-							textField_4.setText(rs9.getString("value"));
-						}
-						if(rs9.getString("chid").equals("MANUF_REF")) {
-							textField_5.setText(rs9.getString("value"));
-						}
-						if(rs9.getString("chid").equals("URL")) {
-							textArea_3.setText(rs9.getString("value"));
-						}
-						if(rs9.getString("chid").equals("QUESTION")) {
-							textField_6.setText(rs9.getString("value"));
-						}
-						if(rs9.getString("chid").equals("COMMENT")) {
-							textArea_4.setText(rs9.getString("value"));
-						}
-					}
-				}
-			}
-
-			textArea.setLineWrap(true);
-			textArea_1.setLineWrap(true);
-			textArea_2.setLineWrap(true);
-			textArea_3.setLineWrap(true);
-			
 			rs.close();
 			rs1.close();
 			st.close();
@@ -1137,7 +344,7 @@ public class ReviewDetail extends JFrame {
 					pane.setVisible(true);
 					if(login.equals("Corinne")) {
 						try {
-							ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane);
+							ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane,clock);
 						} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
 								| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
 								| BadPaddingException | ClassNotFoundException | IOException | SQLException e1) {
@@ -1148,8 +355,7 @@ public class ReviewDetail extends JFrame {
 					}
 					try {
 						Class.forName("org.postgresql.Driver");
-						String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
-						Properties props = new Properties();
+						url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
 						props.setProperty("user","postgres");
 						props.setProperty("password","Neonec");
 
@@ -1248,7 +454,7 @@ public class ReviewDetail extends JFrame {
 						prepStmt.close();
 						conn0.close();
 						
-						ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane);
+						ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane,clock);
 					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
 							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
 							| BadPaddingException | IOException e1) {
@@ -1285,7 +491,7 @@ public class ReviewDetail extends JFrame {
 					pane.setVisible(true);
 					if(login.equals("Corinne")) {
 						try {
-							ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane);
+							ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane,clock);
 						} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
 								| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
 								| BadPaddingException | ClassNotFoundException | IOException | SQLException e1) {
@@ -1296,8 +502,7 @@ public class ReviewDetail extends JFrame {
 					}
 					try {
 						Class.forName("org.postgresql.Driver");
-						String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
-						Properties props = new Properties();
+						url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
 						props.setProperty("user","postgres");
 						props.setProperty("password","Neonec");
 
@@ -1388,7 +593,7 @@ public class ReviewDetail extends JFrame {
 						conn0.close();
 						
 						
-						ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane);
+						ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane,clock);
 					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
 							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
 							| BadPaddingException | IOException e1) {
@@ -1431,8 +636,7 @@ public class ReviewDetail extends JFrame {
 		            }
 		            try {
 						Class.forName("org.postgresql.Driver");
-						String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
-						Properties props = new Properties();
+						url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
 						props.setProperty("user","postgres");
 						props.setProperty("password","Neonec");
 						props.setProperty("loginTimeout", "20");
@@ -1618,7 +822,688 @@ public class ReviewDetail extends JFrame {
 			ReviewList ReviewList = new ReviewList(login, clock);
 		}
 	}
+	
+	
+	
     
+	private void load_class(JButton btnApplyClassification,JButton btnApplyCancel) throws SQLException {
+		MouseAdapter classCancel = new MouseAdapter() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				textField.setText(originalDomain);
+				//textField_1.removeAllItems();
+				textField_1.setText(originalGroup);
+				//textField_2.removeAllItems();
+				textField_2.setText(originalfamily);
+				//textField_3.removeAllItems();
+				textField_3.setText(originalclass);
+				currentFamily.clear();
+				currentFamily.put(originalclass, originalcid);
+				lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
+				classApply.mouseClicked(e);
+			}};
+		Runnable cancelClass = new Runnable() {
+	        @Override
+	        public void run() {
+	        	classCancel.mouseClicked(null); 
+	        }
+	    };
+	    btnApplyCancel.addMouseListener(classCancel);
+		textField_3.getDocument().addDocumentListener(new DocumentListener() {
+
+			public void changedUpdate(DocumentEvent e){
+				
+			}
+
+			public void insertUpdate(DocumentEvent e) {
+				if(!viewbutton ) {
+					btnApplyClassification.setVisible(false);
+				}
+				if(textField_3.getText().split("\\.").length !=4) {
+					return;
+				}else{
+					if(textField_3.getText().split("\\.")[3].length() <3) {
+						return;
+					}
+					try {
+						Connection conn9;
+						conn9 = DriverManager.getConnection(url, props);
+						PreparedStatement st9 = conn9.prepareStatement("select * from public.\"class_hierarchy\" WHERE \"cid\" = ?");
+						String cidlook = textField_3.getText().substring(0, 15);
+						//System.out.println(cidlook);
+						st9.setString(1, cidlook);
+						//st9.setString(1, textField_3.getText());
+						ResultSet rs9 = st9.executeQuery();
+						if(!rs9.isBeforeFirst()) {
+							JOptionPane.showMessageDialog(textField_3, "<html><h2><font color='red'>Unknown Class ID, Canceling changes</font></h2></html>");
+							/*textField.setText("N/A");
+							textField_1.setText("N/A");
+							textField_2.setText("N/A");*/
+							rs9.close();
+							st9.close();
+							conn9.close();
+							SwingUtilities.invokeLater(cancelClass);
+							return;
+						}
+						rs9.next();
+						textField.setText(rs9.getString("domain"));
+						textField_1.setText(rs9.getString("groupe"));
+						textField_2.setText(rs9.getString("family"));
+						Runnable doHighlight = new Runnable() {
+					        @Override
+					        public void run() {
+					        	try {
+					        		String claas = rs9.getString("class");
+									currentFamily.clear();
+					        		//currentFamily.put(claas, textField_3.getText());
+									currentFamily.put(claas, rs9.getString("cid"));
+					        		
+									textField_3.setText(claas);
+									rs9.close();
+									st9.close();
+									conn9.close();
+									viewbutton=true;
+									btnApplyClassification.setVisible(false);
+									lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
+									classApply.mouseClicked(null);
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+					        }
+					    };
+						SwingUtilities.invokeLater(doHighlight);
+						//textField_3.setText(rs9.getString("class"));
+						
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+
+			public void removeUpdate(DocumentEvent e) {
+				btnApplyClassification.setVisible(false);
+			}
+
+		
+		
+		
+		});
+		
+		
+		conn1 = DriverManager.getConnection(url, props);
+		st1 = conn1.prepareStatement("select * from public.\"class_hierarchy\" WHERE \"cid\" = ?");
+		st1.setString(1, rs.getString("cid"));
+		rs1 = st1.executeQuery();
+		rs1.next();
+		originalcid = rs.getString("cid");
+		textField.setText(rs1.getString("domain"));
+		originalDomain = (rs1.getString("domain"));
+		//textField_1.removeAllItems();
+		textField_1.setText(rs1.getString("groupe"));
+		originalGroup = (rs1.getString("groupe"));
+		//textField_2.removeAllItems();
+		textField_2.setText(rs1.getString("family"));
+		originalfamily = (rs1.getString("family"));
+		//textField_3.removeAllItems();
+		textField_3.setText(rs1.getString("class"));
+		originalclass = (rs1.getString("class"));
+		
+	}
+
+	private void load_ui_elements(DLL dll, String selectedAID, JButton btnApplyClassification, JButton btnApplyCancel, JLabel lblNewLabel_5) throws SQLException {
+		setTitle("TECHNICAL ITEM DESCRIPTION");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(PartDetail.class.getResource("/ntdw/resources/images/Neonec-white-logo only.png")));
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		setBounds(0, 0, 0, 0);
+		
+		contentPane.setName("contentPane");
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		gbl_contentPane.columnWidths = new int[]{133,133, 21, 300,99};
+		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0,0};
+		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 1.0};
+		gbl_contentPane.rowWeights = new double[]{0.0,0.2, 0.0, 1.0, Double.MIN_VALUE};
+		contentPane.setLayout(gbl_contentPane);
+		
+		Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		this.height = screenSize.height;
+		this.width = screenSize.width;
+		setPreferredSize(new Dimension(width, height));
+		
+		pnl_controlflex.setBackground(SystemColor.activeCaption);
+		pnl_controlflex.setName("pnl_controlflex");
+		pnl_controlflex.setForeground(SystemColor.activeCaption);
+
+
+		gbc_pnl_controlflex.anchor = GridBagConstraints.WEST;
+		gbc_pnl_controlflex.fill = GridBagConstraints.VERTICAL;
+		gbc_pnl_controlflex.insets = new Insets(0, 0, 5, 0);
+		gbc_pnl_controlflex.gridx = 0;
+		gbc_pnl_controlflex.gridy = 0;
+		gbc_pnl_controlflex.gridwidth = 1;
+		contentPane.add(pnl_controlflex, gbc_pnl_controlflex);
+		
+		btnArrowLeft.setText("        ");
+		btnArrowLeft.setHorizontalAlignment(SwingConstants.LEFT);
+		btnArrowLeft.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnArrowLeft.setActionCommand("");
+		btnArrowLeft.setSize(new Dimension(49, 50));
+		btnArrowLeft.setName("btnArrowLeft");
+		
+		lblNewLabel.setText(dll.getprev(selectedAID));
+		lblNewLabel.setName("lb_controlflex");
+		pnl_controlflex.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		pnl_controlflex.add(btnArrowLeft);
+		pnl_controlflex.add(lblNewLabel);
+		
+		panelCenter.setBackground(SystemColor.activeCaption);
+		panelCenter.setName("panelCenter");
+
+		gbc_panelCenter.insets = new Insets(0, 0, 5, 0);
+		gbc_panelCenter.fill = GridBagConstraints.BOTH;
+		gbc_panelCenter.gridx = 1;
+		gbc_panelCenter.gridy = 0;
+		gbc_panelCenter.gridwidth = 3;
+		contentPane.add(panelCenter, gbc_panelCenter);
+		
+		lblVal.setText(selectedAID);
+		lblVal.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				StringSelection stringSelection = new StringSelection(selectedAID + " / " + currentFamily.get((String) textField_3.getText()));
+				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clpbrd.setContents(stringSelection, null);
+			}
+		});
+		panelCenter.add(lblVal);
+		lblVal.setName("lbl_val");
+		
+
+		panelRigth.setBackground(SystemColor.activeCaption);
+		panelRigth.setName("panelRigth");
+
+		gbc_panelRigth.insets = new Insets(0, 0, 5, 0);
+		gbc_panelRigth.anchor = GridBagConstraints.NORTH;
+		gbc_panelRigth.fill = GridBagConstraints.HORIZONTAL;
+		gbc_panelRigth.gridx = 4;
+		gbc_panelRigth.gridy = 0;
+		contentPane.add(panelRigth, gbc_panelRigth);
+		
+
+		lblFlexor.setText(dll.getnext(selectedAID));
+		lblFlexor.setName("lbl_flexor");
+		panelRigth.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panelRigth.add(lblFlexor);
+		
+		btnArrowRigth.setText("        ");
+		btnArrowRigth.setSize(new Dimension(100, 100));
+		btnArrowRigth.setName("btnArrowRight");
+		panelRigth.add(btnArrowRigth);
+		
+		pnlDescription.setName("shortDescription");
+		gbc_pnlDescription.insets = new Insets(0, 0, 5, 0);
+		gbc_pnlDescription.fill = GridBagConstraints.BOTH;
+		gbc_pnlDescription.gridx = 0;
+		gbc_pnlDescription.gridy = 1;
+		gbc_pnlDescription.gridwidth = 5;
+		contentPane.add(pnlDescription, gbc_pnlDescription);
+
+		gbl_pnlDescription.columnWidths = new int[]{0, 0};
+		gbl_pnlDescription.rowHeights = new int[]{0, 0};
+		gbl_pnlDescription.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_pnlDescription.rowWeights = new double[]{0.0, 1.0};
+		pnlDescription.setLayout(gbl_pnlDescription);
+		
+		gbc_panel.insets = new Insets(0, 0, 5, 0);
+		gbc_panel.fill = GridBagConstraints.BOTH;
+		gbc_panel.gridx = 0;
+		gbc_panel.gridy = 0;
+		pnlDescription.add(panel, gbc_panel);
+		
+
+		lblNewLabel_1.setText("Short description");
+		lblNewLabel_1.setFont(new Font("Calibri", Font.BOLD, 16));
+		
+		textArea.setSelectionColor(Color.LIGHT_GRAY);
+		lblNewLabel_2.setText("Long description");
+		lblNewLabel_2.setFont(new Font("Calibri", Font.BOLD, 16));
+		
+		textArea_1.setSelectionColor(Color.LIGHT_GRAY);
+		
+		lblNewLabel_3.setText("PO text");
+		lblNewLabel_3.setFont(new Font("Calibri", Font.BOLD, 16));
+		
+		textArea_2.setSelectionColor(Color.LIGHT_GRAY);
+		GroupLayout gl_panel = new GroupLayout(panel);
+		gl_panel.setHorizontalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel.createSequentialGroup()
+							.addGap(10)
+							.addComponent(lblNewLabel_3))
+						.addComponent(textArea_2, GroupLayout.DEFAULT_SIZE, 1046, Short.MAX_VALUE)
+						.addGroup(gl_panel.createSequentialGroup()
+							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+								.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 225, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_panel.createSequentialGroup()
+									.addGap(9)
+									.addComponent(lblNewLabel_1)))
+							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panel.createSequentialGroup()
+									.addGap(18)
+									.addComponent(textArea_1, GroupLayout.DEFAULT_SIZE, 803, Short.MAX_VALUE))
+								.addGroup(gl_panel.createSequentialGroup()
+									.addGap(35)
+									.addComponent(lblNewLabel_2)))))
+					.addContainerGap())
+		);
+		gl_panel.setVerticalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblNewLabel_2)
+						.addComponent(lblNewLabel_1))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE)
+						.addComponent(textArea_1, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(lblNewLabel_3)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(textArea_2, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		panel.setLayout(gl_panel);
+		
+
+		pnlClassification.setName("pnlClassification");
+
+		gbc_pnlClassification.gridheight = 3;
+		gbc_pnlClassification.insets = new Insets(0, 0, 0, 5);
+		gbc_pnlClassification.fill = GridBagConstraints.BOTH;
+		gbc_pnlClassification.gridx = 0;
+		gbc_pnlClassification.gridy = 2;
+		contentPane.add(pnlClassification, gbc_pnlClassification);
+
+		gbl_pnlClassification.columnWidths = new int[]{0, 0};
+		gbl_pnlClassification.rowHeights = new int[]{0, 0};
+		gbl_pnlClassification.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_pnlClassification.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
+		pnlClassification.setLayout(gbl_pnlClassification);
+		
+
+		lblNewLabel_4.setFont(new Font("Calibri", Font.BOLD, 16));
+
+		gbc_lblNewLabel_4.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblNewLabel_4.anchor = GridBagConstraints.NORTH;
+		gbc_lblNewLabel_4.insets = new Insets(0, 15, 5, 0);
+		gbc_lblNewLabel_4.gridx = 0;
+		gbc_lblNewLabel_4.gridy = 0;
+		pnlClassification.add(lblNewLabel_4, gbc_lblNewLabel_4);
+		
+		textField.setEditable(false);
+
+
+		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField.gridx = 0;
+		gbc_textField.gridy = 1;
+		pnlClassification.add(textField, gbc_textField);
+		//textField.setColumns(10);
+		
+		textField_1.setEditable(false);
+
+
+		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField_1.gridx = 0;
+		gbc_textField_1.gridy = 2;
+		pnlClassification.add(textField_1, gbc_textField_1);
+		//textField_1.setColumns(10);
+		
+		textField_2.setEditable(false);
+
+
+		gbc_textField_2.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField_2.gridx = 0;
+		gbc_textField_2.gridy = 3;
+		pnlClassification.add(textField_2, gbc_textField_2);
+		//textField_2.setColumns(10);
+		
+
+
+		gbc_textField_3.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField_3.gridx = 0;
+		gbc_textField_3.gridy = 4;
+		pnlClassification.add(textField_3, gbc_textField_3);
+		//textField_3.setColumns(10);
+		
+		
+		
+		///////////////////////////////////////////////////////////
+		
+		btnApplyClassification.addMouseListener(classApply);
+		btnApplyClassification.setFont(new Font("Calibri", Font.PLAIN, 12));
+		btnApplyClassification.setName("btnApplyClassification");
+
+		gbc_btnApplyClassification.insets = new Insets(0, 6, 5, 0);
+		gbc_btnApplyClassification.fill = GridBagConstraints.BOTH;
+		gbc_btnApplyClassification.gridx = 0;
+		gbc_btnApplyClassification.gridy = 5;
+		pnlClassification.add(btnApplyClassification, gbc_btnApplyClassification);
+			
+		btnApplyCancel.setFont(new Font("Calibri", Font.PLAIN, 12));
+		btnApplyCancel.setName("btnCancelClassification");
+
+		gbc_btnApplyCancel.insets = new Insets(0, 6, 5, 0);
+		gbc_btnApplyCancel.fill = GridBagConstraints.BOTH;
+		gbc_btnApplyCancel.gridx = 0;
+		gbc_btnApplyCancel.gridy = 6;
+		pnlClassification.add(btnApplyCancel, gbc_btnApplyCancel);
+		
+		lblNewLabel_5.setFont(new Font("Calibri", Font.BOLD, 16));
+
+		gbc_lblNewLabel_5.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblNewLabel_5.insets = new Insets(0, 15, 0, 0);
+		gbc_lblNewLabel_5.gridx = 0;
+		gbc_lblNewLabel_5.gridy = 7;
+		pnlClassification.add(lblNewLabel_5, gbc_lblNewLabel_5);
+		
+		textField_4.setSelectionColor(Color.LIGHT_GRAY);
+
+		gbc_textField_4.insets = new Insets(0, 6, 5, 0);
+		gbc_textField_4.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField_4.gridx = 0;
+		gbc_textField_4.gridy = 8;
+		pnlClassification.add(textField_4, gbc_textField_4);
+		textField_4.setColumns(10);
+		
+		lblNewLabel_6.setFont(new Font("Calibri", Font.BOLD, 16));
+
+		gbc_lblNewLabel_6.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblNewLabel_6.insets = new Insets(0, 15, 0, 0);
+		gbc_lblNewLabel_6.gridx = 0;
+		gbc_lblNewLabel_6.gridy = 9;
+		pnlClassification.add(lblNewLabel_6, gbc_lblNewLabel_6);
+		
+		textField_5.setSelectionColor(Color.LIGHT_GRAY);
+
+		gbc_textField_5.insets = new Insets(0, 6, 5, 0);
+		gbc_textField_5.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField_5.gridx = 0;
+		gbc_textField_5.gridy = 10;
+		pnlClassification.add(textField_5, gbc_textField_5);
+		textField_5.setColumns(10);
+		
+		lblNewLabel_7.setFont(new Font("Calibri", Font.BOLD, 16));
+
+		gbc_lblNewLabel_7.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblNewLabel_7.insets = new Insets(0, 15, 0, 0);
+		gbc_lblNewLabel_7.gridx = 0;
+		gbc_lblNewLabel_7.gridy = 11;
+		pnlClassification.add(lblNewLabel_7, gbc_lblNewLabel_7);
+		
+		textArea_3.setSelectionColor(Color.LIGHT_GRAY);
+
+		gbc_textArea_3.insets = new Insets(0, 6, 5, 0);
+		gbc_textArea_3.fill = GridBagConstraints.BOTH;
+		gbc_textArea_3.gridx = 0;
+		gbc_textArea_3.gridy = 12;
+		pnlClassification.add(textArea_3, gbc_textArea_3);
+		
+		pnlCharValues.setName("pnlCharValues");
+
+		gbc_pnlCharValues.gridheight = 3;
+		gbc_pnlCharValues.insets = new Insets(0, 0, 5, 5);
+		gbc_pnlCharValues.fill = GridBagConstraints.BOTH;
+		gbc_pnlCharValues.gridx = 1;
+		gbc_pnlCharValues.gridy = 2;
+		gbc_pnlCharValues.gridwidth = 4;
+		contentPane.add(pnlCharValues, gbc_pnlCharValues);
+
+		gbl_pnlCharValues.columnWidths = new int[]{0};
+		gbl_pnlCharValues.rowHeights = new int[]{0,0};
+		gbl_pnlCharValues.columnWeights = new double[]{1.0};
+		gbl_pnlCharValues.rowWeights = new double[]{1.0,0.2};
+		pnlCharValues.setLayout(gbl_pnlCharValues);
+		
+
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
+		gbc_scrollPane.gridx = 0;
+		gbc_scrollPane.gridy = 0;
+		pnlCharValues.add(scrollPane, gbc_scrollPane);
+		
+
+		scrollPane.setViewportView(panelCharVals);
+		panelCharVals.setName("panelCharVals");
+		GridBagLayout gbl_panelCharVals = new GridBagLayout();
+		gbl_panelCharVals.columnWidths = new int[]{0,0};
+		gbl_panelCharVals.rowHeights = new int[]{0,0};
+		gbl_panelCharVals.columnWeights = new double[]{1.0,1.0};
+		gbl_panelCharVals.rowWeights = new double[]{1.0,1.0};
+		panelCharVals.setLayout(gbl_panelCharVals);
+		
+
+
+		gbc_panel_1.insets = new Insets(0, 0, 5, 5);
+		gbc_panel_1.fill = GridBagConstraints.BOTH;
+		gbc_panel_1.gridx = 0;
+		gbc_panel_1.gridy = 0;
+		panelCharVals.add(panel_1, gbc_panel_1);
+		
+		gbl_panel_1.columnWidths = new int[]{350, 0};
+		gbl_panel_1.rowHeights = new int[]{16, 0, 0};
+		gbl_panel_1.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+		gbl_panel_1.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		panel_1.setLayout(gbl_panel_1);
+		
+
+		lblNewLabel_8.setText("Characteristic Values");
+		lblNewLabel_8.setForeground(new Color(68, 84, 105));
+		lblNewLabel_8.setFont(new Font("Calibri", Font.BOLD, 12));
+
+		gbc_lblNewLabel_8.insets = new Insets(0, 62, 5, 0);
+		gbc_lblNewLabel_8.anchor = GridBagConstraints.NORTHWEST;
+		gbc_lblNewLabel_8.gridx = 0;
+		gbc_lblNewLabel_8.gridy = 0;
+		panel_1.add(lblNewLabel_8, gbc_lblNewLabel_8);
+		
+
+		lblNewLabel_9.setText("Value complement");
+
+		lblNewLabel_9.setForeground(new Color(68, 84, 105));
+		lblNewLabel_9.setFont(new Font("Calibri", Font.BOLD, 12));
+		gbc_lblNewLabel_9.anchor = GridBagConstraints.NORTH;
+		gbc_lblNewLabel_8.insets = new Insets(0, 0, 5, 0);
+		gbc_lblNewLabel_9.gridx = 1;
+		gbc_lblNewLabel_9.gridy = 0;
+		panel_1.add(lblNewLabel_9, gbc_lblNewLabel_9);
+		
+
+
+		gbc_panel_2.insets = new Insets(0, 0, 5, 5);
+		gbc_panel_2.fill = GridBagConstraints.BOTH;
+		gbc_panel_2.gridx = 1;
+		gbc_panel_2.gridy = 0;
+		panelCharVals.add(panel_2, gbc_panel_2);
+
+		gbl_panel_2.columnWidths = new int[]{350, 0};
+		gbl_panel_2.rowHeights = new int[]{16, 0, 0};
+		gbl_panel_2.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+		gbl_panel_2.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		panel_2.setLayout(gbl_panel_2);
+		
+
+		lblNewLabel_10.setText("Characteristic Values");
+		lblNewLabel_10.setForeground(new Color(68, 84, 105));
+		lblNewLabel_10.setFont(new Font("Calibri", Font.BOLD, 12));
+		
+		gbc_lblNewLabel_10.insets = new Insets(0, 62, 5, 0);
+		gbc_lblNewLabel_10.anchor = GridBagConstraints.NORTHWEST;
+		gbc_lblNewLabel_10.gridx = 0;
+		gbc_lblNewLabel_10.gridy = 0;
+		panel_2.add(lblNewLabel_10, gbc_lblNewLabel_10);
+		
+
+		lblNewLabel_12.setText("Value complement");
+		lblNewLabel_12.setForeground(new Color(68, 84, 105));
+		lblNewLabel_12.setFont(new Font("Calibri", Font.BOLD, 12));
+
+		gbc_lblNewLabel_12.anchor = GridBagConstraints.NORTH;
+		gbc_lblNewLabel_8.insets = new Insets(0, 0, 5, 0);
+		gbc_lblNewLabel_12.gridx = 1;
+		gbc_lblNewLabel_12.gridy = 0;
+		panel_2.add(lblNewLabel_12, gbc_lblNewLabel_12);
+		
+		pnlCharacLeft.setName("pnlCharacLeft");
+
+		gbc_pnlCharacLeft.anchor = GridBagConstraints.NORTH;
+		gbc_pnlCharacLeft.insets = new Insets(0, 0, 0, 5);
+		gbc_pnlCharacLeft.fill = GridBagConstraints.HORIZONTAL;
+		gbc_pnlCharacLeft.gridx = 0;
+		gbc_pnlCharacLeft.gridy = 1;
+		panelCharVals.add(pnlCharacLeft, gbc_pnlCharacLeft);
+
+		gbl_pnlCharacLeft.columnWidths = new int[]{0};
+		gbl_pnlCharacLeft.rowHeights = new int[]{0};
+		gbl_pnlCharacLeft.columnWeights = new double[]{Double.MIN_VALUE};
+		gbl_pnlCharacLeft.rowWeights = new double[]{Double.MIN_VALUE};
+		pnlCharacLeft.setLayout(gbl_pnlCharacLeft);
+		
+		pnlCharacRigth.setName("pnlCharacRigth");
+		
+		gbc_pnlCharacRigth.anchor = GridBagConstraints.NORTH;
+		gbc_pnlCharacRigth.fill = GridBagConstraints.HORIZONTAL;
+		gbc_pnlCharacRigth.gridx = 1;
+		gbc_pnlCharacRigth.gridy = 1;
+		panelCharVals.add(pnlCharacRigth, gbc_pnlCharacRigth);
+
+		gbl_pnlCharacRigth.columnWidths = new int[]{0};
+		gbl_pnlCharacRigth.rowHeights = new int[]{0};
+		gbl_pnlCharacRigth.columnWeights = new double[]{Double.MIN_VALUE};
+		gbl_pnlCharacRigth.rowWeights = new double[]{0};
+		pnlCharacRigth.setLayout(gbl_pnlCharacRigth);
+		
+		
+		
+		pnlComment.setName("pnlComment");
+
+		gbc_pnlComment.fill = GridBagConstraints.BOTH;
+		gbc_pnlComment.gridx = 0;
+		gbc_pnlComment.gridy = 1;
+		pnlCharValues.add(pnlComment, gbc_pnlComment);
+
+		gbl_pnlComment.columnWidths = new int[]{0, 0, 0, 0, 0, 0, -85, 0, 0, 0, 0, 0, 0, 0};
+		gbl_pnlComment.rowHeights = new int[]{0, 0, 0};
+		gbl_pnlComment.columnWeights = new double[]{1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_pnlComment.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		pnlComment.setLayout(gbl_pnlComment);
+		
+		lblQuestion.setForeground(new Color(68, 84, 105));
+		lblQuestion.setFont(new Font("Calibri", Font.BOLD, 12));
+		
+		gbc_lblQuestion.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblQuestion.insets = new Insets(0, 0, 5, 5);
+		gbc_lblQuestion.gridx = 0;
+		gbc_lblQuestion.gridy = 0;
+		pnlComment.add(lblQuestion, gbc_lblQuestion);
+		
+		lblNewLabel_11.setForeground(new Color(68, 84, 105));
+		lblNewLabel_11.setFont(new Font("Calibri", Font.BOLD, 12));
+		
+		gbc_lblNewLabel_11.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblNewLabel_11.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_11.gridx = 1;
+		gbc_lblNewLabel_11.gridy = 0;
+		pnlComment.add(lblNewLabel_11, gbc_lblNewLabel_11);
+		
+		textField_6.setSelectionColor(Color.LIGHT_GRAY);
+
+		gbc_textField_6.insets = new Insets(0, 0, 0, 5);
+		gbc_textField_6.fill = GridBagConstraints.BOTH;
+		gbc_textField_6.gridx = 0;
+		gbc_textField_6.gridy = 1;
+		pnlComment.add(textField_6, gbc_textField_6);
+		textField_6.setColumns(10);
+		
+		textArea_4.setSelectionColor(Color.LIGHT_GRAY);
+		
+		gbc_textArea_4.insets = new Insets(0, 0, 0, 5);
+		gbc_textArea_4.fill = GridBagConstraints.BOTH;
+		gbc_textArea_4.gridx = 1;
+		gbc_textArea_4.gridy = 1;
+		pnlComment.add(textArea_4, gbc_textArea_4);
+		
+		Dimension d = gbl_contentPane.minimumLayoutSize(contentPane);
+		setMinimumSize(new Dimension(Double.valueOf(d.getWidth()).intValue(),
+				Double.valueOf(400).intValue()));
+		
+		//textArea.setEditable(false);
+		textArea.setText(rs.getString("sd"));
+		textArea.setLineWrap(true);
+		//textArea_1.setEditable(false);
+		textArea_1.setText(rs.getString("ld"));
+		//textArea_2.setEditable(false);
+		textArea_2.setText(rs.getString("po"));
+		//textField.setEditable(false);
+		
+
+
+		textArea.setLineWrap(true);
+		textArea_1.setLineWrap(true);
+		textArea_2.setLineWrap(true);
+		textArea_3.setLineWrap(true);
+		
+		
+		
+		
+	}
+
+	private void load_item_data(Connection conn, String url, Properties props, PreparedStatement st, String selectedAID, ResultSet rs) throws SQLException {
+		conn = DriverManager.getConnection(url, props);
+		st = conn.prepareStatement("select * from public.\"items\" WHERE \"aid\" = ?");
+		st.setString(1, selectedAID);
+		rs = st.executeQuery();
+		rs.next();
+	}
+
+	private void load_static_data(String url, Properties props, String selectedAID) throws SQLException {
+		Connection conn9 = DriverManager.getConnection(url, props);
+		PreparedStatement st9 = conn9.prepareStatement("select * from public.\"data\" WHERE \"aid\" = ?");
+		//st9.setString(2, "REVIEW");
+		st9.setString(1, selectedAID);
+		ResultSet rs9 = st9.executeQuery();
+		//if(rs9.isBeforeFirst()) {
+			while(rs9.next()) {
+				if(rs9.getString("chid").equals("MANUF")) {
+					textField_4.setText(rs9.getString("value"));
+				}
+				if(rs9.getString("chid").equals("MANUF_REF")) {
+					textField_5.setText(rs9.getString("value"));
+				}
+				if(rs9.getString("chid").equals("URL")) {
+					textArea_3.setText(rs9.getString("value"));
+				}
+				if(rs9.getString("chid").equals("QUESTION")) {
+					textField_6.setText(rs9.getString("value"));
+				}
+				if(rs9.getString("chid").equals("COMMENT")) {
+					textArea_4.setText(rs9.getString("value"));
+				}
+			}
+		
+	}
+
 	private void load_chars(String string,Boolean refresh, String selectedAID) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, ShortBufferException, IllegalBlockSizeException, BadPaddingException, ClassNotFoundException, SQLException, IOException {
     	List<CharacValue> characValues = characService.getCharacValues(string);
     	if(characValues.isEmpty()) {
