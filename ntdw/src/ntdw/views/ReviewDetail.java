@@ -124,23 +124,10 @@ public class ReviewDetail extends JFrame {
 	public GridBagConstraints gbc_textField_1; 
 	public GridBagConstraints gbc_textField_2; 
 	public GridBagConstraints gbc_textField_3 ;
+
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	CharacMockDataService characService = CharacMockDataService.getInstance();
-	
-	
-	
 	CharacValueRenderer characValueRenderer = new CharacValueRenderer();
 	private JTextField textField_6;
 	protected boolean click=false;
@@ -215,6 +202,8 @@ public class ReviewDetail extends JFrame {
 	private GridBagConstraints gbc_lblNewLabel_11;
 	private GridBagConstraints gbc_textField_6;
 	private GridBagConstraints gbc_textArea_4;
+	private GridBagConstraints gbc_scrollPane;
+	private GridBagLayout gbl_panelCharVals;
 	
 
 	/**
@@ -239,6 +228,7 @@ public class ReviewDetail extends JFrame {
 		});
 	}
 
+	
 	/**
 	 * Create the frame.
 	 * @param selectedAID 
@@ -276,7 +266,6 @@ public class ReviewDetail extends JFrame {
 			String ip = Tools.load_ip();
 			Class.forName("org.postgresql.Driver");
 			url = "jdbc:postgresql://"+ip+":5432/northwind";
-			
 			props.setProperty("user","postgres");
 			props.setProperty("password","Neonec");
 			props.setProperty("loginTimeout", "20");
@@ -284,536 +273,21 @@ public class ReviewDetail extends JFrame {
 			props.setProperty("socketTimeout", "0");
 			//props.setProperty("ssl","true");
 			
-			
-			btnApplyClassification.setText("APPLY CLASSIFICATION CHANGE");
-			btnApplyCancel.setText("CANCEL CLASSIFICATION CHANGE");
-			lblNewLabel_5.setText("Manufacturer name");
-			
 			load_item_data(conn, url, props, st, selectedAID, rs);
 			load_ui_elements(dll,selectedAID,btnApplyClassification,btnApplyCancel,lblNewLabel_5);
-			
-			
-			
-			
-				classApply = new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					try {
-						load_chars(currentFamily.get((String) textField_3.getText()),true, selectedAID);
-					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-							| BadPaddingException | ClassNotFoundException | SQLException | IOException e1) {
-						StringBuilder sb = new StringBuilder(e1.toString());
-					    for (StackTraceElement ste : e1.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					}
-				}};
-			
-			
-			
-			
 			load_chars(rs.getString("cid"),false,selectedAID);
 			load_class(btnApplyClassification,btnApplyCancel);
 						
 			
-			
 			test = new CharacValue();
 			
-			load_static_data(url, props, selectedAID);
-
-			rs.close();
-			rs1.close();
-			st.close();
-			st1.close();
-			conn.close();
-			conn1.close();
-			setVisible(true);
-			currentFamily.clear();
-			currentFamily.put(originalclass, originalcid);
-			pack();
-			pane.setVisible(false);
+			load_static_data(url, props, selectedAID,pane);
 			
-			lblNewLabel.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					dispose();
-					pane.setVisible(true);
-					if(login.equals("Corinne")) {
-						try {
-							ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane,clock);
-						} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-								| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-								| BadPaddingException | ClassNotFoundException | IOException | SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						return;
-					}
-					try {
-						Class.forName("org.postgresql.Driver");
-						url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
-						props.setProperty("user","postgres");
-						props.setProperty("password","Neonec");
-
-						props.setProperty("loginTimeout", "20");
-						props.setProperty("connectTimeout", "0");
-						props.setProperty("socketTimeout", "0");
-						//props.setProperty("ssl","true");
-						Connection conn0 = DriverManager.getConnection(url, props);
-						conn0.setAutoCommit(false);
-						//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
-						PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
-								+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
-						
-						if(modelLeft!=null) {
-						for(CharacValue element:modelLeft) {
-							prepStmt.setString(1,selectedAID);
-							prepStmt.setString(2,element.getId());
-							prepStmt.setString(3, element.getvalue());
-							prepStmt.setString(4,"REVIEW");
-							prepStmt.setString(5,element.getComp());
-							prepStmt.addBatch();
-			        	}
-						for(CharacValue element:modelRight) {
-							prepStmt.setString(1,selectedAID);
-							prepStmt.setString(2,element.getId());
-							prepStmt.setString(3, element.getvalue());
-							prepStmt.setString(4,"REVIEW");
-							prepStmt.setString(5,element.getComp());
-							prepStmt.addBatch();
-			        	}
-						}
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "MANUF");
-						prepStmt.setString(3,textField_4.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "MANUF_REF");
-						prepStmt.setString(3,textField_5.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "URL");
-						prepStmt.setString(3,textArea_3.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "QUESTION");
-						prepStmt.setString(3,textField_6.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "QUESTION");
-						prepStmt.setString(3,textField_6.getText());
-						prepStmt.setString(4, "DESCRIPTION");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "COMMENT");
-						prepStmt.setString(3,textArea_4.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.executeBatch();
-						conn0.commit();
-						prepStmt.clearBatch();
-						prepStmt.close();
-						conn0.close();
-						
-						conn0 = DriverManager.getConnection(url, props);
-						Date end = new Date();
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='REVIEWED',cid= ?,\"classChange\"=?, \"ques\"=?, timetaken=timetaken + ?, ledate = ? WHERE aid = ?");
-						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-						if(textField_6.getText().length()>=5) {
-							prepStmt.setString(3, textField_6.getText().substring(0,5));
-						}else {
-							prepStmt.setString(3, textField_6.getText());
-						}
-						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-						prepStmt.setString(6, selectedAID);
-						prepStmt.setObject(5, LocalDate.now());
-						prepStmt.execute();
-						
-						prepStmt.close();
-						conn0.close();
-						
-						ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane,clock);
-					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-							| BadPaddingException | IOException e1) {
-						StringBuilder sb = new StringBuilder(e1.toString());
-					    for (StackTraceElement ste : e1.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (ClassNotFoundException e1) {
-						StringBuilder sb = new StringBuilder(e1.toString());
-					    for (StackTraceElement ste : e1.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (SQLException e1) {
-						StringBuilder sb = new StringBuilder(e1.toString());
-					    for (StackTraceElement ste : e1.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			});
-			lblFlexor.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					dispose();
-					pane.setVisible(true);
-					if(login.equals("Corinne")) {
-						try {
-							ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane,clock);
-						} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-								| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-								| BadPaddingException | ClassNotFoundException | IOException | SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						return;
-					}
-					try {
-						Class.forName("org.postgresql.Driver");
-						url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
-						props.setProperty("user","postgres");
-						props.setProperty("password","Neonec");
-
-						props.setProperty("loginTimeout", "20");
-						props.setProperty("connectTimeout", "0");
-						props.setProperty("socketTimeout", "0");
-						//props.setProperty("ssl","true");
-						Connection conn0 = DriverManager.getConnection(url, props);
-						conn0.setAutoCommit(false);        
-						//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
-						PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
-								+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
-						
-						if(modelLeft != null) {
-						for(CharacValue element:modelLeft) {
-							prepStmt.setString(1,selectedAID);
-							prepStmt.setString(2,element.getId());
-							prepStmt.setString(3, element.getvalue());
-							prepStmt.setString(4,"REVIEW");
-							prepStmt.setString(5,element.getComp());
-							prepStmt.addBatch();
-			        	}
-						for(CharacValue element:modelRight) {
-							prepStmt.setString(1,selectedAID);
-							prepStmt.setString(2,element.getId());
-							prepStmt.setString(3, element.getvalue());
-							prepStmt.setString(4,"REVIEW");
-							prepStmt.setString(5,element.getComp());
-							prepStmt.addBatch();
-			        	}
-						}
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "MANUF");
-						prepStmt.setString(3,textField_4.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "MANUF_REF");
-						prepStmt.setString(3,textField_5.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "URL");
-						prepStmt.setString(3,textArea_3.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "QUESTION");
-						prepStmt.setString(3,textField_6.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "COMMENT");
-						prepStmt.setString(3,textArea_4.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.executeBatch();
-						conn0.commit();
-						prepStmt.clearBatch();
-						prepStmt.close();
-						conn0.close();
-						
-						conn0 = DriverManager.getConnection(url, props);
-						Date end = new Date();
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='REVIEWED',cid= ?,\"classChange\"=? , \"ques\"=?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
-						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-						if(textField_6.getText().length()>=5) {
-							prepStmt.setString(3, textField_6.getText().substring(0,5));
-						}else {
-							prepStmt.setString(3, textField_6.getText());
-						}
-						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-						prepStmt.setString(6, selectedAID);
-						prepStmt.setObject(5, LocalDate.now());
-						prepStmt.execute();
-						
-						prepStmt.close();
-						conn0.close();
-						
-						
-						ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane,clock);
-					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-							| BadPaddingException | IOException e1) {
-						StringBuilder sb = new StringBuilder(e1.toString());
-					    for (StackTraceElement ste : e1.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (ClassNotFoundException e1) {
-						StringBuilder sb = new StringBuilder(e1.toString());
-					    for (StackTraceElement ste : e1.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (SQLException e1) {
-						StringBuilder sb = new StringBuilder(e1.toString());
-					    for (StackTraceElement ste : e1.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			});
+			closing_procedure(login, pane, selectedAID, start);
 			
 			
-			addWindowListener(new WindowAdapter() {
-		        @Override
-		        public void windowClosing(WindowEvent event) {
-		            pane.setVisible(true);
-		            dispose();
-		            if(login.equals("Corinne")) {
-		            	Home home = new Home(login, clock);
-		            	return;
-		            }
-		            try {
-						Class.forName("org.postgresql.Driver");
-						url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
-						props.setProperty("user","postgres");
-						props.setProperty("password","Neonec");
-						props.setProperty("loginTimeout", "20");
-						props.setProperty("connectTimeout", "0");
-						props.setProperty("socketTimeout", "0");
-						//props.setProperty("ssl","true");
-						Connection conn0 = DriverManager.getConnection(url, props);
-						conn0.setAutoCommit(false);        
-						//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
-						PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
-								+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
-						
-						if(modelLeft!=null) {
-						for(CharacValue element:modelLeft) {
-							prepStmt.setString(1,selectedAID);
-							prepStmt.setString(2,element.getId());
-							prepStmt.setString(3, element.getvalue());
-							prepStmt.setString(4,"REVIEW");
-							prepStmt.setString(5,element.getComp());
-							prepStmt.addBatch();
-			        	}
-						for(CharacValue element:modelRight) {
-							prepStmt.setString(1,selectedAID);
-							prepStmt.setString(2,element.getId());
-							prepStmt.setString(3, element.getvalue());
-							prepStmt.setString(4,"REVIEW");
-							prepStmt.setString(5,element.getComp());
-							prepStmt.addBatch();
-			        	}
-						}
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "MANUF");
-						prepStmt.setString(3,textField_4.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "MANUF_REF");
-						prepStmt.setString(3,textField_5.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "URL");
-						prepStmt.setString(3,textArea_3.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "QUESTION");
-						prepStmt.setString(3,textField_6.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2, "COMMENT");
-						prepStmt.setString(3,textArea_4.getText());
-						prepStmt.setString(4, "REVIEW");
-						prepStmt.setString(5,null);
-						prepStmt.addBatch();
-						
-						prepStmt.executeBatch();
-						conn0.commit();
-						prepStmt.clearBatch();
-						prepStmt.close();
-						conn0.close();
-						conn0 = DriverManager.getConnection(url, props);
-						Date end = new Date();
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='PENDING', cid= ?, \"classChange\"=?, \"ques\"=?, timetaken = timetaken + ? , ledate = ? WHERE aid = ?");
-						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-						if(textField_6.getText().length()>=5) {
-							prepStmt.setString(3, textField_6.getText().substring(0,5));
-						}else {
-							prepStmt.setString(3, textField_6.getText());
-						}
-						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-						prepStmt.setString(6, selectedAID);
-						prepStmt.setObject(5, LocalDate.now());
-						prepStmt.execute();
-						
-						prepStmt.close();
-						conn0.close();
-					} catch (ClassNotFoundException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (SQLException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (InvalidKeyException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (NoSuchAlgorithmException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (NoSuchProviderException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (NoSuchPaddingException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (ShortBufferException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (IllegalBlockSizeException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (BadPaddingException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					} catch (IOException e) {
-						StringBuilder sb = new StringBuilder(e.toString());
-					    for (StackTraceElement ste : e.getStackTrace()) {
-					        sb.append("\n\tat ");
-					        sb.append(ste);
-					    }
-					    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-					            JOptionPane.ERROR_MESSAGE);
-					}
-					Home home = new Home(login, clock);
-		        }
-		    });
-			
-			
-			
-			lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
-			btnApplyClassification.setVisible(false);
-			
+			previous_procedure(dll, selectedAID, pane, start, login, clock);
+			next_procedure(login, selectedAID, start, dll, clock, pane);
 			
 			
 		}else {
@@ -826,7 +300,542 @@ public class ReviewDetail extends JFrame {
 	
 	
     
-	private void load_class(JButton btnApplyClassification,JButton btnApplyCancel) throws SQLException {
+	private void next_procedure(String login,String selectedAID,Date start,DLL dll,Clock clock,JOptionPane pane) {
+		lblFlexor.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+				pane.setVisible(true);
+				if(login.equals("Corinne")) {
+					try {
+						ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane,clock);
+					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+							| BadPaddingException | ClassNotFoundException | IOException | SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					return;
+				}
+				
+				
+				
+				
+				try {
+					Class.forName("org.postgresql.Driver");
+					url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
+					props.setProperty("user","postgres");
+					props.setProperty("password","Neonec");
+
+					props.setProperty("loginTimeout", "20");
+					props.setProperty("connectTimeout", "0");
+					props.setProperty("socketTimeout", "0");
+					//props.setProperty("ssl","true");
+					Connection conn0 = DriverManager.getConnection(url, props);
+					conn0.setAutoCommit(false);        
+					//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
+							+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					
+					if(modelLeft != null) {
+					for(CharacValue element:modelLeft) {
+						prepStmt.setString(1,selectedAID);
+						prepStmt.setString(2,element.getId());
+						prepStmt.setString(3, element.getvalue());
+						prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(5,element.getComp());
+						prepStmt.addBatch();
+		        	}
+					for(CharacValue element:modelRight) {
+						prepStmt.setString(1,selectedAID);
+						prepStmt.setString(2,element.getId());
+						prepStmt.setString(3, element.getvalue());
+						prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(5,element.getComp());
+						prepStmt.addBatch();
+		        	}
+					}
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "MANUF");
+					prepStmt.setString(3,textField_4.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "MANUF_REF");
+					prepStmt.setString(3,textField_5.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "URL");
+					prepStmt.setString(3,textArea_3.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "QUESTION");
+					prepStmt.setString(3,textField_6.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "COMMENT");
+					prepStmt.setString(3,textArea_4.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.executeBatch();
+					conn0.commit();
+					prepStmt.clearBatch();
+					prepStmt.close();
+					conn0.close();
+					conn0 = DriverManager.getConnection(url, props);
+					Date end = new Date();
+					
+					prepStmt = conn0.prepareStatement("UPDATE public.items SET status='REVIEWED',cid= ?,\"classChange\"=? , \"ques\"=?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
+					prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
+					prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
+					if(textField_6.getText().length()>=5) {
+						prepStmt.setString(3, textField_6.getText().substring(0,5));
+					}else {
+						prepStmt.setString(3, textField_6.getText());
+					}
+					prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
+					prepStmt.setString(6, selectedAID);
+					prepStmt.setObject(5, LocalDate.now());
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					prepStmt.execute();
+					
+					prepStmt.close();
+					conn0.close();
+					
+					
+					ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane,clock);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+						| BadPaddingException | IOException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (ClassNotFoundException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+	}
+
+	
+private void previous_procedure(DLL dll,String selectedAID,JOptionPane pane,Date start,String login,Clock clock) {
+		lblNewLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+				pane.setVisible(true);
+				if(login.equals("Corinne")) {
+					try {
+						ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane,clock);
+					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+							| BadPaddingException | ClassNotFoundException | IOException | SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					return;
+				}
+				
+				
+				
+				
+				
+				try {
+					Class.forName("org.postgresql.Driver");
+					url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
+					props.setProperty("user","postgres");
+					props.setProperty("password","Neonec");
+
+					props.setProperty("loginTimeout", "20");
+					props.setProperty("connectTimeout", "0");
+					props.setProperty("socketTimeout", "0");
+					//props.setProperty("ssl","true");
+					Connection conn0 = DriverManager.getConnection(url, props);
+					conn0.setAutoCommit(false);
+					//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
+							+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					
+					if(modelLeft!=null) {
+					for(CharacValue element:modelLeft) {
+						prepStmt.setString(1,selectedAID);
+						prepStmt.setString(2,element.getId());
+						prepStmt.setString(3, element.getvalue());
+						prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(5,element.getComp());
+						prepStmt.addBatch();
+		        	}
+					for(CharacValue element:modelRight) {
+						prepStmt.setString(1,selectedAID);
+						prepStmt.setString(2,element.getId());
+						prepStmt.setString(3, element.getvalue());
+						prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(5,element.getComp());
+						prepStmt.addBatch();
+		        	}
+					}
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "MANUF");
+					prepStmt.setString(3,textField_4.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "MANUF_REF");
+					prepStmt.setString(3,textField_5.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "URL");
+					prepStmt.setString(3,textArea_3.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "QUESTION");
+					prepStmt.setString(3,textField_6.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "QUESTION");
+					prepStmt.setString(3,textField_6.getText());
+					prepStmt.setString(4, "DESCRIPTION");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "COMMENT");
+					prepStmt.setString(3,textArea_4.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.executeBatch();
+					conn0.commit();
+					prepStmt.clearBatch();
+					prepStmt.close();
+					conn0.close();
+					
+					conn0 = DriverManager.getConnection(url, props);
+					Date end = new Date();
+					
+					prepStmt = conn0.prepareStatement("UPDATE public.items SET status='REVIEWED',cid= ?,\"classChange\"=?, \"ques\"=?, timetaken=timetaken + ?, ledate = ? WHERE aid = ?");
+					prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
+					prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
+					if(textField_6.getText().length()>=5) {
+						prepStmt.setString(3, textField_6.getText().substring(0,5));
+					}else {
+						prepStmt.setString(3, textField_6.getText());
+					}
+					prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
+					prepStmt.setString(6, selectedAID);
+					prepStmt.setObject(5, LocalDate.now());
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					prepStmt.execute();
+					
+					prepStmt.close();
+					conn0.close();
+					
+					ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane,clock);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+						| BadPaddingException | IOException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (ClassNotFoundException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+	}
+
+	private void closing_procedure(String login,JOptionPane pane,String selectedAID,Date start) {
+		addWindowListener(new WindowAdapter() {
+	        public void windowClosing(WindowEvent event,Clock clock) {
+	            pane.setVisible(true);
+	            dispose();
+	            if(login.equals("Corinne")) {
+	            	Home home = new Home(login, clock);
+	            	return;
+	            }
+	            try {
+					Class.forName("org.postgresql.Driver");
+					url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
+					props.setProperty("user","postgres");
+					props.setProperty("password","Neonec");
+					props.setProperty("loginTimeout", "20");
+					props.setProperty("connectTimeout", "0");
+					props.setProperty("socketTimeout", "0");
+					//props.setProperty("ssl","true");
+					Connection conn0 = DriverManager.getConnection(url, props);
+					conn0.setAutoCommit(false);        
+					//PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?);");
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, phase, comp) VALUES (?, ?, ?, ?, ?)"
+							+ " ON CONFLICT (aid,chid,phase) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					
+					if(modelLeft!=null) {
+					for(CharacValue element:modelLeft) {
+						prepStmt.setString(1,selectedAID);
+						prepStmt.setString(2,element.getId());
+						prepStmt.setString(3, element.getvalue());
+						prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(5,element.getComp());
+						prepStmt.addBatch();
+		        	}
+					for(CharacValue element:modelRight) {
+						prepStmt.setString(1,selectedAID);
+						prepStmt.setString(2,element.getId());
+						prepStmt.setString(3, element.getvalue());
+						prepStmt.setString(4,"REVIEW");
+						prepStmt.setString(5,element.getComp());
+						prepStmt.addBatch();
+		        	}
+					}
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "MANUF");
+					prepStmt.setString(3,textField_4.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "MANUF_REF");
+					prepStmt.setString(3,textField_5.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "URL");
+					prepStmt.setString(3,textArea_3.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "QUESTION");
+					prepStmt.setString(3,textField_6.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "COMMENT");
+					prepStmt.setString(3,textArea_4.getText());
+					prepStmt.setString(4, "REVIEW");
+					prepStmt.setString(5,null);
+					prepStmt.addBatch();
+					
+					prepStmt.executeBatch();
+					conn0.commit();
+					prepStmt.clearBatch();
+					prepStmt.close();
+					conn0.close();
+					conn0 = DriverManager.getConnection(url, props);
+					Date end = new Date();
+					
+					prepStmt = conn0.prepareStatement("UPDATE public.items SET status='PENDING', cid= ?, \"classChange\"=?, \"ques\"=?, timetaken = timetaken + ? , ledate = ? WHERE aid = ?");
+					prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
+					prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
+					if(textField_6.getText().length()>=5) {
+						prepStmt.setString(3, textField_6.getText().substring(0,5));
+					}else {
+						prepStmt.setString(3, textField_6.getText());
+					}
+					prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
+					prepStmt.setString(6, selectedAID);
+					prepStmt.setObject(5, LocalDate.now());
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					prepStmt.execute();
+					
+					prepStmt.close();
+					conn0.close();
+				} catch (ClassNotFoundException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (InvalidKeyException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (NoSuchAlgorithmException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (NoSuchProviderException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (NoSuchPaddingException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (ShortBufferException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (IllegalBlockSizeException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (BadPaddingException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (IOException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				}
+				Home home = new Home(login, clock);
+	        }
+	    });
+	}
+
+	
+private void load_class(JButton btnApplyClassification,JButton btnApplyCancel) throws SQLException {
 		MouseAdapter classCancel = new MouseAdapter() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -953,7 +962,10 @@ public class ReviewDetail extends JFrame {
 		
 	}
 
-	private void load_ui_elements(DLL dll, String selectedAID, JButton btnApplyClassification, JButton btnApplyCancel, JLabel lblNewLabel_5) throws SQLException {
+	
+
+
+private void load_ui_elements(DLL dll, String selectedAID, JButton btnApplyClassification, JButton btnApplyCancel, JLabel lblNewLabel_5) throws SQLException {
 		setTitle("TECHNICAL ITEM DESCRIPTION");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(PartDetail.class.getResource("/ntdw/resources/images/Neonec-white-logo only.png")));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -994,7 +1006,7 @@ public class ReviewDetail extends JFrame {
 			}
 		});
 		btnArrowLeft.setActionCommand("");
-		btnArrowLeft.setSize(new Dimension(49, 50));
+		btnArrowLeft.setSize(new Dimension((int) (49* (screenSize.width/1366.0)), 50));
 		btnArrowLeft.setName("btnArrowLeft");
 		
 		lblNewLabel.setText(dll.getprev(selectedAID));
@@ -1080,6 +1092,9 @@ public class ReviewDetail extends JFrame {
 		lblNewLabel_3.setText("PO text");
 		lblNewLabel_3.setFont(new Font("Calibri", Font.BOLD, 16));
 		
+		btnApplyClassification.setText("APPLY CLASSIFICATION CHANGE");
+		
+		
 		textArea_2.setSelectionColor(Color.LIGHT_GRAY);
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
@@ -1153,7 +1168,7 @@ public class ReviewDetail extends JFrame {
 		
 		textField.setEditable(false);
 
-
+		gbc_textField.insets = new Insets(0, 6, 5, 0);
 		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField.gridx = 0;
 		gbc_textField.gridy = 1;
@@ -1162,7 +1177,7 @@ public class ReviewDetail extends JFrame {
 		
 		textField_1.setEditable(false);
 
-
+		gbc_textField_1.insets = new Insets(0, 6, 5, 0);
 		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_1.gridx = 0;
 		gbc_textField_1.gridy = 2;
@@ -1172,6 +1187,7 @@ public class ReviewDetail extends JFrame {
 		textField_2.setEditable(false);
 
 
+		gbc_textField_2.insets = new Insets(0, 6, 5, 0);
 		gbc_textField_2.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_2.gridx = 0;
 		gbc_textField_2.gridy = 3;
@@ -1180,6 +1196,7 @@ public class ReviewDetail extends JFrame {
 		
 
 
+		gbc_textField_3.insets = new Insets(0, 6, 5, 0);
 		gbc_textField_3.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_3.gridx = 0;
 		gbc_textField_3.gridy = 4;
@@ -1189,6 +1206,27 @@ public class ReviewDetail extends JFrame {
 		
 		
 		///////////////////////////////////////////////////////////
+		
+
+		
+		
+		classApply = new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			try {
+				load_chars(currentFamily.get((String) textField_3.getText()),true, selectedAID);
+			} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+					| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+					| BadPaddingException | ClassNotFoundException | SQLException | IOException e1) {
+				StringBuilder sb = new StringBuilder(e1.toString());
+			    for (StackTraceElement ste : e1.getStackTrace()) {
+			        sb.append("\n\tat ");
+			        sb.append(ste);
+			    }
+			    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+			            JOptionPane.ERROR_MESSAGE);
+			}
+		}};
 		
 		btnApplyClassification.addMouseListener(classApply);
 		btnApplyClassification.setFont(new Font("Calibri", Font.PLAIN, 12));
@@ -1200,6 +1238,7 @@ public class ReviewDetail extends JFrame {
 		gbc_btnApplyClassification.gridy = 5;
 		pnlClassification.add(btnApplyClassification, gbc_btnApplyClassification);
 			
+		btnApplyCancel.setText("CANCEL CLASSIFICATION CHANGE");
 		btnApplyCancel.setFont(new Font("Calibri", Font.PLAIN, 12));
 		btnApplyCancel.setName("btnCancelClassification");
 
@@ -1209,6 +1248,7 @@ public class ReviewDetail extends JFrame {
 		gbc_btnApplyCancel.gridy = 6;
 		pnlClassification.add(btnApplyCancel, gbc_btnApplyCancel);
 		
+		lblNewLabel_5.setText("Manufacturer name");
 		lblNewLabel_5.setFont(new Font("Calibri", Font.BOLD, 16));
 
 		gbc_lblNewLabel_5.fill = GridBagConstraints.HORIZONTAL;
@@ -1216,6 +1256,7 @@ public class ReviewDetail extends JFrame {
 		gbc_lblNewLabel_5.gridx = 0;
 		gbc_lblNewLabel_5.gridy = 7;
 		pnlClassification.add(lblNewLabel_5, gbc_lblNewLabel_5);
+		
 		
 		textField_4.setSelectionColor(Color.LIGHT_GRAY);
 
@@ -1226,6 +1267,7 @@ public class ReviewDetail extends JFrame {
 		pnlClassification.add(textField_4, gbc_textField_4);
 		textField_4.setColumns(10);
 		
+		lblNewLabel_6.setText("Manufacturer reference");
 		lblNewLabel_6.setFont(new Font("Calibri", Font.BOLD, 16));
 
 		gbc_lblNewLabel_6.fill = GridBagConstraints.HORIZONTAL;
@@ -1233,6 +1275,7 @@ public class ReviewDetail extends JFrame {
 		gbc_lblNewLabel_6.gridx = 0;
 		gbc_lblNewLabel_6.gridy = 9;
 		pnlClassification.add(lblNewLabel_6, gbc_lblNewLabel_6);
+		
 		
 		textField_5.setSelectionColor(Color.LIGHT_GRAY);
 
@@ -1242,7 +1285,7 @@ public class ReviewDetail extends JFrame {
 		gbc_textField_5.gridy = 10;
 		pnlClassification.add(textField_5, gbc_textField_5);
 		textField_5.setColumns(10);
-		
+		lblNewLabel_7.setText("Source URL");
 		lblNewLabel_7.setFont(new Font("Calibri", Font.BOLD, 16));
 
 		gbc_lblNewLabel_7.fill = GridBagConstraints.HORIZONTAL;
@@ -1276,7 +1319,6 @@ public class ReviewDetail extends JFrame {
 		pnlCharValues.setLayout(gbl_pnlCharValues);
 		
 
-		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
 		gbc_scrollPane.gridx = 0;
@@ -1286,7 +1328,7 @@ public class ReviewDetail extends JFrame {
 
 		scrollPane.setViewportView(panelCharVals);
 		panelCharVals.setName("panelCharVals");
-		GridBagLayout gbl_panelCharVals = new GridBagLayout();
+		
 		gbl_panelCharVals.columnWidths = new int[]{0,0};
 		gbl_panelCharVals.rowHeights = new int[]{0,0};
 		gbl_panelCharVals.columnWeights = new double[]{1.0,1.0};
@@ -1418,6 +1460,8 @@ public class ReviewDetail extends JFrame {
 		gbc_lblQuestion.gridy = 0;
 		pnlComment.add(lblQuestion, gbc_lblQuestion);
 		
+		
+		lblNewLabel_11.setText("Comment");
 		lblNewLabel_11.setForeground(new Color(68, 84, 105));
 		lblNewLabel_11.setFont(new Font("Calibri", Font.BOLD, 12));
 		
@@ -1464,12 +1508,17 @@ public class ReviewDetail extends JFrame {
 		textArea_2.setLineWrap(true);
 		textArea_3.setLineWrap(true);
 		
+
 		
+		lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
+		btnApplyClassification.setVisible(false);
 		
 		
 	}
 
-	private void load_item_data(Connection conn, String url, Properties props, PreparedStatement st, String selectedAID, ResultSet rs) throws SQLException {
+	
+
+private void load_item_data(Connection conn, String url, Properties props, PreparedStatement st, String selectedAID, ResultSet rs) throws SQLException {
 		conn = DriverManager.getConnection(url, props);
 		st = conn.prepareStatement("select * from public.\"items\" WHERE \"aid\" = ?");
 		st.setString(1, selectedAID);
@@ -1477,7 +1526,11 @@ public class ReviewDetail extends JFrame {
 		rs.next();
 	}
 
-	private void load_static_data(String url, Properties props, String selectedAID) throws SQLException {
+	
+
+
+
+private void load_static_data(String url, Properties props, String selectedAID,JOptionPane pane) throws SQLException {
 		Connection conn9 = DriverManager.getConnection(url, props);
 		PreparedStatement st9 = conn9.prepareStatement("select * from public.\"data\" WHERE \"aid\" = ?");
 		//st9.setString(2, "REVIEW");
@@ -1501,8 +1554,22 @@ public class ReviewDetail extends JFrame {
 					textArea_4.setText(rs9.getString("value"));
 				}
 			}
+			
+			rs.close();
+			rs1.close();
+			st.close();
+			st1.close();
+			conn.close();
+			conn1.close();
+			setVisible(true);
+			currentFamily.clear();
+			currentFamily.put(originalclass, originalcid);
+			pack();
+			pane.setVisible(false);
 		
 	}
+
+	
 
 	private void load_chars(String string,Boolean refresh, String selectedAID) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, ShortBufferException, IllegalBlockSizeException, BadPaddingException, ClassNotFoundException, SQLException, IOException {
     	List<CharacValue> characValues = characService.getCharacValues(string);
