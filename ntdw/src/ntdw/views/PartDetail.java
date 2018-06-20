@@ -204,6 +204,7 @@ public class PartDetail extends JFrame {
 	private GridBagConstraints gbc_textField_6 = new GridBagConstraints();
 	private GridBagConstraints gbc_textArea_4 = new GridBagConstraints();
 	private MouseAdapter classApply;
+	private String status;
 	
 	
 
@@ -316,10 +317,11 @@ public class PartDetail extends JFrame {
 					}
 					return;
 				}
-				String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()));
+				String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
 				if(allow.equals("KO")){
 					return;
 				}
+				
 				try {
 					Class.forName("org.postgresql.Driver");
 					String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
@@ -335,7 +337,40 @@ public class PartDetail extends JFrame {
 					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
-					if(modelLeft!=null) {
+					save_chars(prepStmt, conn0);					
+					
+					PartDetail partdetail = new PartDetail(dll,dll.getnextID(selectedAID),login,pane, clock);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+						| BadPaddingException | IOException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (ClassNotFoundException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				}
+			}
+
+			private void save_chars(PreparedStatement prepStmt,Connection conn0) throws SQLException {
+				if(modelLeft!=null) {
 					for(CharacValue element:modelLeft) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
@@ -396,7 +431,7 @@ public class PartDetail extends JFrame {
 					conn0 = DriverManager.getConnection(url, props);
 					Date end = new Date ();
 					if(fedate!=null) {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()))+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
+						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
 						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
 						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
 						if(textField_6.getText().length()>=5) {
@@ -408,7 +443,7 @@ public class PartDetail extends JFrame {
 						prepStmt.setString(6, selectedAID);
 						prepStmt.setObject(5, LocalDate.now());
 					}else {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()))+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ?, fedate = ? WHERE aid = ?");
+						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ?, fedate = ? WHERE aid = ?");
 						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
 						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
 						if(textField_6.getText().length()>=5) {
@@ -426,9 +461,52 @@ public class PartDetail extends JFrame {
 					
 					prepStmt.close();
 					conn0.close();
+
+			}
+		});
+	}
+
+	private void previous_procedure(String login,String selectedAID,Clock clock,Date start,DLL dll,JOptionPane pane) {
+    	lblNewLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+				pane.setVisible(true);
+				if(login.equals("Corinne")) {
+					try {
+						PartDetail partdetail = new PartDetail(dll,dll.getprevID(selectedAID),login,pane, clock);
+					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+							| BadPaddingException | ClassNotFoundException | IOException | SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					return;
+				}
+				String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
+				if(allow.equals("KO")){
+					return;
+				}
+				
+				try {
+					Class.forName("org.postgresql.Driver");
+					String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
+					props.setProperty("user","postgres");
+					props.setProperty("password","Neonec");
+
+					props.setProperty("loginTimeout", "20");
+					props.setProperty("connectTimeout", "0");
+					props.setProperty("socketTimeout", "0");
+					//props.setProperty("ssl","true");
+					Connection conn0 = DriverManager.getConnection(url, props);
+					conn0.setAutoCommit(false);        
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
+							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					
+					save_chars(prepStmt, conn0);
 					
 					
-					PartDetail partdetail = new PartDetail(dll,dll.getnextID(selectedAID),login,pane, clock);
+					PartDetail partdetail = new PartDetail(dll,dll.getprevID(selectedAID),login,pane, clock);
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
 						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
 						| BadPaddingException | IOException e1) {
@@ -457,47 +535,9 @@ public class PartDetail extends JFrame {
 				            JOptionPane.ERROR_MESSAGE);
 				}
 			}
-		});
-	}
 
-	private void previous_procedure(String login,String selectedAID,Clock clock,Date start,DLL dll,JOptionPane pane) {
-    	lblNewLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				dispose();
-				pane.setVisible(true);
-				if(login.equals("Corinne")) {
-					try {
-						PartDetail partdetail = new PartDetail(dll,dll.getprevID(selectedAID),login,pane, clock);
-					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-							| BadPaddingException | ClassNotFoundException | IOException | SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					return;
-				}
-				String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()));
-				if(allow.equals("KO")){
-					return;
-				}
-				
-				try {
-					Class.forName("org.postgresql.Driver");
-					String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
-					props.setProperty("user","postgres");
-					props.setProperty("password","Neonec");
-
-					props.setProperty("loginTimeout", "20");
-					props.setProperty("connectTimeout", "0");
-					props.setProperty("socketTimeout", "0");
-					//props.setProperty("ssl","true");
-					Connection conn0 = DriverManager.getConnection(url, props);
-					conn0.setAutoCommit(false);        
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
-							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
-					
-					if(modelLeft != null) {
+			private void save_chars(PreparedStatement prepStmt, Connection conn0) throws SQLException {
+				if(modelLeft != null) {
 					for(CharacValue element:modelLeft) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
@@ -559,7 +599,7 @@ public class PartDetail extends JFrame {
 					conn0 = DriverManager.getConnection(url, props);
 					Date end = new Date();
 					if(fedate!=null) {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()))+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
+						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
 						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
 						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
 						if(textField_6.getText().length()>=5) {
@@ -571,7 +611,7 @@ public class PartDetail extends JFrame {
 						prepStmt.setObject(5, LocalDate.now());
 						prepStmt.setString(6, selectedAID);
 					}else {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()))+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ?, fedate = ? WHERE aid = ?");
+						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ?, fedate = ? WHERE aid = ?");
 						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
 						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
 						if(textField_6.getText().length()>=5) {
@@ -589,35 +629,7 @@ public class PartDetail extends JFrame {
 					
 					prepStmt.close();
 					conn0.close();
-					
-					PartDetail partdetail = new PartDetail(dll,dll.getprevID(selectedAID),login,pane, clock);
-				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-						| BadPaddingException | IOException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (ClassNotFoundException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				}
+				
 			}
 		});
 	}
@@ -654,97 +666,7 @@ public class PartDetail extends JFrame {
 					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
-					if(modelLeft!=null) {
-					for(CharacValue element:modelLeft) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					for(CharacValue element:modelRight) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					}
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF");
-					prepStmt.setString(3,textField_4.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF_REF");
-					prepStmt.setString(3,textField_5.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "URL");
-					prepStmt.setString(3,textArea_3.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "QUESTION");
-					prepStmt.setString(3,textField_6.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "COMMENT");
-					prepStmt.setString(3,textArea_4.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.executeBatch();
-					conn0.commit();
-					prepStmt.clearBatch();
-					prepStmt.close();
-					conn0.close();
-					conn0 = DriverManager.getConnection(url, props);
-					Date end = new Date();
-					if(fedate!=null) {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='PENDING', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
-						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-						if(textField_6.getText().length()>=5) {
-							prepStmt.setString(3, textField_6.getText().substring(0,5));
-						}else {
-							prepStmt.setString(3, textField_6.getText());
-						}
-						prepStmt.setString(6, selectedAID);
-						prepStmt.setObject(5, LocalDate.now());
-						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-						
-					}else {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='PENDING', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? , fedate = ? WHERE aid = ?");
-						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-						if(textField_6.getText().length()>=5) {
-							prepStmt.setString(3, textField_6.getText().substring(0,5));
-						}else {
-							prepStmt.setString(3, textField_6.getText());
-						}
-						prepStmt.setString(7, selectedAID);
-						prepStmt.setObject(5, LocalDate.now());
-						prepStmt.setObject(6, LocalDate.now());
-						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-					}
-					prepStmt.execute();
-					
-					prepStmt.close();
-					conn0.close();
+					save_chars(prepStmt, conn0);
 				} catch (ClassNotFoundException e) {
 					StringBuilder sb = new StringBuilder(e.toString());
 				    for (StackTraceElement ste : e.getStackTrace()) {
@@ -829,6 +751,100 @@ public class PartDetail extends JFrame {
 				}
 				Home home = new Home(login, clock);
 	        }
+
+			private void save_chars(PreparedStatement prepStmt,Connection conn0) throws SQLException {
+				if(modelLeft!=null) {
+					for(CharacValue element:modelLeft) {
+						prepStmt.setString(1,selectedAID);
+						prepStmt.setString(2,element.getId());
+						prepStmt.setString(3, element.getvalue());
+						//prepStmt.setString(4,"DESCRIPTION");
+						prepStmt.setString(4,element.getComp());
+						prepStmt.addBatch();
+		        	}
+					for(CharacValue element:modelRight) {
+						prepStmt.setString(1,selectedAID);
+						prepStmt.setString(2,element.getId());
+						prepStmt.setString(3, element.getvalue());
+						//prepStmt.setString(4,"DESCRIPTION");
+						prepStmt.setString(4,element.getComp());
+						prepStmt.addBatch();
+		        	}
+					}
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "MANUF");
+					prepStmt.setString(3,textField_4.getText());
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "MANUF_REF");
+					prepStmt.setString(3,textField_5.getText());
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "URL");
+					prepStmt.setString(3,textArea_3.getText());
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "QUESTION");
+					prepStmt.setString(3,textField_6.getText());
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
+					prepStmt.addBatch();
+					
+					prepStmt.setString(1,selectedAID);
+					prepStmt.setString(2, "COMMENT");
+					prepStmt.setString(3,textArea_4.getText());
+					//prepStmt.setString(4,"DESCRIPTION");
+					prepStmt.setString(4,null);
+					prepStmt.addBatch();
+					
+					prepStmt.executeBatch();
+					conn0.commit();
+					prepStmt.clearBatch();
+					prepStmt.close();
+					conn0.close();
+					conn0 = DriverManager.getConnection(url, props);
+					Date end = new Date();
+					if(fedate!=null) {
+						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
+						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
+						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
+						if(textField_6.getText().length()>=5) {
+							prepStmt.setString(3, textField_6.getText().substring(0,5));
+						}else {
+							prepStmt.setString(3, textField_6.getText());
+						}
+						prepStmt.setString(6, selectedAID);
+						prepStmt.setObject(5, LocalDate.now());
+						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
+						
+					}else {
+						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? , fedate = ? WHERE aid = ?");
+						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
+						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
+						if(textField_6.getText().length()>=5) {
+							prepStmt.setString(3, textField_6.getText().substring(0,5));
+						}else {
+							prepStmt.setString(3, textField_6.getText());
+						}
+						prepStmt.setString(7, selectedAID);
+						prepStmt.setObject(5, LocalDate.now());
+						prepStmt.setObject(6, LocalDate.now());
+						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
+					}
+					prepStmt.execute();
+					
+					prepStmt.close();
+					conn0.close();
+			}
 	    });
 	}
 
@@ -1525,7 +1541,7 @@ public class PartDetail extends JFrame {
 		st.setString(1, selectedAID);
 		rs = st.executeQuery();
 		rs.next();
-		
+		status=rs.getString("status");
 		fedate = rs.getDate("fedate");
 		//ledate = rs.getDate("ledate");
 		
@@ -1628,7 +1644,7 @@ public class PartDetail extends JFrame {
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
-	protected String allow_next(/*List<CharacValue> modelLeft, List<CharacValue> modelRight, */String question, String cid) {
+	protected String allow_next(/*List<CharacValue> modelLeft, List<CharacValue> modelRight, */String question, String cid, String status) {
     	LinkedHashSet<String> critics = new LinkedHashSet<String>();
     	LinkedHashSet<String> nus = new LinkedHashSet<String>();
     	HashSet<String> allowed = new HashSet<String>(Arrays.asList("0", "1","2","3","4","5","6","7","8","9","/","\\","-","_",",",";"," ","."));
@@ -1689,20 +1705,69 @@ public class PartDetail extends JFrame {
 				}
 			}
 		}
+		
+		
+		if(!nus.isEmpty()) {
+			JOptionPane.showMessageDialog(null, new JLabel(
+				    "<html><h2><font color='red'>Non numeric data in fields:\n ("+String.join(" et ", nus)+") \n Valeurs permises : Chiffres, Slashs, tirets, virgules, point et espace.</font></h2></html>")); 
+			return "KO";
+		}
+		
+		
 		if(!critics.isEmpty()) {
-			if(textField_6.getText().length() ==0) {
+			//CC manquants
+			
+			if(question.replace(" ","").length() ==0) {
+				//Question Vide
 				JOptionPane.showMessageDialog(null, new JLabel(
-					    "<html><h2><font color='red'>Renseignez les champs critiques\n ("+String.join(" et ", critics)+") \n ou saisir une question.</font></h2></html>")); 
-				return "KO";
-			}else {
-				if(!nus.isEmpty()) {
-					JOptionPane.showMessageDialog(null, new JLabel(
-						    "<html><h2><font color='red'>Valeurs non valides pour les champs numériques\n ("+String.join(" et ", nus)+") \n Valeurs permises : Chiffres, Slashs, tirets, virgules, point et espace.</font></h2></html>")); 
-					return "KO";
+					    "<html><h2><font color='red'>Warning:PENDING: Missing critical Fields."
+					    + "\n ("+String.join(" et ", critics)+") \n .</font></h2></html>")); 
+				if (status.contains("REWORK:")){
+					return "REWORK:PENDING";
 				}
-				return "IN_PROGRESS";
+				return "PENDING";
+			}else {
+				//Question Non Vide
+				JOptionPane.showMessageDialog(null, new JLabel(
+					    "<html><h2><font color='red'>Warning:PENDING: Question Written.</font></h2></html>")); 
+				if (status.contains("REWORK:")){
+					return "REWORK:PENDING";
+				}
+				return "PENDING";
 			}
 		}
+		//CC OK
+
+		if(question.replace(" ","").length() !=0) {
+			//Question non vide
+			JOptionPane.showMessageDialog(null, new JLabel(
+				    "<html><h2><font color='red'>Warning:PENDING: Question Written.</font></h2></html>")); 
+			if (status.contains("REWORK:")){
+				return "REWORK:PENDING";
+			}
+			return "PENDING";
+		}
+		
+		if(isEphem(cid)) {
+			//Classe ephemere
+			JOptionPane.showMessageDialog(null, new JLabel(
+				    "<html><h2><font color='red'>Warning:PENDING: Temporary Class.</font></h2></html>")); 
+			if (status.contains("REWORK:")){
+				return "REWORK:PENDING";
+			}
+			return "PENDING";
+		}
+		
+		if (status.contains("REWORK:")){
+			return "REWORK:COMPLET";
+		}
 		return "COMPLET";
+		
+		
+	}
+
+	private boolean isEphem(String cid) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
