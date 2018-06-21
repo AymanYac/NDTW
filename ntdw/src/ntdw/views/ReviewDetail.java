@@ -335,7 +335,41 @@ public class ReviewDetail extends JFrame {
 					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
-					if(modelLeft != null) {
+					save_chars(prepStmt, conn0);
+					
+					
+					ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane,clock);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+						| BadPaddingException | IOException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (ClassNotFoundException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				}
+			}
+
+			private void save_chars(PreparedStatement prepStmt,Connection conn0) throws SQLException {
+				if(modelLeft != null) {
 					for(CharacValue element:modelLeft) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
@@ -426,36 +460,6 @@ public class ReviewDetail extends JFrame {
 					
 					prepStmt.close();
 					conn0.close();
-					
-					
-					ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane,clock);
-				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-						| BadPaddingException | IOException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (ClassNotFoundException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				}
 			}
 		});
 	}
@@ -498,7 +502,40 @@ public class ReviewDetail extends JFrame {
 					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
-					if(modelLeft!=null) {
+					save_chars(conn0, prepStmt);
+					
+					ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane,clock);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+						| BadPaddingException | IOException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (ClassNotFoundException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				}
+			}
+
+			private void save_chars(Connection conn0, PreparedStatement prepStmt) throws SQLException {
+				if(modelLeft!=null) {
 					for(CharacValue element:modelLeft) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
@@ -597,36 +634,7 @@ public class ReviewDetail extends JFrame {
 					prepStmt.execute();
 					
 					prepStmt.close();
-					conn0.close();
-					
-					ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane,clock);
-				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-						| BadPaddingException | IOException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (ClassNotFoundException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				}
+					conn0.close();	
 			}
 		});
 	}
@@ -654,7 +662,93 @@ public class ReviewDetail extends JFrame {
 					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
-					if(modelLeft!=null) {
+					save_chars(prepStmt,conn0);
+				} catch (ClassNotFoundException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (InvalidKeyException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (NoSuchAlgorithmException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (NoSuchProviderException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (NoSuchPaddingException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (ShortBufferException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (IllegalBlockSizeException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (BadPaddingException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (IOException e) {
+					StringBuilder sb = new StringBuilder(e.toString());
+				    for (StackTraceElement ste : e.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				}
+				Home home = new Home(login, clock);
+	        }
+
+			private void save_chars(PreparedStatement prepStmt, Connection conn0) throws SQLException {
+				if(modelLeft!=null) {
 					for(CharacValue element:modelLeft) {
 						prepStmt.setString(1,selectedAID);
 						prepStmt.setString(2,element.getId());
@@ -745,89 +839,7 @@ public class ReviewDetail extends JFrame {
 					
 					prepStmt.close();
 					conn0.close();
-				} catch (ClassNotFoundException e) {
-					StringBuilder sb = new StringBuilder(e.toString());
-				    for (StackTraceElement ste : e.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException e) {
-					StringBuilder sb = new StringBuilder(e.toString());
-				    for (StackTraceElement ste : e.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (InvalidKeyException e) {
-					StringBuilder sb = new StringBuilder(e.toString());
-				    for (StackTraceElement ste : e.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (NoSuchAlgorithmException e) {
-					StringBuilder sb = new StringBuilder(e.toString());
-				    for (StackTraceElement ste : e.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (NoSuchProviderException e) {
-					StringBuilder sb = new StringBuilder(e.toString());
-				    for (StackTraceElement ste : e.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (NoSuchPaddingException e) {
-					StringBuilder sb = new StringBuilder(e.toString());
-				    for (StackTraceElement ste : e.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (ShortBufferException e) {
-					StringBuilder sb = new StringBuilder(e.toString());
-				    for (StackTraceElement ste : e.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (IllegalBlockSizeException e) {
-					StringBuilder sb = new StringBuilder(e.toString());
-				    for (StackTraceElement ste : e.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (BadPaddingException e) {
-					StringBuilder sb = new StringBuilder(e.toString());
-				    for (StackTraceElement ste : e.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (IOException e) {
-					StringBuilder sb = new StringBuilder(e.toString());
-				    for (StackTraceElement ste : e.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				}
-				Home home = new Home(login, clock);
-	        }
+			}
 	    });
 	}
 

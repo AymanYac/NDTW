@@ -88,7 +88,6 @@ public class Login extends JFrame {
 	 */
 	public Login() {
 		final Clock clock = new NanoClock().withZone(ZoneId.of("UTC"));   
-		System.out.println(Tools.maintenant(clock));
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Login.class.getResource("/ntdw/resources/images/Neonec-white-logo only.png")));
 		setTitle("TECHNICAL ITEM DESCRIPTION");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

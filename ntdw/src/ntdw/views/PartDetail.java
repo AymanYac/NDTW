@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
@@ -205,6 +206,12 @@ public class PartDetail extends JFrame {
 	private GridBagConstraints gbc_textArea_4 = new GridBagConstraints();
 	private MouseAdapter classApply;
 	private String status;
+	private int completedVals;
+	private String allwnxt;
+	private boolean isStub;
+	private boolean classchange;
+	private HashSet<String> classesTemp = new HashSet<String>();
+	protected Clock clock2;
 	
 	
 
@@ -250,6 +257,10 @@ public class PartDetail extends JFrame {
 	 */
 	public PartDetail(DLL dll, String selectedAID, String login, JOptionPane pane, Clock clock) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, ShortBufferException, IllegalBlockSizeException, BadPaddingException, IOException, ClassNotFoundException, SQLException {
 		if(selectedAID!=null) {
+			this.clock2=clock;
+			this.completedVals=0;
+			this.allwnxt="";
+			this.isStub=false;
 			try {
 				SynthLookAndFeel laf = new SynthLookAndFeel();
 				laf.load(PartDetail.class.getResourceAsStream("/ntdw/resources/detail_laf.xml"), PartDetail.class);
@@ -284,8 +295,6 @@ public class PartDetail extends JFrame {
 			load_static_data(/*url, props,*/ selectedAID, pane);
 
 			closing_procedure(login, pane, selectedAID, start);
-			
-			
 			previous_procedure(login, selectedAID, clock, start, dll, pane);
 			next_procedure(login, selectedAID, clock, dll, start, pane);
 			
@@ -301,7 +310,7 @@ public class PartDetail extends JFrame {
 	
     
     private void next_procedure(String login,String selectedAID,Clock clock,DLL dll,Date start,JOptionPane pane) {
-    	lblFlexor.addMouseListener(new MouseAdapter() {
+    	btnArrowRigth.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				dispose();
@@ -317,12 +326,20 @@ public class PartDetail extends JFrame {
 					}
 					return;
 				}
-				String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
+				String allow="";
+				try {
+					allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
+				} catch (HeadlessException | SQLException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
 				if(allow.equals("KO")){
 					return;
 				}
 				
 				try {
+					
+					
 					Class.forName("org.postgresql.Driver");
 					String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
 					
@@ -332,12 +349,25 @@ public class PartDetail extends JFrame {
 					props.setProperty("connectTimeout", "0");
 					props.setProperty("socketTimeout", "0");
 					//props.setProperty("ssl","true");
+					
+					///////////////Fonctionnel
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);        
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
-							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES ( ?, ?, ?, ?)"
+							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value, comp=EXCLUDED.comp;");
 					
-					save_chars(prepStmt, conn0);					
+					save_chars(prepStmt, conn0, selectedAID, login,start,allow);
+					
+					/////////////Historisation
+					conn0 = DriverManager.getConnection(url, props);
+					conn0.setAutoCommit(false);        
+					prepStmt = conn0.prepareStatement("INSERT INTO public.wal (aid, chid, value,phase, comp,time) VALUES (?,?, ?, ?, ?, ?)");
+					
+					save_chars(prepStmt, conn0,clock, selectedAID, login);
+					
+					
+					
+					
 					
 					PartDetail partdetail = new PartDetail(dll,dll.getnextID(selectedAID),login,pane, clock);
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
@@ -369,107 +399,77 @@ public class PartDetail extends JFrame {
 				}
 			}
 
-			private void save_chars(PreparedStatement prepStmt,Connection conn0) throws SQLException {
-				if(modelLeft!=null) {
-					for(CharacValue element:modelLeft) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					for(CharacValue element:modelRight) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					}
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF");
-					prepStmt.setString(3,textField_4.getText());
-					//prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF_REF");
-					prepStmt.setString(3,textField_5.getText());
-					//prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "URL");
-					prepStmt.setString(3,textArea_3.getText());
-					//prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "QUESTION");
-					prepStmt.setString(3,textField_6.getText());
-					//prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "COMMENT");
-					prepStmt.setString(3,textArea_4.getText());
-					//prepStmt.setString(4, "DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.executeBatch();
-					conn0.commit();
-					prepStmt.clearBatch();
-					prepStmt.close();
-					conn0.close();
-					conn0 = DriverManager.getConnection(url, props);
-					Date end = new Date ();
-					if(fedate!=null) {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
-						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-						if(textField_6.getText().length()>=5) {
-							prepStmt.setString(3, textField_6.getText().substring(0,5));
-						}else {
-							prepStmt.setString(3, textField_6.getText());
-						}
-						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-						prepStmt.setString(6, selectedAID);
-						prepStmt.setObject(5, LocalDate.now());
-					}else {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ?, fedate = ? WHERE aid = ?");
-						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-						if(textField_6.getText().length()>=5) {
-							prepStmt.setString(3, textField_6.getText().substring(0,5));
-						}else {
-							prepStmt.setString(3, textField_6.getText());
-						}
-						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-						prepStmt.setString(7, selectedAID);
-						prepStmt.setObject(6, LocalDate.now());
-						prepStmt.setObject(5, LocalDate.now());
-					}
-					
-					prepStmt.execute();
-					
-					prepStmt.close();
-					conn0.close();
-
-			}
+			
 		});
 	}
 
+	protected void log_progress(Connection conn0,String login,String selectedAID) throws SQLException {
+		if(this.allwnxt.contains("COMPLET")) {
+			conn0 = DriverManager.getConnection(url, props);
+			PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.progress (login,aid,status,card) VALUES (?,?,?,?)");
+			prepStmt.setString(1, login);
+			prepStmt.setString(2, selectedAID);
+			if(this.allwnxt.contains("REWORK")) {
+				prepStmt.setString(3,"REWORK");
+			}else {
+				prepStmt.setString(3, "COMPLET");
+			}
+			prepStmt.setInt(4, this.completedVals);
+			prepStmt.execute();
+			
+			prepStmt.close();
+			conn0.close();
+		}
+		
+	}
+
+	protected void log_classif(Connection conn0,String login,String selectedAID,String cid,String target) throws SQLException {
+		if(cid.equals(target)) {
+			return;
+		}
+		conn0 = DriverManager.getConnection(url, props);
+		PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.reclassifs (login,aid,original,target,nature,work,phase,type) VALUES(?,?,?,?,?,?,?,?)");
+		prepStmt.setString(1, login);
+		prepStmt.setString(2, selectedAID);
+		prepStmt.setString(3, cid);
+		prepStmt.setString(4, target);
+		if(isEphem(target)) {
+			prepStmt.setString(5, "TEMP");
+		}else {
+			if(this.isStub) {
+				prepStmt.setString(5, "STUB");
+			}else {
+				prepStmt.setString(5, "REEL");
+			}
+		}
+		if(this.allwnxt.contains("REWORK")) {
+			prepStmt.setString(6, "REWORK");
+		}else {
+			prepStmt.setString(6, "INITIAL");
+		}
+		prepStmt.setString(7, "DESCRIPTION");
+		if(!isEphem(cid)) {
+			if(!isEphem(target)) {
+				prepStmt.setString(8, "I");
+			}else {
+				prepStmt.setString(8, "II");
+			}
+		}else {
+			if(!isEphem(target)) {
+				prepStmt.setString(8, "III");
+			}else {
+				prepStmt.setString(8, "IV");
+			}
+		}
+		prepStmt.execute();
+		
+		prepStmt.close();
+		conn0.close();
+	}
+
 	private void previous_procedure(String login,String selectedAID,Clock clock,Date start,DLL dll,JOptionPane pane) {
-    	lblNewLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
+		btnArrowLeft.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				dispose();
 				pane.setVisible(true);
 				if(login.equals("Corinne")) {
@@ -483,7 +483,13 @@ public class PartDetail extends JFrame {
 					}
 					return;
 				}
-				String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
+				String allow="";
+				try {
+					allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
+				} catch (HeadlessException | SQLException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
 				if(allow.equals("KO")){
 					return;
 				}
@@ -498,13 +504,22 @@ public class PartDetail extends JFrame {
 					props.setProperty("connectTimeout", "0");
 					props.setProperty("socketTimeout", "0");
 					//props.setProperty("ssl","true");
+					
+					/////////////Fonctionnel
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);        
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
-					save_chars(prepStmt, conn0);
+					save_chars(prepStmt, conn0, selectedAID, login,start,allow);
 					
+					
+					/////////////Historisation
+					conn0 = DriverManager.getConnection(url, props);
+					conn0.setAutoCommit(false);        
+					prepStmt = conn0.prepareStatement("INSERT INTO public.wal (aid, chid, value,phase, comp,time) VALUES (?, ?, ?, ?, ?,?)");
+							
+					save_chars(prepStmt, conn0,clock, selectedAID, login);
 					
 					PartDetail partdetail = new PartDetail(dll,dll.getprevID(selectedAID),login,pane, clock);
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
@@ -536,101 +551,7 @@ public class PartDetail extends JFrame {
 				}
 			}
 
-			private void save_chars(PreparedStatement prepStmt, Connection conn0) throws SQLException {
-				if(modelLeft != null) {
-					for(CharacValue element:modelLeft) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					for(CharacValue element:modelRight) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					}
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF");
-					prepStmt.setString(3,textField_4.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF_REF");
-					prepStmt.setString(3,textField_5.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "URL");
-					prepStmt.setString(3,textArea_3.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "QUESTION");
-					prepStmt.setString(3,textField_6.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "COMMENT");
-					prepStmt.setString(3,textArea_4.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.executeBatch();
-					conn0.commit();
-					prepStmt.clearBatch();
-					prepStmt.close();
-					conn0.close();
-					
-					conn0 = DriverManager.getConnection(url, props);
-					Date end = new Date();
-					if(fedate!=null) {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
-						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-						if(textField_6.getText().length()>=5) {
-							prepStmt.setString(3, textField_6.getText().substring(0,5));
-						}else {
-							prepStmt.setString(3, textField_6.getText());
-						}
-						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-						prepStmt.setObject(5, LocalDate.now());
-						prepStmt.setString(6, selectedAID);
-					}else {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ?, fedate = ? WHERE aid = ?");
-						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-						if(textField_6.getText().length()>=5) {
-							prepStmt.setString(3, textField_6.getText().substring(0,5));
-						}else {
-							prepStmt.setString(3, textField_6.getText());
-						}
-						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-						prepStmt.setObject(5, LocalDate.now());
-						prepStmt.setObject(6, LocalDate.now());
-						prepStmt.setString(7, selectedAID);
-					}
-					
-					prepStmt.execute();
-					
-					prepStmt.close();
-					conn0.close();
-				
-			}
+			
 		});
 	}
 
@@ -645,11 +566,11 @@ public class PartDetail extends JFrame {
 	
 	private void closing_procedure(String login,JOptionPane pane,String selectedAID,Date start) {
     	addWindowListener(new WindowAdapter() {
-	        public void windowClosing(WindowEvent event, Clock clock) {
-	            pane.setVisible(true);
+	        public void windowClosing(WindowEvent event) {
+	        	pane.setVisible(true);
 	            dispose();
 	            if(login.equals("Corinne")) {
-	            	Home home = new Home(login, clock);
+	            	Home home = new Home(login, clock2);
 	            	return;
 	            }
 	            try {
@@ -661,12 +582,34 @@ public class PartDetail extends JFrame {
 					props.setProperty("connectTimeout", "0");
 					props.setProperty("socketTimeout", "0");
 					//props.setProperty("ssl","true");
+					
+					
+					///////////////Fonctionnel
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES ( ?, ?, ?, ?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
-					save_chars(prepStmt, conn0);
+					String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
+					save_chars(prepStmt, conn0, selectedAID, login,start,allow);
+							
+					/////////////Historisation
+					conn0 = DriverManager.getConnection(url, props);
+					conn0.setAutoCommit(false);        
+					prepStmt = conn0.prepareStatement("INSERT INTO public.wal (aid, chid, value,phase, comp,time) VALUES (?,?, ?, ?, ?, ?)");
+							
+					save_chars(prepStmt, conn0,clock2, selectedAID, login);
+							
+							
+					
+					
+					
+					
+					
+					
+					
+					
+					
 				} catch (ClassNotFoundException e) {
 					StringBuilder sb = new StringBuilder(e.toString());
 				    for (StackTraceElement ste : e.getStackTrace()) {
@@ -749,103 +692,177 @@ public class PartDetail extends JFrame {
 				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
 				            JOptionPane.ERROR_MESSAGE);
 				}
-				Home home = new Home(login, clock);
+				Home home = new Home(login, clock2);
 	        }
-
-			private void save_chars(PreparedStatement prepStmt,Connection conn0) throws SQLException {
-				if(modelLeft!=null) {
-					for(CharacValue element:modelLeft) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					for(CharacValue element:modelRight) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"DESCRIPTION");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					}
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF");
-					prepStmt.setString(3,textField_4.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF_REF");
-					prepStmt.setString(3,textField_5.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "URL");
-					prepStmt.setString(3,textArea_3.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "QUESTION");
-					prepStmt.setString(3,textField_6.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "COMMENT");
-					prepStmt.setString(3,textArea_4.getText());
-					//prepStmt.setString(4,"DESCRIPTION");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.executeBatch();
-					conn0.commit();
-					prepStmt.clearBatch();
-					prepStmt.close();
-					conn0.close();
-					conn0 = DriverManager.getConnection(url, props);
-					Date end = new Date();
-					if(fedate!=null) {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
-						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-						if(textField_6.getText().length()>=5) {
-							prepStmt.setString(3, textField_6.getText().substring(0,5));
-						}else {
-							prepStmt.setString(3, textField_6.getText());
-						}
-						prepStmt.setString(6, selectedAID);
-						prepStmt.setObject(5, LocalDate.now());
-						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-						
-					}else {
-						prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status)+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? , fedate = ? WHERE aid = ?");
-						prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-						prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-						if(textField_6.getText().length()>=5) {
-							prepStmt.setString(3, textField_6.getText().substring(0,5));
-						}else {
-							prepStmt.setString(3, textField_6.getText());
-						}
-						prepStmt.setString(7, selectedAID);
-						prepStmt.setObject(5, LocalDate.now());
-						prepStmt.setObject(6, LocalDate.now());
-						prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-					}
-					prepStmt.execute();
-					
-					prepStmt.close();
-					conn0.close();
-			}
 	    });
+	}
+	
+	private void save_chars(PreparedStatement prepStmt,Connection conn0,String selectedAID, String login,Date start,String allow) throws SQLException {
+		if(modelLeft!=null) {
+			for(CharacValue element:modelLeft) {
+				prepStmt.setString(1,selectedAID);
+				prepStmt.setString(2,element.getId());
+				prepStmt.setString(3, element.getvalue());
+				//prepStmt.setString(4,"DESCRIPTION");
+				prepStmt.setString(4,element.getComp());
+				prepStmt.addBatch();
+        	}
+			for(CharacValue element:modelRight) {
+				prepStmt.setString(1,selectedAID);
+				prepStmt.setString(2,element.getId());
+				prepStmt.setString(3, element.getvalue());
+				//prepStmt.setString(4,"DESCRIPTION");
+				prepStmt.setString(4,element.getComp());
+				prepStmt.addBatch();
+        	}
+			}
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "MANUF");
+			prepStmt.setString(3,textField_4.getText());
+			//prepStmt.setString(4,"DESCRIPTION");
+			prepStmt.setString(4,null);
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "MANUF_REF");
+			prepStmt.setString(3,textField_5.getText());
+			//prepStmt.setString(4,"DESCRIPTION");
+			prepStmt.setString(4,null);
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "URL");
+			prepStmt.setString(3,textArea_3.getText());
+			//prepStmt.setString(4,"DESCRIPTION");
+			prepStmt.setString(4,null);
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "QUESTION");
+			prepStmt.setString(3,textField_6.getText());
+			//prepStmt.setString(4,"DESCRIPTION");
+			prepStmt.setString(4,null);
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "COMMENT");
+			prepStmt.setString(3,textArea_4.getText());
+			//prepStmt.setString(4,"DESCRIPTION");
+			prepStmt.setString(4,null);
+			prepStmt.addBatch();
+			
+			prepStmt.executeBatch();
+			conn0.commit();
+			prepStmt.clearBatch();
+			prepStmt.close();
+			conn0.close();
+			conn0 = DriverManager.getConnection(url, props);
+			Date end = new Date();
+			if(fedate!=null) {
+				prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
+				prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
+				//prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
+				prepStmt.setBoolean(2, hasChanged(currentFamily.get((String) textField_3.getText())));
+				if(textField_6.getText().length()>=5) {
+					prepStmt.setString(3, textField_6.getText().substring(0,5));
+				}else {
+					prepStmt.setString(3, textField_6.getText());
+				}
+				prepStmt.setString(6, selectedAID);
+				prepStmt.setObject(5, LocalDate.now());
+				prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
+				
+			}else {
+				prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? , fedate = ? WHERE aid = ?");
+				prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
+				//prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
+				prepStmt.setBoolean(2, hasChanged(currentFamily.get((String) textField_3.getText())));
+				if(textField_6.getText().length()>=5) {
+					prepStmt.setString(3, textField_6.getText().substring(0,5));
+				}else {
+					prepStmt.setString(3, textField_6.getText());
+				}
+				prepStmt.setString(7, selectedAID);
+				prepStmt.setObject(5, LocalDate.now());
+				prepStmt.setObject(6, LocalDate.now());
+				prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
+			}
+			prepStmt.execute();
+			
+			prepStmt.close();
+			conn0.close();
+	}
+	private void save_chars(PreparedStatement prepStmt,Connection conn0,Clock clock,String selectedAID,String login) throws SQLException {
+		if(modelLeft!=null) {
+			for(CharacValue element:modelLeft) {
+				prepStmt.setString(1,selectedAID);
+				prepStmt.setString(2,element.getId());
+				prepStmt.setString(3, element.getvalue());
+				prepStmt.setString(4,"DESCRIPTION");
+				prepStmt.setString(5,element.getComp());
+				prepStmt.setTimestamp(6, Tools.maintenant(clock));
+				prepStmt.addBatch();
+        	}
+			for(CharacValue element:modelRight) {
+				prepStmt.setString(1,selectedAID);
+				prepStmt.setString(2,element.getId());
+				prepStmt.setString(3, element.getvalue());
+				prepStmt.setString(4,"DESCRIPTION");
+				prepStmt.setString(5,element.getComp());
+				prepStmt.setTimestamp(6, Tools.maintenant(clock));
+				prepStmt.addBatch();
+        	}
+			}
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "MANUF");
+			prepStmt.setString(3,textField_4.getText());
+			prepStmt.setString(4,"DESCRIPTION");
+			prepStmt.setString(5,null);
+			prepStmt.setTimestamp(6, Tools.maintenant(clock));
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "MANUF_REF");
+			prepStmt.setString(3,textField_5.getText());
+			prepStmt.setString(4,"DESCRIPTION");
+			prepStmt.setString(5,null);
+			prepStmt.setTimestamp(6, Tools.maintenant(clock));
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "URL");
+			prepStmt.setString(3,textArea_3.getText());
+			prepStmt.setString(4,"DESCRIPTION");
+			prepStmt.setString(5,null);
+			prepStmt.setTimestamp(6, Tools.maintenant(clock));
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "QUESTION");
+			prepStmt.setString(3,textField_6.getText());
+			prepStmt.setString(4,"DESCRIPTION");
+			prepStmt.setString(5,null);
+			prepStmt.setTimestamp(6, Tools.maintenant(clock));
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "COMMENT");
+			prepStmt.setString(3,textArea_4.getText());
+			prepStmt.setString(4,"DESCRIPTION");
+			prepStmt.setString(5,null);
+			prepStmt.setTimestamp(6, Tools.maintenant(clock));
+			prepStmt.addBatch();
+			
+			prepStmt.executeBatch();
+			conn0.commit();
+			prepStmt.clearBatch();
+			prepStmt.close();
+			conn0.close();
+			
+			log_classif(conn0,login,selectedAID,originalcid,currentFamily.get((String) textField_3.getText()));
+			log_progress(conn0,login,selectedAID);
+			
+
 	}
 
 	private void load_class(/*String url, Properties props, Connection conn1*/) throws SQLException {
@@ -964,6 +981,7 @@ public class PartDetail extends JFrame {
 		ResultSet rs1 = st1.executeQuery();
 		rs1.next();
 		originalcid = rs.getString("cid");
+		classchange=rs.getBoolean("classChange");
 		textField.setText(rs1.getString("domain"));
 		originalDomain = (rs1.getString("domain"));
 		//textField_1.removeAllItems();
@@ -980,6 +998,15 @@ public class PartDetail extends JFrame {
 		st1.close();
 		conn1.close();
 		
+	}
+	private boolean hasChanged(String currentCID) {
+		if(this.classchange) {
+			return true;
+		}
+		if(!currentCID.equals(currentFamily.get((String) textField_3.getText()))) {
+			return true;
+		}
+		return false;
 	}
 
 	private void load_ui_elements(/*JButton btnApplyClassification ,JButton btnArrowRigth, JButton btnArrowLeft, JLabel lblNewLabel_1, DLL dll, String selectedAID,GridBagLayout gbl_contentPane,JPanel pnl_controlflex,GridBagConstraints gbc_pnl_controlflex,JLabel lblNewLabel,JPanel panelCenter,GridBagConstraints gbc_panelCenter,JLabel lblVal,JPanel panelRigth,GridBagConstraints gbc_panelRigth,JLabel lblFlexor,JPanel pnlDescription,GridBagConstraints gbc_pnlDescription,GridBagLayout gbl_pnlDescription,JPanel panel,GridBagConstraints gbc_panel,GroupLayout gl_panel,JPanel pnlClassification,GridBagConstraints gbc_pnlClassification,GridBagLayout gbl_pnlClassification,JLabel lblNewLabel_4,GridBagConstraints gbc_textField,GridBagConstraints gbc_lblNewLabel_4,GridBagConstraints gbc_textField_1,GridBagConstraints gbc_textField_2,GridBagConstraints gbc_textField_3*/String selectedAID) throws SQLException {
@@ -1020,10 +1047,8 @@ public class PartDetail extends JFrame {
 		
 		btnArrowLeft.setText("        ");
 		btnArrowLeft.setHorizontalAlignment(SwingConstants.LEFT);
-		btnArrowLeft.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
+
+
 		btnArrowLeft.setActionCommand("");
 		btnArrowLeft.setSize(new Dimension((int) (49* (area.width/1366.0)), 50));
 		btnArrowLeft.setName("btnArrowLeft");
@@ -1055,6 +1080,7 @@ public class PartDetail extends JFrame {
 		});
 		panelCenter.add(lblVal);
 		lblVal.setName("lbl_val");
+		lblVal.setText(selectedAID);
 		
 		
 		panelRigth.setBackground(SystemColor.activeCaption);
@@ -1644,12 +1670,18 @@ public class PartDetail extends JFrame {
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
-	protected String allow_next(/*List<CharacValue> modelLeft, List<CharacValue> modelRight, */String question, String cid, String status) {
+	protected String allow_next(/*List<CharacValue> modelLeft, List<CharacValue> modelRight, */String question, String cid, String status) throws HeadlessException, SQLException {
     	LinkedHashSet<String> critics = new LinkedHashSet<String>();
     	LinkedHashSet<String> nus = new LinkedHashSet<String>();
     	HashSet<String> allowed = new HashSet<String>(Arrays.asList("0", "1","2","3","4","5","6","7","8","9","/","\\","-","_",",",";"," ","."));
     	if(modelLeft == null) {
-    		return "IN_PROGRESS";
+    		this.isStub=true;
+    		if (status.contains("REWORK:")){
+    			this.allwnxt="REWORK:PENDING";
+    			return "REWORK:PENDING";
+    		}
+    		this.allwnxt="PENDING";
+    		return "PENDING";
     	}
 		for(CharacValue element:modelLeft) {
 			if(element.isCritical) {
@@ -1677,6 +1709,24 @@ public class PartDetail extends JFrame {
 					
 				}
 			}
+			if(element.getType().equals("FT")) {
+				if(!element.getvalue().equals("Inconnu|Unknown")) {
+					this.completedVals=this.completedVals+1;
+			}
+			}
+			else {
+				if(element.getType().equals("NU")) {
+					
+					if(element.getvalue().length()!=0) {
+						this.completedVals=this.completedVals+1;
+					}
+				}else {
+					if(element.getvalue().length()!=0 && !element.getvalue().equals("Inconnu")) {
+						this.completedVals=this.completedVals+1;
+					}
+				}
+			}
+				
 		}
 		for(CharacValue element:modelRight) {
 			if(element.isCritical) {
@@ -1704,12 +1754,35 @@ public class PartDetail extends JFrame {
 					
 				}
 			}
+			//System.out.println("here");
+			if(element.getType().equals("FT")) {
+				//System.out.print("FT");
+				if(!element.getvalue().equals("Inconnu|Unknown")) {
+				this.completedVals=this.completedVals+1;
+			}
+			}
+			else {
+				if(element.getType().equals("NU")) {
+					//System.out.print("NU");
+					if(element.getvalue().length()!=0) {
+						this.completedVals=this.completedVals+1;
+					}
+				}else {
+					//System.out.print("VL");
+					if(element.getvalue().length()!=0 && !element.getvalue().equals("Inconnu")) {
+						//System.out.println(this.completedVals);
+						this.completedVals=this.completedVals+1;
+						//System.out.println(this.completedVals);
+					}
+				}
+			}
 		}
 		
 		
 		if(!nus.isEmpty()) {
 			JOptionPane.showMessageDialog(null, new JLabel(
 				    "<html><h2><font color='red'>Non numeric data in fields:\n ("+String.join(" et ", nus)+") \n Valeurs permises : Chiffres, Slashs, tirets, virgules, point et espace.</font></h2></html>")); 
+			this.allwnxt="KO";
 			return "KO";
 		}
 		
@@ -1723,17 +1796,21 @@ public class PartDetail extends JFrame {
 					    "<html><h2><font color='red'>Warning:PENDING: Missing critical Fields."
 					    + "\n ("+String.join(" et ", critics)+") \n .</font></h2></html>")); 
 				if (status.contains("REWORK:")){
+					this.allwnxt="REWORK:PENDING";
 					return "REWORK:PENDING";
 				}
+				this.allwnxt="PENDING";
 				return "PENDING";
 			}else {
 				//Question Non Vide
 				JOptionPane.showMessageDialog(null, new JLabel(
 					    "<html><h2><font color='red'>Warning:PENDING: Question Written.</font></h2></html>")); 
 				if (status.contains("REWORK:")){
+					this.allwnxt="REWORK:PENDING";
 					return "REWORK:PENDING";
 				}
-				return "PENDING";
+				this.allwnxt="PENDING";
+	    		return "PENDING";
 			}
 		}
 		//CC OK
@@ -1743,9 +1820,11 @@ public class PartDetail extends JFrame {
 			JOptionPane.showMessageDialog(null, new JLabel(
 				    "<html><h2><font color='red'>Warning:PENDING: Question Written.</font></h2></html>")); 
 			if (status.contains("REWORK:")){
-				return "REWORK:PENDING";
+				this.allwnxt="REWORK:PENDING";
+	    		return "REWORK:PENDING";
 			}
-			return "PENDING";
+			this.allwnxt="PENDING";
+    		return "PENDING";
 		}
 		
 		if(isEphem(cid)) {
@@ -1753,21 +1832,36 @@ public class PartDetail extends JFrame {
 			JOptionPane.showMessageDialog(null, new JLabel(
 				    "<html><h2><font color='red'>Warning:PENDING: Temporary Class.</font></h2></html>")); 
 			if (status.contains("REWORK:")){
-				return "REWORK:PENDING";
+				this.allwnxt="REWORK:PENDING";
+	    		return "REWORK:PENDING";
 			}
-			return "PENDING";
+			this.allwnxt="PENDING";
+    		return "PENDING";
 		}
 		
 		if (status.contains("REWORK:")){
-			return "REWORK:COMPLET";
+			this.allwnxt="REWORK:COMPLET";
+    		return "REWORK:COMPLET";
 		}
+		this.allwnxt="COMPLET";
 		return "COMPLET";
 		
 		
 	}
 
-	private boolean isEphem(String cid) {
-		// TODO Auto-generated method stub
+	private boolean isEphem(String cid) throws SQLException {
+		if(classesTemp.size()==0) {
+			Connection conn999 = DriverManager.getConnection(url, props);
+			PreparedStatement st999 = conn999.prepareStatement("select classes_temp from public.\"ephemere\"");
+			ResultSet rs999 = st999.executeQuery();
+			while(rs999.next()) {
+				classesTemp.add(rs999.getString("classes_temp"));
+			}
+			return classesTemp.contains(cid);
+		}
+		if(classesTemp.contains(cid)) {
+			return true;
+		}
 		return false;
 	}
 }
