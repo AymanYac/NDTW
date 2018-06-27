@@ -61,6 +61,7 @@ import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -69,6 +70,7 @@ import javax.swing.SwingUtilities;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -286,10 +288,12 @@ public class PartDetail extends JFrame {
 			props.setProperty("socketTimeout", "0");
 			//props.setProperty("ssl","true");
 			
+			
 			load_item_data(/*conn, url, props, st, url, rs, fedate*/ selectedAID, fedate);
+			load_class(/*url, props, conn1*/selectedAID);
+			
 			load_ui_elements(selectedAID/*btnApplyClassification,btnArrowRigth,btnArrowLeft,lblNewLabel_1,dll, url,gbl_contentPane,pnl_controlflex,gbc_pnl_controlflex,lblNewLabel,panelCenter,gbc_panelCenter,lblVal,panelRigth,gbc_panelRigth,lblFlexor,pnlDescription,gbc_pnlDescription,gbl_pnlDescription,panel,gbc_panel,gl_panel,pnlClassification,gbc_pnlClassification,gbl_pnlClassification,lblNewLabel_4,gbc_textField,gbc_lblNewLabel_4,gbc_textField_1,gbc_textField_2,gbc_textField_3*/);
 			load_chars(rs.getString("cid"),false,selectedAID);
-			load_class(/*url, props, conn1*/);
 			
 			
 			load_static_data(/*url, props,*/ selectedAID, pane);
@@ -297,6 +301,7 @@ public class PartDetail extends JFrame {
 			closing_procedure(login, pane, selectedAID, start);
 			previous_procedure(login, selectedAID, clock, start, dll, pane);
 			next_procedure(login, selectedAID, clock, dll, start, pane);
+			lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
 			
 			
 		}else {
@@ -310,11 +315,10 @@ public class PartDetail extends JFrame {
 	
     
     private void next_procedure(String login,String selectedAID,Clock clock,DLL dll,Date start,JOptionPane pane) {
-    	btnArrowRigth.addMouseListener(new MouseAdapter() {
+    	MouseListener rightaction = new  MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				dispose();
-				pane.setVisible(true);
+				
 				if(login.equals("Corinne")) {
 					try {
 						PartDetail partdetail = new PartDetail(dll,dll.getnextID(selectedAID),login,pane, clock);
@@ -336,7 +340,8 @@ public class PartDetail extends JFrame {
 				if(allow.equals("KO")){
 					return;
 				}
-				
+				dispose();
+				pane.setVisible(false);
 				try {
 					
 					
@@ -353,7 +358,7 @@ public class PartDetail extends JFrame {
 					///////////////Fonctionnel
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);        
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES ( ?, ?, ?, ?)"
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp,type) VALUES ( ?, ?, ?, ?,?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value, comp=EXCLUDED.comp;");
 					
 					save_chars(prepStmt, conn0, selectedAID, login,start,allow);
@@ -400,13 +405,25 @@ public class PartDetail extends JFrame {
 			}
 
 			
+		};
+    	btnArrowRigth.addMouseListener(rightaction);
+		panelRigth.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				btnArrowRigth.doClick();
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnArrowRigth.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				btnArrowRigth.setToolTipText("Save & Load Next");
+			}
 		});
 	}
 
-	protected void log_progress(Connection conn0,String login,String selectedAID) throws SQLException {
+	protected void log_progress(Connection conn0,String login,String selectedAID,Clock clock) throws SQLException {
 		if(this.allwnxt.contains("COMPLET")) {
 			conn0 = DriverManager.getConnection(url, props);
-			PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.progress (login,aid,status,card) VALUES (?,?,?,?)");
+			PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.progress (login,aid,status,card,time) VALUES (?,?,?,?,?)");
 			prepStmt.setString(1, login);
 			prepStmt.setString(2, selectedAID);
 			if(this.allwnxt.contains("REWORK")) {
@@ -415,6 +432,8 @@ public class PartDetail extends JFrame {
 				prepStmt.setString(3, "COMPLET");
 			}
 			prepStmt.setInt(4, this.completedVals);
+			prepStmt.setTimestamp(5, Tools.maintenant(clock));
+			
 			prepStmt.execute();
 			
 			prepStmt.close();
@@ -423,12 +442,12 @@ public class PartDetail extends JFrame {
 		
 	}
 
-	protected void log_classif(Connection conn0,String login,String selectedAID,String cid,String target) throws SQLException {
+	protected void log_classif(Connection conn0,String login,String selectedAID,String cid,String target,Clock clock) throws SQLException {
 		if(cid.equals(target)) {
 			return;
 		}
 		conn0 = DriverManager.getConnection(url, props);
-		PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.reclassifs (login,aid,original,target,nature,work,phase,type) VALUES(?,?,?,?,?,?,?,?)");
+		PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.reclassifs (login,aid,original,target,nature,work,phase,type,time) VALUES(?,?,?,?,?,?,?,?,?)");
 		prepStmt.setString(1, login);
 		prepStmt.setString(2, selectedAID);
 		prepStmt.setString(3, cid);
@@ -461,6 +480,9 @@ public class PartDetail extends JFrame {
 				prepStmt.setString(8, "IV");
 			}
 		}
+		
+		prepStmt.setTimestamp(9, Tools.maintenant(clock));
+		
 		prepStmt.execute();
 		
 		prepStmt.close();
@@ -468,10 +490,9 @@ public class PartDetail extends JFrame {
 	}
 
 	private void previous_procedure(String login,String selectedAID,Clock clock,Date start,DLL dll,JOptionPane pane) {
-		btnArrowLeft.addActionListener(new ActionListener() {
+		ActionListener actionLeft = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();
-				pane.setVisible(true);
+				
 				if(login.equals("Corinne")) {
 					try {
 						PartDetail partdetail = new PartDetail(dll,dll.getprevID(selectedAID),login,pane, clock);
@@ -494,6 +515,9 @@ public class PartDetail extends JFrame {
 					return;
 				}
 				
+				dispose();
+				pane.setVisible(false);
+				
 				try {
 					Class.forName("org.postgresql.Driver");
 					String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
@@ -508,7 +532,7 @@ public class PartDetail extends JFrame {
 					/////////////Fonctionnel
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);        
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?)"
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp,type) VALUES (?, ?, ?, ?,?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
 					save_chars(prepStmt, conn0, selectedAID, login,start,allow);
@@ -552,7 +576,20 @@ public class PartDetail extends JFrame {
 			}
 
 			
+		};
+		btnArrowLeft.addActionListener(actionLeft);
+		pnl_controlflex.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				btnArrowLeft.doClick();
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnArrowLeft.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				btnArrowLeft.setToolTipText("Save & Load Previous");
+			}
 		});
+
 	}
 
 	
@@ -567,7 +604,7 @@ public class PartDetail extends JFrame {
 	private void closing_procedure(String login,JOptionPane pane,String selectedAID,Date start) {
     	addWindowListener(new WindowAdapter() {
 	        public void windowClosing(WindowEvent event) {
-	        	pane.setVisible(true);
+	        	pane.setVisible(false);
 	            dispose();
 	            if(login.equals("Corinne")) {
 	            	Home home = new Home(login, clock2);
@@ -587,10 +624,14 @@ public class PartDetail extends JFrame {
 					///////////////Fonctionnel
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES ( ?, ?, ?, ?)"
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp,type) VALUES (?, ?, ?, ?, ?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
 					String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
+					if(allow.equals("KO")) {
+						Home home = new Home(login, clock2);
+						return;
+					}
 					save_chars(prepStmt, conn0, selectedAID, login,start,allow);
 							
 					/////////////Historisation
@@ -599,8 +640,7 @@ public class PartDetail extends JFrame {
 					prepStmt = conn0.prepareStatement("INSERT INTO public.wal (aid, chid, value,phase, comp,time) VALUES (?,?, ?, ?, ?, ?)");
 							
 					save_chars(prepStmt, conn0,clock2, selectedAID, login);
-							
-							
+					Home home = new Home(login, clock2);
 					
 					
 					
@@ -692,7 +732,7 @@ public class PartDetail extends JFrame {
 				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
 				            JOptionPane.ERROR_MESSAGE);
 				}
-				Home home = new Home(login, clock2);
+				
 	        }
 	    });
 	}
@@ -705,6 +745,7 @@ public class PartDetail extends JFrame {
 				prepStmt.setString(3, element.getvalue());
 				//prepStmt.setString(4,"DESCRIPTION");
 				prepStmt.setString(4,element.getComp());
+				prepStmt.setString(5, element.getType().name());
 				prepStmt.addBatch();
         	}
 			for(CharacValue element:modelRight) {
@@ -713,6 +754,7 @@ public class PartDetail extends JFrame {
 				prepStmt.setString(3, element.getvalue());
 				//prepStmt.setString(4,"DESCRIPTION");
 				prepStmt.setString(4,element.getComp());
+				prepStmt.setString(5, element.getType().name());
 				prepStmt.addBatch();
         	}
 			}
@@ -721,6 +763,7 @@ public class PartDetail extends JFrame {
 			prepStmt.setString(3,textField_4.getText());
 			//prepStmt.setString(4,"DESCRIPTION");
 			prepStmt.setString(4,null);
+			prepStmt.setString(5, null);
 			prepStmt.addBatch();
 			
 			prepStmt.setString(1,selectedAID);
@@ -728,6 +771,7 @@ public class PartDetail extends JFrame {
 			prepStmt.setString(3,textField_5.getText());
 			//prepStmt.setString(4,"DESCRIPTION");
 			prepStmt.setString(4,null);
+			prepStmt.setString(5, null);
 			prepStmt.addBatch();
 			
 			prepStmt.setString(1,selectedAID);
@@ -735,6 +779,7 @@ public class PartDetail extends JFrame {
 			prepStmt.setString(3,textArea_3.getText());
 			//prepStmt.setString(4,"DESCRIPTION");
 			prepStmt.setString(4,null);
+			prepStmt.setString(5, null);
 			prepStmt.addBatch();
 			
 			prepStmt.setString(1,selectedAID);
@@ -742,6 +787,7 @@ public class PartDetail extends JFrame {
 			prepStmt.setString(3,textField_6.getText());
 			//prepStmt.setString(4,"DESCRIPTION");
 			prepStmt.setString(4,null);
+			prepStmt.setString(5, null);
 			prepStmt.addBatch();
 			
 			prepStmt.setString(1,selectedAID);
@@ -749,6 +795,7 @@ public class PartDetail extends JFrame {
 			prepStmt.setString(3,textArea_4.getText());
 			//prepStmt.setString(4,"DESCRIPTION");
 			prepStmt.setString(4,null);
+			prepStmt.setString(5, null);
 			prepStmt.addBatch();
 			
 			prepStmt.executeBatch();
@@ -859,13 +906,13 @@ public class PartDetail extends JFrame {
 			prepStmt.close();
 			conn0.close();
 			
-			log_classif(conn0,login,selectedAID,originalcid,currentFamily.get((String) textField_3.getText()));
-			log_progress(conn0,login,selectedAID);
+			log_classif(conn0,login,selectedAID,originalcid,currentFamily.get((String) textField_3.getText()),clock);
+			log_progress(conn0,login,selectedAID,clock);
 			
 
 	}
 
-	private void load_class(/*String url, Properties props, Connection conn1*/) throws SQLException {
+	private void load_class(String selectedAID/*String url, Properties props, Connection conn1*/) throws SQLException {
 
 		MouseAdapter classCancel = new MouseAdapter() {
 			@SuppressWarnings("unchecked")
@@ -881,7 +928,15 @@ public class PartDetail extends JFrame {
 				currentFamily.clear();
 				currentFamily.put(originalclass, originalcid);
 				lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
-				classApply.mouseClicked(e);
+				try {
+					load_chars(currentFamily.get((String) textField_3.getText()),true, selectedAID);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+						| BadPaddingException | ClassNotFoundException | SQLException | IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				//classApply.mouseClicked(e);
 			}};
 			Runnable cancelClass = new Runnable() {
 		        @Override
@@ -946,8 +1001,9 @@ public class PartDetail extends JFrame {
 										viewbutton=true;
 										btnApplyClassification.setVisible(false);
 										lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
-										classApply.mouseClicked(null);
-									} catch (SQLException e) {
+										load_chars(currentFamily.get((String) textField_3.getText()),true, selectedAID);
+										//classApply.mouseClicked(null);
+									} catch (SQLException | InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException | BadPaddingException | ClassNotFoundException | IOException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}
@@ -1034,11 +1090,7 @@ public class PartDetail extends JFrame {
 		pnl_controlflex.setBackground(SystemColor.activeCaption);
 		pnl_controlflex.setName("pnl_controlflex");
 		pnl_controlflex.setForeground(SystemColor.activeCaption);
-		
-		
-		
-		gbc_pnl_controlflex.anchor = GridBagConstraints.WEST;
-		gbc_pnl_controlflex.fill = GridBagConstraints.VERTICAL;
+		gbc_pnl_controlflex.fill = GridBagConstraints.BOTH;
 		gbc_pnl_controlflex.insets = new Insets(0, 0, 5, 0);
 		gbc_pnl_controlflex.gridx = 0;
 		gbc_pnl_controlflex.gridy = 0;
@@ -1050,7 +1102,7 @@ public class PartDetail extends JFrame {
 
 
 		btnArrowLeft.setActionCommand("");
-		btnArrowLeft.setSize(new Dimension((int) (49* (area.width/1366.0)), 50));
+		btnArrowLeft.setSize(new Dimension((int) (100* (area.width/1366.0)), 50));
 		btnArrowLeft.setName("btnArrowLeft");
 		
 		
@@ -1495,6 +1547,7 @@ public class PartDetail extends JFrame {
 		gbl_pnlComment.columnWeights = new double[]{1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gbl_pnlComment.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		pnlComment.setLayout(gbl_pnlComment);
+		lblQuestion.setText("Question");
 		
 		lblQuestion.setForeground(new Color(68, 84, 105));
 		lblQuestion.setFont(new Font("Calibri", Font.BOLD, 12));
@@ -1556,7 +1609,8 @@ public class PartDetail extends JFrame {
 		
 		
 
-		lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
+		//lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
+		//System.out.println("Classification: "+currentFamily.get((String) textField_3.getText()));
 		btnApplyClassification.setVisible(false);
 		
 	}
@@ -1618,6 +1672,8 @@ public class PartDetail extends JFrame {
     	List<CharacValue> characValues = characService.getCharacValues(string);
     	if(characValues.isEmpty()) {
     		pnlCharacLeft.removeAll();
+    		modelLeft.clear();
+    		modelRight.clear();
     		pnlCharacRigth.removeAll();
     		pnlCharacLeft.repaint();
     		pnlCharacRigth.repaint();
@@ -1626,6 +1682,7 @@ public class PartDetail extends JFrame {
     		}
     		return;
     	}
+
     	characValues.get(0).stat=false;
     	for(CharacValue cv:characValues) {
     		cv.setVal(selectedAID,false, string);
@@ -1673,7 +1730,8 @@ public class PartDetail extends JFrame {
 	protected String allow_next(/*List<CharacValue> modelLeft, List<CharacValue> modelRight, */String question, String cid, String status) throws HeadlessException, SQLException {
     	LinkedHashSet<String> critics = new LinkedHashSet<String>();
     	LinkedHashSet<String> nus = new LinkedHashSet<String>();
-    	HashSet<String> allowed = new HashSet<String>(Arrays.asList("0", "1","2","3","4","5","6","7","8","9","/","\\","-","_",",",";"," ","."));
+    	HashSet<String> allowed = new HashSet<String>(Arrays.asList("0", "1","2","3","4","5","6","7","8","9","-","/",",","@"));
+    	this.completedVals=0;
     	if(modelLeft == null) {
     		this.isStub=true;
     		if (status.contains("REWORK:")){
@@ -1685,19 +1743,13 @@ public class PartDetail extends JFrame {
     	}
 		for(CharacValue element:modelLeft) {
 			if(element.isCritical) {
-				if(element.getType().equals("FT")) {
+				if(element.getType()==CharacType.FT) {
 					if(element.getvalue().length()==0) {
 						critics.add(element.getId().split("\\.")[4]);
 					}
 				}else {
-					if(element.getType().equals("NU")) {
-						for (int i = 0; i < element.getvalue().length(); i++){
-							//System.out.println(element.getvalue().charAt(i));
-						    if(!allowed.contains(element.getvalue().charAt(i))){
-						    	nus.add(element.getId().split("\\.")[4]);
-						    	break;
-						    }
-						}
+					if(element.getType()==CharacType.NU) {
+						
 						if(element.getComp().length() == 0 || element.getvalue().length()==0) {
 							critics.add(element.getId().split("\\.")[4]);
 						}
@@ -1709,19 +1761,25 @@ public class PartDetail extends JFrame {
 					
 				}
 			}
-			if(element.getType().equals("FT")) {
-				if(!element.getvalue().equals("Inconnu|Unknown")) {
+			if(element.getType()==CharacType.FT) {
+				if( !element.getvalue().equals("Inconnu&&Unknown") && !element.getvalue().replace(" ", "").equals("&&") ) {
 					this.completedVals=this.completedVals+1;
 			}
 			}
 			else {
-				if(element.getType().equals("NU")) {
-					
-					if(element.getvalue().length()!=0) {
+				if(element.getType()==CharacType.NU) {
+					for (int i = 0; i < element.getvalue().replace("&&", "").length(); i++){
+						//System.out.println(element.getvalue().charAt(i));
+					    if(!allowed.contains(Character.toString(element.getvalue().replace("&&", "").charAt(i)))){
+					    	nus.add(element.getId().split("\\.")[4]);
+					    	break;
+					    }
+					}
+					if( !element.getvalue().replace("---","").replace(" ", "").equals("&&") && element.getComp().replace("---","").replaceAll(" ", "").length()!=0) {
 						this.completedVals=this.completedVals+1;
 					}
 				}else {
-					if(element.getvalue().length()!=0 && !element.getvalue().equals("Inconnu")) {
+					if(element.getvalue().length()!=0 && !element.getvalue().equals("Inconnu/Unknown")) {
 						this.completedVals=this.completedVals+1;
 					}
 				}
@@ -1730,19 +1788,13 @@ public class PartDetail extends JFrame {
 		}
 		for(CharacValue element:modelRight) {
 			if(element.isCritical) {
-				if(element.getType().equals("FT")) {
+				if(element.getType()==CharacType.FT) {
 					if(element.getvalue().length()==0) {
 						critics.add(element.getId().split("\\.")[4]);
 					}
 				}else {
-					if(element.getType().equals("NU")) {
-						for (int i = 0; i < element.getvalue().length(); i++){
-							//System.out.println(element.getvalue().charAt(i));
-						    if(!allowed.contains(element.getvalue().charAt(i))){
-						    	nus.add(element.getId().split("\\.")[4]);
-						    	break;
-						    }
-						}
+					if(element.getType()==CharacType.NU) {
+						
 						if(element.getComp().length() == 0 || element.getvalue().length()==0) {
 							critics.add(element.getId().split("\\.")[4]);
 						}
@@ -1754,25 +1806,26 @@ public class PartDetail extends JFrame {
 					
 				}
 			}
-			//System.out.println("here");
-			if(element.getType().equals("FT")) {
-				//System.out.print("FT");
-				if(!element.getvalue().equals("Inconnu|Unknown")) {
-				this.completedVals=this.completedVals+1;
+			if(element.getType()==CharacType.FT) {
+				if(!element.getvalue().equals("Inconnu|Unknown") && element.getvalue().length()!=0) {
+					this.completedVals=this.completedVals+1;
 			}
 			}
 			else {
-				if(element.getType().equals("NU")) {
-					//System.out.print("NU");
-					if(element.getvalue().length()!=0) {
+				if(element.getType()==CharacType.NU) {
+					for (int i = 0; i < element.getvalue().replace("&&", "").length(); i++){
+						//System.out.println(element.getvalue().charAt(i));
+					    if(!allowed.contains(Character.toString(element.getvalue().replace("&&", "").charAt(i)))){
+					    	nus.add(element.getId().split("\\.")[4]);
+					    	break;
+					    }
+					}
+					if(element.getvalue().length()!=0 && element.getComp().length()!=0) {
 						this.completedVals=this.completedVals+1;
 					}
 				}else {
-					//System.out.print("VL");
 					if(element.getvalue().length()!=0 && !element.getvalue().equals("Inconnu")) {
-						//System.out.println(this.completedVals);
 						this.completedVals=this.completedVals+1;
-						//System.out.println(this.completedVals);
 					}
 				}
 			}
@@ -1781,7 +1834,7 @@ public class PartDetail extends JFrame {
 		
 		if(!nus.isEmpty()) {
 			JOptionPane.showMessageDialog(null, new JLabel(
-				    "<html><h2><font color='red'>Non numeric data in fields:\n ("+String.join(" et ", nus)+") \n Valeurs permises : Chiffres, Slashs, tirets, virgules, point et espace.</font></h2></html>")); 
+				    "<html><h2><font color='red'>Non numeric data in fields: \n ("+String.join(" et ", nus)+") \n Use : [0-9]  '/'  '-'  ',' or (space) or '@' (Unknown)</font></h2></html>")); 
 			this.allwnxt="KO";
 			return "KO";
 		}

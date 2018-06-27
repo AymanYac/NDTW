@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
@@ -37,6 +38,8 @@ public class CharacValue {
 	public JTextField comp;
 	public String oldVal;
 	public String oldComp;
+	public HashSet<String> hist;
+	public static HashMap<String,HashSet<String>> histVals = new HashMap<String,HashSet<String>>();
 	public static boolean stat = false;
 	public static HashMap<String, String> oldVals = new HashMap<String, String>();
 	public static HashMap<String, String> oldComps= new HashMap<String, String>();
@@ -95,6 +98,11 @@ public class CharacValue {
 			}else {
 				this.oldVal="";
 			}
+			if(histVals.containsKey(this.getId())) {
+				this.hist=histVals.get(this.getId());
+			}else {
+				this.hist=new HashSet<String>();
+			}
 		}else {
 			this.oldVal="";
 			stat(selectedAID,cid, b);
@@ -106,6 +114,7 @@ public class CharacValue {
 		stat=true;
 		oldVals.clear();
 		oldComps.clear();
+		histVals.clear();
 		Class.forName("org.postgresql.Driver");
 		String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
 		Properties props = new Properties();
@@ -143,10 +152,40 @@ public class CharacValue {
 			this.oldComp=oldComps.get(this.getId());
 		}
 		
+		
 		rs.close();
 		st.close();
 		conn.close();
+		Connection conn1 = DriverManager.getConnection(url, props);
+		PreparedStatement st1 = conn1.prepareStatement("select * from public.\"data\" WHERE \"chid\" LIKE ? and type = ?");
+		st1.setString(1,cid+ "%");
+		st1.setString(2, "FT");
+		ResultSet rs1 = st1.executeQuery();
+		while(rs1.next()) {
+			add_hists(histVals ,rs1.getString("chid"),rs1.getString("value"));
+		}
 		
+		if(histVals.containsKey(this.getId())) {
+			this.hist=histVals.get(this.getId());
+		}else {
+			this.hist=new HashSet<String>();
+		}
+		
+		rs1.close();
+		st1.close();
+		conn1.close();
+		
+	}
+	private void add_hists(HashMap<String, HashSet<String>> histVals, String chid, String val) {
+		if(histVals.keySet().contains(chid)) {
+			HashSet<String> tmp = histVals.get(chid);
+			tmp.add(val);
+			histVals.put(chid, tmp);
+		}else {
+			HashSet<String> tmp = new HashSet<String>();
+			tmp.add(val);
+			histVals.put(chid, tmp);
+		}
 	}
 
 }

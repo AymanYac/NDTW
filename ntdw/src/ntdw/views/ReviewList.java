@@ -352,7 +352,7 @@ public class ReviewList extends JFrame {
 						    "<html><h2><font color='red'>\"Loading item, please wait\"</font></h2></html>"));
 		        	JDialog dialog = pane.createDialog(null, "Chargement");
 		        	 dialog.setModal(false);
-		        	 dialog.setVisible(true);
+		        	 dialog.setVisible(false);
 					ReviewDetail ReviewDetail = new ReviewDetail(dll,selectedAID,login,pane,clock);
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
 						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException

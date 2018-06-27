@@ -106,6 +106,8 @@ public class Home extends JFrame {
 		JButton button = new JButton("Reports & Summary");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				dispose();
+				Report report = new Report(login, clock);
 			}
 		});
 		button.setName("btnDescribeParts");

@@ -36,13 +36,20 @@ public class MotionPanel extends JPanel {
 				int thisY = parent.getLocation().y;
 
 				// Determine how much the mouse moved since the initial click
-				int xMoved = (thisX + e.getX()) - (thisX + initialClick.x);
-				int yMoved = (thisY + e.getY()) - (thisY + initialClick.y);
+				try{
+					int xMoved = (thisX + e.getX()) - (thisX + initialClick.x);
+					int yMoved = (thisY + e.getY()) - (thisY + initialClick.y);
 
-				// Move window to this position
-				int X = thisX + xMoved;
-				int Y = thisY + yMoved;
-				parent.setLocation(X, Y);
+					// Move window to this position
+					int X = thisX + xMoved;
+					int Y = thisY + yMoved;
+					parent.setLocation(X, Y);
+					
+				}catch(Exception e1){
+					
+				}
+				
+
 			}
 		});
 

@@ -394,7 +394,21 @@ public class ItemList extends JFrame {
 						    "<html><h2><font color='red'>\"Loading item, please wait\"</font></h2></html>"));
 		        	JDialog dialog = pane.createDialog(null, "Chargement");
 		        	 dialog.setModal(false);
-		        	 dialog.setVisible(true);
+		        	 dialog.setVisible(false);
+		        	 try {
+		 				SynthLookAndFeel laf = new SynthLookAndFeel();
+		 				laf.load(PartDetail.class.getResourceAsStream("/ntdw/resources/detail_laf.xml"), PartDetail.class);
+		 				UIManager.setLookAndFeel(laf);
+
+		 			} catch (Exception ee) {
+		 				StringBuilder sb = new StringBuilder(ee.toString());
+		 			    for (StackTraceElement ste : ee.getStackTrace()) {
+		 			        sb.append("\n\tat ");
+		 			        sb.append(ste);
+		 			    }
+		 			    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+		 			            JOptionPane.ERROR_MESSAGE);
+		 			}
 					PartDetail partdetail = new PartDetail(dll,selectedAID,login,pane, clock);
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
 						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
