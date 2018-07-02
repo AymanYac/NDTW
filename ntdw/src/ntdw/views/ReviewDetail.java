@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -36,7 +38,6 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -60,6 +61,7 @@ import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -68,6 +70,7 @@ import javax.swing.SwingUtilities;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -115,7 +118,7 @@ public class ReviewDetail extends JFrame {
 	public GridBagLayout gbl_pnlDescription = new GridBagLayout(); 
 	public JPanel panel = new JPanel(); 
 	public GridBagConstraints gbc_panel = new GridBagConstraints(); 
-	//public GroupLayout gl_panel = new GroupLayout(); 
+	//public GroupLayout gl_panel; 
 	public JPanel pnlClassification = new JPanel(); 
 	public GridBagConstraints gbc_pnlClassification = new GridBagConstraints(); 
 	public GridBagLayout gbl_pnlClassification = new GridBagLayout(); 
@@ -124,10 +127,9 @@ public class ReviewDetail extends JFrame {
 	public GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints(); 
 	public GridBagConstraints gbc_textField_1 = new GridBagConstraints(); 
 	public GridBagConstraints gbc_textField_2 = new GridBagConstraints(); 
-	public GridBagConstraints gbc_textField_3  = new GridBagConstraints();
-
+	public GridBagConstraints gbc_textField_3 = new GridBagConstraints();
 	
-
+	
 	CharacMockDataService characService = CharacMockDataService.getInstance();
 	CharacValueRenderer characValueRenderer = new CharacValueRenderer();
 	private JTextField textField_6 = new JTextField();
@@ -146,49 +148,50 @@ public class ReviewDetail extends JFrame {
 	private ResultSet rs;
 	private PreparedStatement st;
 	private Connection conn;
-	private MouseAdapter classApply;
-	private JLabel lblNewLabel_6 = new JLabel();
-	private JLabel lblNewLabel_7 = new JLabel();
+	protected Date fedate;
+	private Connection conn1;
+	private ResultSet rs1;
+	private PreparedStatement st1;
+	private String url = new String();
+	private Properties props = new Properties();
 	private JPanel pnlCharValues = new JPanel();
 	private JPanel pnlComment = new JPanel();
 	private JLabel lblQuestion = new JLabel();
 	private JLabel lblNewLabel_11 = new JLabel();
-	private ResultSet rs1;
-	private PreparedStatement st1;
-	private Connection conn1;
-	protected String url;
-	protected Properties props = new Properties();
-	private JButton btnApplyClassification = new JButton();
-	private JButton btnApplyCancel = new JButton();
-	private JLabel lblNewLabel_5 = new JLabel();
-
-	private JButton btnArrowLeft = new JButton();
 	private JButton btnArrowRigth = new JButton();
+	private JButton btnArrowLeft = new JButton();
 	private JLabel lblNewLabel_1 = new JLabel();
+	private JButton btnApplyClassification = new JButton();
 	private JLabel lblNewLabel_2 = new JLabel();
 	private JLabel lblNewLabel_3 = new JLabel();
 	private GridBagConstraints gbc_btnApplyClassification = new GridBagConstraints();
+	private JButton btnApplyCancel = new JButton();
 	private GridBagConstraints gbc_btnApplyCancel = new GridBagConstraints();
+	private JLabel lblNewLabel_5 = new JLabel();
 	private GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
 	private GridBagConstraints gbc_textField_4 = new GridBagConstraints();
+	private JLabel lblNewLabel_6 = new JLabel();
 	private GridBagConstraints gbc_lblNewLabel_6 = new GridBagConstraints();
 	private GridBagConstraints gbc_textField_5 = new GridBagConstraints();
+	private JLabel lblNewLabel_7 = new JLabel();
 	private GridBagConstraints gbc_lblNewLabel_7 = new GridBagConstraints();
 	private GridBagConstraints gbc_textArea_3 = new GridBagConstraints();
 	private GridBagConstraints gbc_pnlCharValues = new GridBagConstraints();
 	private GridBagLayout gbl_pnlCharValues = new GridBagLayout();
 	private JScrollPane scrollPane = new JScrollPane();
+	private GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 	private JPanel panelCharVals = new JPanel();
-	private JPanel panel_1 = new JPanel();
+	private GridBagLayout gbl_panelCharVals = new GridBagLayout();
 	private GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-	private GridBagLayout gbl_panel_1 = new GridBagLayout();
+	private JPanel panel_1 = new JPanel();
 	private JLabel lblNewLabel_8 = new JLabel();
 	private GridBagConstraints gbc_lblNewLabel_8 = new GridBagConstraints();
+	private GridBagLayout gbl_panel_1 = new GridBagLayout();
 	private JLabel lblNewLabel_9 = new JLabel();
 	private GridBagConstraints gbc_lblNewLabel_9 = new GridBagConstraints();
-	private JPanel panel_2 = new JPanel();
 	private GridBagConstraints gbc_panel_2 = new GridBagConstraints();
 	private GridBagLayout gbl_panel_2 = new GridBagLayout();
+	private JPanel panel_2 = new JPanel();
 	private JLabel lblNewLabel_10 = new JLabel();
 	private GridBagConstraints gbc_lblNewLabel_10 = new GridBagConstraints();
 	private JLabel lblNewLabel_12 = new JLabel();
@@ -203,8 +206,16 @@ public class ReviewDetail extends JFrame {
 	private GridBagConstraints gbc_lblNewLabel_11 = new GridBagConstraints();
 	private GridBagConstraints gbc_textField_6 = new GridBagConstraints();
 	private GridBagConstraints gbc_textArea_4 = new GridBagConstraints();
-	private GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-	private GridBagLayout gbl_panelCharVals = new GridBagLayout();
+	private MouseAdapter classApply;
+	private String status;
+	private int completedVals;
+	private String allwnxt;
+	private boolean isStub;
+	private boolean classchange;
+	private HashSet<String> classesTemp = new HashSet<String>();
+	protected Clock clock2;
+	private final JLabel lblNewLabel_13 = new JLabel("REVIEW MODE");
+	
 	
 
 	/**
@@ -215,7 +226,7 @@ public class ReviewDetail extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ReviewDetail frame = new ReviewDetail(null,null,null,null,null);
+					ReviewDetail frame = new ReviewDetail(null,null,null,null, null);
 				} catch (Exception e) {
 					StringBuilder sb = new StringBuilder(e.toString());
 				    for (StackTraceElement ste : e.getStackTrace()) {
@@ -229,13 +240,13 @@ public class ReviewDetail extends JFrame {
 		});
 	}
 
-	
 	/**
 	 * Create the frame.
 	 * @param selectedAID 
 	 * @param dll 
 	 * @param login 
 	 * @param pane 
+	 * @param clock 
 	 * @throws IOException 
 	 * @throws BadPaddingException 
 	 * @throws IllegalBlockSizeException 
@@ -247,11 +258,15 @@ public class ReviewDetail extends JFrame {
 	 * @throws ClassNotFoundException 
 	 * @throws SQLException 
 	 */
-	public ReviewDetail(DLL dll, String selectedAID, String login, JOptionPane pane,Clock clock) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, ShortBufferException, IllegalBlockSizeException, BadPaddingException, IOException, ClassNotFoundException, SQLException {
+	public ReviewDetail(DLL dll, String selectedAID, String login, JOptionPane pane, Clock clock) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, ShortBufferException, IllegalBlockSizeException, BadPaddingException, IOException, ClassNotFoundException, SQLException {
 		if(selectedAID!=null) {
+			this.clock2=clock;
+			this.completedVals=0;
+			this.allwnxt="";
+			this.isStub=false;
 			try {
 				SynthLookAndFeel laf = new SynthLookAndFeel();
-				laf.load(PartDetail.class.getResourceAsStream("/ntdw/resources/detail_laf.xml"), PartDetail.class);
+				laf.load(ReviewDetail.class.getResourceAsStream("/ntdw/resources/detail_laf.xml"), ReviewDetail.class);
 				UIManager.setLookAndFeel(laf);
 
 			} catch (Exception e) {
@@ -274,40 +289,40 @@ public class ReviewDetail extends JFrame {
 			props.setProperty("socketTimeout", "0");
 			//props.setProperty("ssl","true");
 			
-			load_item_data(selectedAID/*conn, url, props, st, selectedAID, rs*/);
-			load_ui_elements(selectedAID/*,btnApplyClassification,btnApplyCancel,lblNewLabel_5*/,dll);
+			
+			load_item_data(/*conn, url, props, st, url, rs, fedate*/ selectedAID, fedate);
+			load_class(/*url, props, conn1*/selectedAID);
+			
+			load_ui_elements(selectedAID/*btnApplyClassification,btnArrowRigth,btnArrowLeft,lblNewLabel_1,dll, url,gbl_contentPane,pnl_controlflex,gbc_pnl_controlflex,lblNewLabel,panelCenter,gbc_panelCenter,lblVal,panelRigth,gbc_panelRigth,lblFlexor,pnlDescription,gbc_pnlDescription,gbl_pnlDescription,panel,gbc_panel,gl_panel,pnlClassification,gbc_pnlClassification,gbl_pnlClassification,lblNewLabel_4,gbc_textField,gbc_lblNewLabel_4,gbc_textField_1,gbc_textField_2,gbc_textField_3*/);
 			load_chars(rs.getString("cid"),false,selectedAID);
-			load_class(/*btnApplyClassification,btnApplyCancel*/);
-						
 			
-			load_static_data(/*url, props,*/ selectedAID,pane);
 			
+			load_static_data(/*url, props,*/ selectedAID, pane);
+
 			closing_procedure(login, pane, selectedAID, start);
-			
-			
-			previous_procedure(dll, selectedAID, pane, start, login, clock);
-			next_procedure(login, selectedAID, start, dll, clock, pane);
+			previous_procedure(login, selectedAID, clock, start, dll, pane);
+			next_procedure(login, selectedAID, clock, dll, start, pane);
+			lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
 			
 			
 		}else {
 			pane.setVisible(false);
 			dispose();
-			ReviewList ReviewList = new ReviewList(login, clock);
+			ItemList itemlist = new ItemList(login, clock);
 		}
 	}
 	
 	
 	
     
-	private void next_procedure(String login,String selectedAID,Date start,DLL dll,Clock clock,JOptionPane pane) {
-		lblFlexor.addMouseListener(new MouseAdapter() {
+    private void next_procedure(String login,String selectedAID,Clock clock,DLL dll,Date start,JOptionPane pane) {
+    	MouseListener rightaction = new  MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				dispose();
-				pane.setVisible(true);
+				
 				if(login.equals("Corinne")) {
 					try {
-						ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane,clock);
+						ReviewDetail partdetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane, clock);
 					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
 							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
 							| BadPaddingException | ClassNotFoundException | IOException | SQLException e1) {
@@ -316,29 +331,82 @@ public class ReviewDetail extends JFrame {
 					}
 					return;
 				}
+				if( (textField_5.getText()!=null && textField_5.getText().replace(" ", "").length()==0) && (textArea_2.getText().toUpperCase().contains(" REF") || textArea_2.getText().toUpperCase().contains(" TYPE ")) ) {
+					String[] options = new String[] {"Write Ref.", "Ignore"};
+				    int response = JOptionPane.showOptionDialog(null, new JLabel(
+						    "<html><h2><font color='red'>Possible Ref. in description fields, Enter Manufacturer Reference?</font></h2></html>"), "Empty Manufacturer Ref.",
+				        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+				        null, options, options[0]);
+				    if(response==0) {
+				    	return;
+				    }
+				}
 				
 				
 				
 				
+				String allow="";
 				try {
+					allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
+				} catch (HeadlessException | SQLException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+				if(!allow.contains("REVIEWED")){
+					System.out.println(allow);
+					return;
+				}
+				
+				if(hasChangedNow(currentFamily.get((String) textField_3.getText()))) {
+					if(textArea_4.getText() == null || textArea_4.getText().replace(" ", "").length() == 0) {
+						JOptionPane.showMessageDialog(null, new JLabel(
+							    "<html><h2><font color='red'>Class change detected, please write comment !</font></h2></html>"));
+						return;
+					}
+				
+				}
+				dispose();
+				pane.setVisible(false);
+				try {
+					
+					
 					Class.forName("org.postgresql.Driver");
-					url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
+					String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
+					
 					props.setProperty("user","postgres");
 					props.setProperty("password","Neonec");
-
 					props.setProperty("loginTimeout", "20");
 					props.setProperty("connectTimeout", "0");
 					props.setProperty("socketTimeout", "0");
 					//props.setProperty("ssl","true");
+					
+					
+						
+						
+					
+					
+					///////////////Fonctionnel
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);        
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
-							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
-					
-					save_chars(prepStmt, conn0);
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp,type) VALUES ( ?, ?, ?, ?,?)"
+							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value, comp=EXCLUDED.comp;");
 					
 					
-					ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane,clock);
+					
+					save_chars(prepStmt, conn0, selectedAID, login,start,allow);
+					
+					/////////////Historisation
+					conn0 = DriverManager.getConnection(url, props);
+					conn0.setAutoCommit(false);        
+					prepStmt = conn0.prepareStatement("INSERT INTO public.wal (aid, chid, value,phase, comp,time) VALUES (?,?, ?, ?, ?, ?)");
+					
+					save_chars(prepStmt, conn0,clock, selectedAID, login);
+					
+					
+					
+					
+					
+					ReviewDetail partdetail = new ReviewDetail(dll,dll.getnextID(selectedAID),login,pane, clock);
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
 						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
 						| BadPaddingException | IOException e1) {
@@ -368,284 +436,243 @@ public class ReviewDetail extends JFrame {
 				}
 			}
 
-			private void save_chars(PreparedStatement prepStmt,Connection conn0) throws SQLException {
-				if(modelLeft != null) {
-					for(CharacValue element:modelLeft) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					for(CharacValue element:modelRight) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					}
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF");
-					prepStmt.setString(3,textField_4.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF_REF");
-					prepStmt.setString(3,textField_5.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "URL");
-					prepStmt.setString(3,textArea_3.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "QUESTION");
-					prepStmt.setString(3,textField_6.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "COMMENT");
-					prepStmt.setString(3,textArea_4.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.executeBatch();
-					conn0.commit();
-					prepStmt.clearBatch();
-					prepStmt.close();
-					conn0.close();
-					conn0 = DriverManager.getConnection(url, props);
-					Date end = new Date();
-					
-					prepStmt = conn0.prepareStatement("UPDATE public.items SET status='REVIEWED',cid= ?,\"classChange\"=? , \"ques\"=?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
-					prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-					prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-					if(textField_6.getText().length()>=5) {
-						prepStmt.setString(3, textField_6.getText().substring(0,5));
-					}else {
-						prepStmt.setString(3, textField_6.getText());
-					}
-					prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-					prepStmt.setString(6, selectedAID);
-					prepStmt.setObject(5, LocalDate.now());
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					prepStmt.execute();
-					
-					prepStmt.close();
-					conn0.close();
+			
+		};
+    	btnArrowRigth.addMouseListener(rightaction);
+		panelRigth.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				btnArrowRigth.doClick();
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnArrowRigth.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				btnArrowRigth.setToolTipText("Save & Load Next");
 			}
 		});
+	}
+
+	protected void log_progress(Connection conn0,String login,String selectedAID,Clock clock) throws SQLException {
+		if(this.allwnxt.contains("REVIEWED")) {
+			System.out.println("here");
+			conn0 = DriverManager.getConnection(url, props);
+			PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.progress (login,aid,status,card,time) VALUES (?,?,?,?,?)");
+			prepStmt.setString(1, login);
+			prepStmt.setString(2, selectedAID);
+			if(this.allwnxt.contains("REWORK")) {
+				prepStmt.setString(3,"REWORK:REVIEWED");
+			}else {
+				prepStmt.setString(3, "REVIEWED");
+			}
+			prepStmt.setInt(4, this.completedVals);
+			prepStmt.setTimestamp(5, Tools.maintenant(clock));
+			
+			prepStmt.execute();
+			
+			prepStmt.close();
+			conn0.close();
+		}else {
+			System.out.println(this.allwnxt);
+		}
+		
+	}
+
+	protected void log_classif(Connection conn0,String login,String selectedAID,String cid,String target,Clock clock) throws SQLException {
+		if(cid.equals(target)) {
+			return;
+		}
+		conn0 = DriverManager.getConnection(url, props);
+		PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.reclassifs (login,aid,original,target,nature,work,phase,type,time) VALUES(?,?,?,?,?,?,?,?,?)");
+		prepStmt.setString(1, login);
+		prepStmt.setString(2, selectedAID);
+		prepStmt.setString(3, cid);
+		prepStmt.setString(4, target);
+		if(isEphem(target)) {
+			prepStmt.setString(5, "TEMP");
+		}else {
+			if(this.isStub) {
+				prepStmt.setString(5, "STUB");
+			}else {
+				prepStmt.setString(5, "REEL");
+			}
+		}
+		if(this.allwnxt.contains("REWORK")) {
+			prepStmt.setString(6, "REWORK");
+		}else {
+			prepStmt.setString(6, "INITIAL");
+		}
+		prepStmt.setString(7, "REVIEW");
+		if(!isEphem(cid)) {
+			if(!isEphem(target)) {
+				prepStmt.setString(8, "I");
+			}else {
+				prepStmt.setString(8, "II");
+			}
+		}else {
+			if(!isEphem(target)) {
+				prepStmt.setString(8, "III");
+			}else {
+				prepStmt.setString(8, "IV");
+			}
+		}
+		
+		prepStmt.setTimestamp(9, Tools.maintenant(clock));
+		
+		prepStmt.execute();
+		
+		prepStmt.close();
+		conn0.close();
+	}
+
+	private void previous_procedure(String login,String selectedAID,Clock clock,Date start,DLL dll,JOptionPane pane) {
+		ActionListener actionLeft = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(login.equals("Corinne")) {
+					try {
+						ReviewDetail partdetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane, clock);
+					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+							| BadPaddingException | ClassNotFoundException | IOException | SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					return;
+				}
+				
+				if( (textField_5.getText()!=null && textField_5.getText().replace(" ", "").length()==0) && (textArea_2.getText().toUpperCase().contains(" REF") || textArea_2.getText().toUpperCase().contains(" TYPE ")) ) {
+					String[] options = new String[] {"Write Ref.", "Ignore"};
+				    int response = JOptionPane.showOptionDialog(null, new JLabel(
+						    "<html><h2><font color='red'>Possible Ref. in description fields, Enter Manufacturer Reference?</font></h2></html>"), "Empty Manufacturer Ref.",
+				        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+				        null, options, options[0]);
+				    if(response==0) {
+				    	return;
+				    }
+				}
+				
+				
+				
+				
+				
+				
+				
+				String allow="";
+				try {
+					allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
+				} catch (HeadlessException | SQLException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+				if(!allow.contains("REVIEWED")){
+					System.out.println(allow);
+					return;
+				}
+				if(hasChangedNow(currentFamily.get((String) textField_3.getText()))) {
+					if(textArea_4.getText() == null || textArea_4.getText().replace(" ", "").length() == 0) {
+						JOptionPane.showMessageDialog(null, new JLabel(
+							    "<html><h2><font color='red'>Class change detected, please write comment !</font></h2></html>"));
+						return;
+					}
+					
+					
+				}
+				
+				dispose();
+				pane.setVisible(false);
+				
+				try {
+					Class.forName("org.postgresql.Driver");
+					String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
+					props.setProperty("user","postgres");
+					props.setProperty("password","Neonec");
+
+					props.setProperty("loginTimeout", "20");
+					props.setProperty("connectTimeout", "0");
+					props.setProperty("socketTimeout", "0");
+					//props.setProperty("ssl","true");
+					
+					
+					
+					/////////////Fonctionnel
+					Connection conn0 = DriverManager.getConnection(url, props);
+					conn0.setAutoCommit(false);        
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp,type) VALUES (?, ?, ?, ?,?)"
+							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
+					
+					save_chars(prepStmt, conn0, selectedAID, login,start,allow);
+					
+					
+					/////////////Historisation
+					conn0 = DriverManager.getConnection(url, props);
+					conn0.setAutoCommit(false);        
+					prepStmt = conn0.prepareStatement("INSERT INTO public.wal (aid, chid, value,phase, comp,time) VALUES (?, ?, ?, ?, ?,?)");
+							
+					save_chars(prepStmt, conn0,clock, selectedAID, login);
+					
+					ReviewDetail partdetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane, clock);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+						| BadPaddingException | IOException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (ClassNotFoundException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				}
+			}
+
+			
+		};
+		btnArrowLeft.addActionListener(actionLeft);
+		pnl_controlflex.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				btnArrowLeft.doClick();
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnArrowLeft.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				btnArrowLeft.setToolTipText("Save & Load Previous");
+			}
+		});
+
 	}
 
 	
-	private void previous_procedure(DLL dll,String selectedAID,JOptionPane pane,Date start,String login,Clock clock) {
-		lblNewLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				dispose();
-				pane.setVisible(true);
-				if(login.equals("Corinne")) {
-					try {
-						ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane,clock);
-					} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-							| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-							| BadPaddingException | ClassNotFoundException | IOException | SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					return;
-				}
-				
-				
-				
-				
-				
-				try {
-					Class.forName("org.postgresql.Driver");
-					url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
-					props.setProperty("user","postgres");
-					props.setProperty("password","Neonec");
 
-					props.setProperty("loginTimeout", "20");
-					props.setProperty("connectTimeout", "0");
-					props.setProperty("socketTimeout", "0");
-					//props.setProperty("ssl","true");
-					Connection conn0 = DriverManager.getConnection(url, props);
-					conn0.setAutoCommit(false);
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
-							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
-					
-					save_chars(conn0, prepStmt);
-					
-					ReviewDetail ReviewDetail = new ReviewDetail(dll,dll.getprevID(selectedAID),login,pane,clock);
-				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-						| BadPaddingException | IOException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (ClassNotFoundException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException e1) {
-					StringBuilder sb = new StringBuilder(e1.toString());
-				    for (StackTraceElement ste : e1.getStackTrace()) {
-				        sb.append("\n\tat ");
-				        sb.append(ste);
-				    }
-				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-				            JOptionPane.ERROR_MESSAGE);
-				}
-			}
-
-			private void save_chars(Connection conn0, PreparedStatement prepStmt) throws SQLException {
-				if(modelLeft!=null) {
-					for(CharacValue element:modelLeft) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					for(CharacValue element:modelRight) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					}
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF");
-					prepStmt.setString(3,textField_4.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF_REF");
-					prepStmt.setString(3,textField_5.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "URL");
-					prepStmt.setString(3,textArea_3.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "QUESTION");
-					prepStmt.setString(3,textField_6.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "QUESTION");
-					prepStmt.setString(3,textField_6.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "COMMENT");
-					prepStmt.setString(3,textArea_4.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.executeBatch();
-					conn0.commit();
-					prepStmt.clearBatch();
-					prepStmt.close();
-					conn0.close();
-					
-					conn0 = DriverManager.getConnection(url, props);
-					Date end = new Date();
-					
-					prepStmt = conn0.prepareStatement("UPDATE public.items SET status='REVIEWED',cid= ?,\"classChange\"=?, \"ques\"=?, timetaken=timetaken + ?, ledate = ? WHERE aid = ?");
-					prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-					prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-					if(textField_6.getText().length()>=5) {
-						prepStmt.setString(3, textField_6.getText().substring(0,5));
-					}else {
-						prepStmt.setString(3, textField_6.getText());
-					}
-					prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-					prepStmt.setString(6, selectedAID);
-					prepStmt.setObject(5, LocalDate.now());
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					prepStmt.execute();
-					
-					prepStmt.close();
-					conn0.close();	
-			}
-		});
-	}
-
+	
+	
+	
+	
+	
+	
+	
 	private void closing_procedure(String login,JOptionPane pane,String selectedAID,Date start) {
-		addWindowListener(new WindowAdapter() {
-	        public void windowClosing(WindowEvent event,Clock clock) {
-	            pane.setVisible(true);
+    	addWindowListener(new WindowAdapter() {
+	        public void windowClosing(WindowEvent event) {
+	        	pane.setVisible(false);
 	            dispose();
 	            if(login.equals("Corinne")) {
-	            	Home home = new Home(login, clock);
+	            	Home home = new Home(login, clock2);
 	            	return;
 	            }
 	            try {
@@ -657,12 +684,49 @@ public class ReviewDetail extends JFrame {
 					props.setProperty("connectTimeout", "0");
 					props.setProperty("socketTimeout", "0");
 					//props.setProperty("ssl","true");
+					
+					if(hasChangedNow(currentFamily.get((String) textField_3.getText()))) {
+						if(textArea_4.getText() == null || textArea_4.getText().replace(" ", "").length() == 0) {
+							JOptionPane.showMessageDialog(null, new JLabel(
+								    "<html><h2><font color='red'>WARNING: Data not Saved : Class change detected & No comment written.</font></h2></html>"));
+							return;
+						}
+						
+						
+					}
+					
+					
+					
+					///////////////Fonctionnel
 					Connection conn0 = DriverManager.getConnection(url, props);
-					conn0.setAutoCommit(false);        
-					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp) VALUES (?, ?, ?, ?, ?)"
+					conn0.setAutoCommit(false);
+					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp,type) VALUES (?, ?, ?, ?, ?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value,comp=EXCLUDED.comp;");
 					
-					save_chars(prepStmt,conn0);
+					String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
+					if(!allow.contains("REVIEWED")) {
+						System.out.println(allow);
+						Home home = new Home(login, clock2);
+						return;
+					}
+					save_chars(prepStmt, conn0, selectedAID, login,start,allow);
+							
+					/////////////Historisation
+					conn0 = DriverManager.getConnection(url, props);
+					conn0.setAutoCommit(false);        
+					prepStmt = conn0.prepareStatement("INSERT INTO public.wal (aid, chid, value,phase, comp,time) VALUES (?,?, ?, ?, ?, ?)");
+							
+					save_chars(prepStmt, conn0,clock2, selectedAID, login);
+					Home home = new Home(login, clock2);
+					
+					
+					
+					
+					
+					
+					
+					
+					
 				} catch (ClassNotFoundException e) {
 					StringBuilder sb = new StringBuilder(e.toString());
 				    for (StackTraceElement ste : e.getStackTrace()) {
@@ -696,6 +760,7 @@ public class ReviewDetail extends JFrame {
 				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
 				            JOptionPane.ERROR_MESSAGE);
 				} catch (NoSuchProviderException e) {
+					// TODO Auto-generated catch block
 					StringBuilder sb = new StringBuilder(e.toString());
 				    for (StackTraceElement ste : e.getStackTrace()) {
 				        sb.append("\n\tat ");
@@ -744,107 +809,188 @@ public class ReviewDetail extends JFrame {
 				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
 				            JOptionPane.ERROR_MESSAGE);
 				}
-				Home home = new Home(login, clock);
+				
 	        }
-
-			private void save_chars(PreparedStatement prepStmt, Connection conn0) throws SQLException {
-				if(modelLeft!=null) {
-					for(CharacValue element:modelLeft) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					for(CharacValue element:modelRight) {
-						prepStmt.setString(1,selectedAID);
-						prepStmt.setString(2,element.getId());
-						prepStmt.setString(3, element.getvalue());
-						//prepStmt.setString(4,"REVIEW");
-						prepStmt.setString(4,element.getComp());
-						prepStmt.addBatch();
-		        	}
-					}
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF");
-					prepStmt.setString(3,textField_4.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "MANUF_REF");
-					prepStmt.setString(3,textField_5.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "URL");
-					prepStmt.setString(3,textArea_3.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "QUESTION");
-					prepStmt.setString(3,textField_6.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.setString(1,selectedAID);
-					prepStmt.setString(2, "COMMENT");
-					prepStmt.setString(3,textArea_4.getText());
-					//prepStmt.setString(4,"REVIEW");
-					prepStmt.setString(4,null);
-					prepStmt.addBatch();
-					
-					prepStmt.executeBatch();
-					conn0.commit();
-					prepStmt.clearBatch();
-					prepStmt.close();
-					conn0.close();
-					conn0 = DriverManager.getConnection(url, props);
-					Date end = new Date();
-					
-					prepStmt = conn0.prepareStatement("UPDATE public.items SET status='PENDING', cid= ?, \"classChange\"=?, \"ques\"=?, timetaken = timetaken + ? , ledate = ? WHERE aid = ?");
-					prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
-					prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
-					if(textField_6.getText().length()>=5) {
-						prepStmt.setString(3, textField_6.getText().substring(0,5));
-					}else {
-						prepStmt.setString(3, textField_6.getText());
-					}
-					prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
-					prepStmt.setString(6, selectedAID);
-					prepStmt.setObject(5, LocalDate.now());
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					prepStmt.execute();
-					
-					prepStmt.close();
-					conn0.close();
-			}
 	    });
 	}
-
 	
-	private void load_class(/*JButton btnApplyClassification,JButton btnApplyCancel*/) throws SQLException {
+	private void save_chars(PreparedStatement prepStmt,Connection conn0,String selectedAID, String login,Date start,String allow) throws SQLException {
+		if(modelLeft!=null) {
+			for(CharacValue element:modelLeft) {
+				prepStmt.setString(1,selectedAID);
+				prepStmt.setString(2,element.getId());
+				prepStmt.setString(3, element.getvalue());
+				//prepStmt.setString(4,"REVIEW");
+				prepStmt.setString(4,element.getComp());
+				prepStmt.setString(5, element.getType().name());
+				prepStmt.addBatch();
+        	}
+			for(CharacValue element:modelRight) {
+				prepStmt.setString(1,selectedAID);
+				prepStmt.setString(2,element.getId());
+				prepStmt.setString(3, element.getvalue());
+				//prepStmt.setString(4,"REVIEW");
+				prepStmt.setString(4,element.getComp());
+				prepStmt.setString(5, element.getType().name());
+				prepStmt.addBatch();
+        	}
+			}
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "MANUF");
+			prepStmt.setString(3,textField_4.getText());
+			//prepStmt.setString(4,"REVIEW");
+			prepStmt.setString(4,null);
+			prepStmt.setString(5, null);
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "MANUF_REF");
+			prepStmt.setString(3,textField_5.getText());
+			//prepStmt.setString(4,"REVIEW");
+			prepStmt.setString(4,null);
+			prepStmt.setString(5, null);
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "URL");
+			prepStmt.setString(3,textArea_3.getText());
+			//prepStmt.setString(4,"REVIEW");
+			prepStmt.setString(4,null);
+			prepStmt.setString(5, null);
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "QUESTION");
+			prepStmt.setString(3,textField_6.getText());
+			//prepStmt.setString(4,"REVIEW");
+			prepStmt.setString(4,null);
+			prepStmt.setString(5, null);
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "COMMENT");
+			prepStmt.setString(3,textArea_4.getText());
+			//prepStmt.setString(4,"REVIEW");
+			prepStmt.setString(4,null);
+			prepStmt.setString(5, null);
+			prepStmt.addBatch();
+			
+			prepStmt.executeBatch();
+			conn0.commit();
+			prepStmt.clearBatch();
+			prepStmt.close();
+			conn0.close();
+			conn0 = DriverManager.getConnection(url, props);
+			Date end = new Date();
+			if(fedate!=null) {
+				prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? WHERE aid = ?");
+				prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
+				//prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
+				prepStmt.setBoolean(2, hasChanged(currentFamily.get((String) textField_3.getText())));
+				if(textField_6.getText().length()>=5) {
+					prepStmt.setString(3, textField_6.getText().substring(0,5));
+				}else {
+					prepStmt.setString(3, textField_6.getText());
+				}
+				prepStmt.setString(6, selectedAID);
+				prepStmt.setObject(5, LocalDate.now());
+				prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
+				
+			}else {
+				prepStmt = conn0.prepareStatement("UPDATE public.items SET status='"+allow+"', cid= ?, \"classChange\"=?, \"ques\" = ?, timetaken = timetaken + ?, ledate = ? , fedate = ? WHERE aid = ?");
+				prepStmt.setString(1, currentFamily.get((String) textField_3.getText()));
+				//prepStmt.setBoolean(2, !originalcid.equals(currentFamily.get((String) textField_3.getText())));
+				prepStmt.setBoolean(2, hasChanged(currentFamily.get((String) textField_3.getText())));
+				if(textField_6.getText().length()>=5) {
+					prepStmt.setString(3, textField_6.getText().substring(0,5));
+				}else {
+					prepStmt.setString(3, textField_6.getText());
+				}
+				prepStmt.setString(7, selectedAID);
+				prepStmt.setObject(5, LocalDate.now());
+				prepStmt.setObject(6, LocalDate.now());
+				prepStmt.setDouble(4, Double.valueOf((int)((end.getTime() - start.getTime()) / 1000)));
+			}
+			prepStmt.execute();
+			
+			prepStmt.close();
+			conn0.close();
+	}
+	private void save_chars(PreparedStatement prepStmt,Connection conn0,Clock clock,String selectedAID,String login) throws SQLException {
+		if(modelLeft!=null) {
+			for(CharacValue element:modelLeft) {
+				prepStmt.setString(1,selectedAID);
+				prepStmt.setString(2,element.getId());
+				prepStmt.setString(3, element.getvalue());
+				prepStmt.setString(4,"REVIEW");
+				prepStmt.setString(5,element.getComp());
+				prepStmt.setTimestamp(6, Tools.maintenant(clock));
+				prepStmt.addBatch();
+        	}
+			for(CharacValue element:modelRight) {
+				prepStmt.setString(1,selectedAID);
+				prepStmt.setString(2,element.getId());
+				prepStmt.setString(3, element.getvalue());
+				prepStmt.setString(4,"REVIEW");
+				prepStmt.setString(5,element.getComp());
+				prepStmt.setTimestamp(6, Tools.maintenant(clock));
+				prepStmt.addBatch();
+        	}
+			}
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "MANUF");
+			prepStmt.setString(3,textField_4.getText());
+			prepStmt.setString(4,"REVIEW");
+			prepStmt.setString(5,null);
+			prepStmt.setTimestamp(6, Tools.maintenant(clock));
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "MANUF_REF");
+			prepStmt.setString(3,textField_5.getText());
+			prepStmt.setString(4,"REVIEW");
+			prepStmt.setString(5,null);
+			prepStmt.setTimestamp(6, Tools.maintenant(clock));
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "URL");
+			prepStmt.setString(3,textArea_3.getText());
+			prepStmt.setString(4,"REVIEW");
+			prepStmt.setString(5,null);
+			prepStmt.setTimestamp(6, Tools.maintenant(clock));
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "QUESTION");
+			prepStmt.setString(3,textField_6.getText());
+			prepStmt.setString(4,"REVIEW");
+			prepStmt.setString(5,null);
+			prepStmt.setTimestamp(6, Tools.maintenant(clock));
+			prepStmt.addBatch();
+			
+			prepStmt.setString(1,selectedAID);
+			prepStmt.setString(2, "COMMENT");
+			prepStmt.setString(3,textArea_4.getText());
+			prepStmt.setString(4,"REVIEW");
+			prepStmt.setString(5,null);
+			prepStmt.setTimestamp(6, Tools.maintenant(clock));
+			prepStmt.addBatch();
+			
+			prepStmt.executeBatch();
+			conn0.commit();
+			prepStmt.clearBatch();
+			prepStmt.close();
+			conn0.close();
+			
+			log_classif(conn0,login,selectedAID,originalcid,currentFamily.get((String) textField_3.getText()),clock);
+			log_progress(conn0,login,selectedAID,clock);
+			
+
+	}
+
+	private void load_class(String selectedAID/*String url, Properties props, Connection conn1*/) throws SQLException {
+
 		MouseAdapter classCancel = new MouseAdapter() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -859,104 +1005,116 @@ public class ReviewDetail extends JFrame {
 				currentFamily.clear();
 				currentFamily.put(originalclass, originalcid);
 				lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
-				classApply.mouseClicked(e);
-			}};
-		Runnable cancelClass = new Runnable() {
-	        @Override
-	        public void run() {
-	        	classCancel.mouseClicked(null); 
-	        }
-	    };
-	    btnApplyCancel.addMouseListener(classCancel);
-		textField_3.getDocument().addDocumentListener(new DocumentListener() {
-
-			public void changedUpdate(DocumentEvent e){
-				
-			}
-
-			public void insertUpdate(DocumentEvent e) {
-				if(!viewbutton ) {
-					btnApplyClassification.setVisible(false);
+				try {
+					load_chars(currentFamily.get((String) textField_3.getText()),true, selectedAID);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+						| BadPaddingException | ClassNotFoundException | SQLException | IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-				if(textField_3.getText().split("\\.").length !=4) {
-					return;
-				}else{
-					if(textField_3.getText().split("\\.")[3].length() <3) {
-						return;
+				//classApply.mouseClicked(e);
+			}};
+			Runnable cancelClass = new Runnable() {
+		        @Override
+		        public void run() {
+		        	classCancel.mouseClicked(null); 
+		        }
+		    };
+			btnApplyCancel.addMouseListener(classCancel);
+			textField_3.getDocument().addDocumentListener(new DocumentListener() {
+
+				public void changedUpdate(DocumentEvent e){
+					
+				}
+
+				public void insertUpdate(DocumentEvent e) {
+					if(!viewbutton ) {
+						btnApplyClassification.setVisible(false);
 					}
-					try {
-						Connection conn9;
-						conn9 = DriverManager.getConnection(url, props);
-						PreparedStatement st9 = conn9.prepareStatement("select * from public.\"class_hierarchy\" WHERE \"cid\" = ?");
-						String cidlook = textField_3.getText().substring(0, 15);
-						//System.out.println(cidlook);
-						st9.setString(1, cidlook);
-						//st9.setString(1, textField_3.getText());
-						ResultSet rs9 = st9.executeQuery();
-						if(!rs9.isBeforeFirst()) {
-							JOptionPane.showMessageDialog(textField_3, "<html><h2><font color='red'>Unknown Class ID, Canceling changes</font></h2></html>");
-							/*textField.setText("N/A");
-							textField_1.setText("N/A");
-							textField_2.setText("N/A");*/
-							rs9.close();
-							st9.close();
-							conn9.close();
-							SwingUtilities.invokeLater(cancelClass);
+					if(textField_3.getText().split("\\.").length !=4) {
+						return;
+					}else{
+						if(textField_3.getText().split("\\.")[3].length() <3) {
 							return;
 						}
-						rs9.next();
-						textField.setText(rs9.getString("domain"));
-						textField_1.setText(rs9.getString("groupe"));
-						textField_2.setText(rs9.getString("family"));
-						Runnable doHighlight = new Runnable() {
-					        @Override
-					        public void run() {
-					        	try {
-					        		String claas = rs9.getString("class");
-									currentFamily.clear();
-					        		//currentFamily.put(claas, textField_3.getText());
-									currentFamily.put(claas, rs9.getString("cid"));
-					        		
-									textField_3.setText(claas);
-									rs9.close();
-									st9.close();
-									conn9.close();
-									viewbutton=true;
-									btnApplyClassification.setVisible(false);
-									lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
-									classApply.mouseClicked(null);
-								} catch (SQLException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-					        }
-					    };
-						SwingUtilities.invokeLater(doHighlight);
-						//textField_3.setText(rs9.getString("class"));
-						
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						try {
+							Connection conn9;
+							conn9 = DriverManager.getConnection(url, props);
+							PreparedStatement st9 = conn9.prepareStatement("select * from public.\"class_hierarchy\" WHERE \"cid\" = ?");
+							String cidlook = textField_3.getText().substring(0, 15);
+							//System.out.println(cidlook);
+							st9.setString(1, cidlook);
+							//st9.setString(1, textField_3.getText());
+							ResultSet rs9 = st9.executeQuery();
+							if(!rs9.isBeforeFirst()) {
+								JOptionPane.showMessageDialog(textField_3, "<html><h2><font color='red'>Unknown Class ID, Canceling changes</font></h2></html>");
+								/*textField.setText("N/A");
+								textField_1.setText("N/A");
+								textField_2.setText("N/A");*/
+								rs9.close();
+								st9.close();
+								conn9.close();
+								SwingUtilities.invokeLater(cancelClass);
+								return;
+							}
+							rs9.next();
+							textField.setText(rs9.getString("domain"));
+							textField_1.setText(rs9.getString("groupe"));
+							textField_2.setText(rs9.getString("family"));
+							Runnable doHighlight = new Runnable() {
+						        @Override
+						        public void run() {
+						        	try {
+						        		String claas = rs9.getString("class");
+										currentFamily.clear();
+						        		//currentFamily.put(claas, textField_3.getText());
+										currentFamily.put(claas, rs9.getString("cid"));
+						        		
+										textField_3.setText(claas);
+										rs9.close();
+										st9.close();
+										conn9.close();
+										viewbutton=true;
+										btnApplyClassification.setVisible(false);
+										lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
+										load_chars(currentFamily.get((String) textField_3.getText()),true, selectedAID);
+										//classApply.mouseClicked(null);
+									} catch (SQLException | InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException | BadPaddingException | ClassNotFoundException | IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+						        }
+						    };
+							SwingUtilities.invokeLater(doHighlight);
+							//textField_3.setText(rs9.getString("class"));
+							
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 				}
-			}
 
-			public void removeUpdate(DocumentEvent e) {
-				btnApplyClassification.setVisible(false);
-			}
+				public void removeUpdate(DocumentEvent e) {
+					btnApplyClassification.setVisible(false);
+				}
 
-		
-		
-		
-		});
-		
-		
+			
+			
+			
+			});
+    	
+    	
+    	
+    	
 		conn1 = DriverManager.getConnection(url, props);
-		st1 = conn1.prepareStatement("select * from public.\"class_hierarchy\" WHERE \"cid\" = ?");
+		PreparedStatement st1 = conn1.prepareStatement("select * from public.\"class_hierarchy\" WHERE \"cid\" = ?");
 		st1.setString(1, rs.getString("cid"));
-		rs1 = st1.executeQuery();
+		ResultSet rs1 = st1.executeQuery();
 		rs1.next();
 		originalcid = rs.getString("cid");
+		classchange=rs.getBoolean("classChange");
 		textField.setText(rs1.getString("domain"));
 		originalDomain = (rs1.getString("domain"));
 		//textField_1.removeAllItems();
@@ -969,14 +1127,35 @@ public class ReviewDetail extends JFrame {
 		textField_3.setText(rs1.getString("class"));
 		originalclass = (rs1.getString("class"));
 		
+		rs1.close();
+		st1.close();
+		conn1.close();
+		
 	}
-
+	private boolean hasChanged(String currentCID) {
+		if(this.classchange) {
+			return true;
+		}
+		if(!currentCID.equals(originalcid)) {
+			return true;
+		}
+		return false;
+	}
+	private boolean hasChangedNow(String currentCID) {
+		if(!currentCID.equals(originalcid)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
 	
 
-
-	private void load_ui_elements(/*DLL dll, String selectedAID, JButton btnApplyClassification, JButton btnApplyCancel, JLabel lblNewLabel_5*/String selectedAID,DLL dll) throws SQLException {
-		setTitle("TECHNICAL ITEM DESCRIPTION");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(PartDetail.class.getResource("/ntdw/resources/images/Neonec-white-logo only.png")));
+	private void load_ui_elements(/*JButton btnApplyClassification ,JButton btnArrowRigth, JButton btnArrowLeft, JLabel lblNewLabel_1, DLL dll, String selectedAID,GridBagLayout gbl_contentPane,JPanel pnl_controlflex,GridBagConstraints gbc_pnl_controlflex,JLabel lblNewLabel,JPanel panelCenter,GridBagConstraints gbc_panelCenter,JLabel lblVal,JPanel panelRigth,GridBagConstraints gbc_panelRigth,JLabel lblFlexor,JPanel pnlDescription,GridBagConstraints gbc_pnlDescription,GridBagLayout gbl_pnlDescription,JPanel panel,GridBagConstraints gbc_panel,GroupLayout gl_panel,JPanel pnlClassification,GridBagConstraints gbc_pnlClassification,GridBagLayout gbl_pnlClassification,JLabel lblNewLabel_4,GridBagConstraints gbc_textField,GridBagConstraints gbc_lblNewLabel_4,GridBagConstraints gbc_textField_1,GridBagConstraints gbc_textField_2,GridBagConstraints gbc_textField_3*/String selectedAID) throws SQLException {
+    	
+    	setTitle("TECHNICAL ITEM REVIEW");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ReviewDetail.class.getResource("/ntdw/resources/images/Neonec-white-logo only.png")));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
 		setBounds(0, 0, 0, 0);
@@ -990,18 +1169,15 @@ public class ReviewDetail extends JFrame {
 		gbl_contentPane.rowWeights = new double[]{0.0,0.2, 0.0, 1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
-		Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-		this.height = screenSize.height;
-		this.width = screenSize.width;
+		Rectangle area = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		this.height = area.height;
+		this.width = area.width;
 		setPreferredSize(new Dimension(width, height));
 		
-		pnl_controlflex.setBackground(SystemColor.activeCaption);
+		pnl_controlflex.setBackground(Color.CYAN);
 		pnl_controlflex.setName("pnl_controlflex");
 		pnl_controlflex.setForeground(SystemColor.activeCaption);
-
-
-		gbc_pnl_controlflex.anchor = GridBagConstraints.WEST;
-		gbc_pnl_controlflex.fill = GridBagConstraints.VERTICAL;
+		gbc_pnl_controlflex.fill = GridBagConstraints.BOTH;
 		gbc_pnl_controlflex.insets = new Insets(0, 0, 5, 0);
 		gbc_pnl_controlflex.gridx = 0;
 		gbc_pnl_controlflex.gridy = 0;
@@ -1010,23 +1186,21 @@ public class ReviewDetail extends JFrame {
 		
 		btnArrowLeft.setText("        ");
 		btnArrowLeft.setHorizontalAlignment(SwingConstants.LEFT);
-		btnArrowLeft.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
+
+
 		btnArrowLeft.setActionCommand("");
-		btnArrowLeft.setSize(new Dimension((int) (49* (screenSize.width/1366.0)), 50));
+		btnArrowLeft.setSize(new Dimension((int) (100* (area.width/1366.0)), 50));
 		btnArrowLeft.setName("btnArrowLeft");
 		
-		lblNewLabel.setText(dll.getprev(selectedAID));
+		
 		lblNewLabel.setName("lb_controlflex");
 		pnl_controlflex.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		pnl_controlflex.add(btnArrowLeft);
 		pnl_controlflex.add(lblNewLabel);
 		
-		panelCenter.setBackground(SystemColor.activeCaption);
+		panelCenter.setBackground(Color.CYAN);
 		panelCenter.setName("panelCenter");
-
+		
 		gbc_panelCenter.insets = new Insets(0, 0, 5, 0);
 		gbc_panelCenter.fill = GridBagConstraints.BOTH;
 		gbc_panelCenter.gridx = 1;
@@ -1034,7 +1208,7 @@ public class ReviewDetail extends JFrame {
 		gbc_panelCenter.gridwidth = 3;
 		contentPane.add(panelCenter, gbc_panelCenter);
 		
-		lblVal.setText(selectedAID);
+		
 		lblVal.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -1043,13 +1217,17 @@ public class ReviewDetail extends JFrame {
 				clpbrd.setContents(stringSelection, null);
 			}
 		});
+		lblNewLabel_13.setForeground(Color.RED);
+		
+		panelCenter.add(lblNewLabel_13);
 		panelCenter.add(lblVal);
 		lblVal.setName("lbl_val");
+		lblVal.setText(selectedAID);
 		
-
-		panelRigth.setBackground(SystemColor.activeCaption);
+		
+		panelRigth.setBackground(Color.CYAN);
 		panelRigth.setName("panelRigth");
-
+		
 		gbc_panelRigth.insets = new Insets(0, 0, 5, 0);
 		gbc_panelRigth.anchor = GridBagConstraints.NORTH;
 		gbc_panelRigth.fill = GridBagConstraints.HORIZONTAL;
@@ -1057,14 +1235,12 @@ public class ReviewDetail extends JFrame {
 		gbc_panelRigth.gridy = 0;
 		contentPane.add(panelRigth, gbc_panelRigth);
 		
-
-		lblFlexor.setText(dll.getnext(selectedAID));
 		lblFlexor.setName("lbl_flexor");
 		panelRigth.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		panelRigth.add(lblFlexor);
 		
 		btnArrowRigth.setText("        ");
-		btnArrowRigth.setSize(new Dimension(100, 100));
+		btnArrowRigth.setSize(new Dimension((int) (100* (area.width/1366.0)), 100));
 		btnArrowRigth.setName("btnArrowRight");
 		panelRigth.add(btnArrowRigth);
 		
@@ -1075,7 +1251,7 @@ public class ReviewDetail extends JFrame {
 		gbc_pnlDescription.gridy = 1;
 		gbc_pnlDescription.gridwidth = 5;
 		contentPane.add(pnlDescription, gbc_pnlDescription);
-
+		
 		gbl_pnlDescription.columnWidths = new int[]{0, 0};
 		gbl_pnlDescription.rowHeights = new int[]{0, 0};
 		gbl_pnlDescription.columnWeights = new double[]{1.0, Double.MIN_VALUE};
@@ -1088,7 +1264,7 @@ public class ReviewDetail extends JFrame {
 		gbc_panel.gridy = 0;
 		pnlDescription.add(panel, gbc_panel);
 		
-
+		
 		lblNewLabel_1.setText("Short description");
 		lblNewLabel_1.setFont(new Font("Calibri", Font.BOLD, 16));
 		
@@ -1097,15 +1273,14 @@ public class ReviewDetail extends JFrame {
 		lblNewLabel_2.setFont(new Font("Calibri", Font.BOLD, 16));
 		
 		textArea_1.setSelectionColor(Color.LIGHT_GRAY);
-		
+
 		lblNewLabel_3.setText("PO text");
 		lblNewLabel_3.setFont(new Font("Calibri", Font.BOLD, 16));
 		
 		btnApplyClassification.setText("APPLY CLASSIFICATION CHANGE");
 		
-		
-		textArea_2.setSelectionColor(Color.LIGHT_GRAY);
 		GroupLayout gl_panel = new GroupLayout(panel);
+		textArea_2.setSelectionColor(Color.LIGHT_GRAY);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel.createSequentialGroup()
@@ -1149,25 +1324,26 @@ public class ReviewDetail extends JFrame {
 		);
 		panel.setLayout(gl_panel);
 		
-
+		
+		
 		pnlClassification.setName("pnlClassification");
-
+		
 		gbc_pnlClassification.gridheight = 3;
 		gbc_pnlClassification.insets = new Insets(0, 0, 0, 5);
 		gbc_pnlClassification.fill = GridBagConstraints.BOTH;
 		gbc_pnlClassification.gridx = 0;
 		gbc_pnlClassification.gridy = 2;
 		contentPane.add(pnlClassification, gbc_pnlClassification);
-
+		
 		gbl_pnlClassification.columnWidths = new int[]{0, 0};
 		gbl_pnlClassification.rowHeights = new int[]{0, 0};
 		gbl_pnlClassification.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gbl_pnlClassification.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
 		pnlClassification.setLayout(gbl_pnlClassification);
 		
-
+		
 		lblNewLabel_4.setFont(new Font("Calibri", Font.BOLD, 16));
-
+		
 		gbc_lblNewLabel_4.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblNewLabel_4.anchor = GridBagConstraints.NORTH;
 		gbc_lblNewLabel_4.insets = new Insets(0, 15, 5, 0);
@@ -1176,7 +1352,8 @@ public class ReviewDetail extends JFrame {
 		pnlClassification.add(lblNewLabel_4, gbc_lblNewLabel_4);
 		
 		textField.setEditable(false);
-
+		
+		
 		gbc_textField.insets = new Insets(0, 6, 5, 0);
 		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField.gridx = 0;
@@ -1185,7 +1362,8 @@ public class ReviewDetail extends JFrame {
 		//textField.setColumns(10);
 		
 		textField_1.setEditable(false);
-
+		
+		
 		gbc_textField_1.insets = new Insets(0, 6, 5, 0);
 		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_1.gridx = 0;
@@ -1194,8 +1372,8 @@ public class ReviewDetail extends JFrame {
 		//textField_1.setColumns(10);
 		
 		textField_2.setEditable(false);
-
-
+		
+		
 		gbc_textField_2.insets = new Insets(0, 6, 5, 0);
 		gbc_textField_2.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_2.gridx = 0;
@@ -1203,8 +1381,8 @@ public class ReviewDetail extends JFrame {
 		pnlClassification.add(textField_2, gbc_textField_2);
 		//textField_2.setColumns(10);
 		
-
-
+		
+		
 		gbc_textField_3.insets = new Insets(0, 6, 5, 0);
 		gbc_textField_3.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_3.gridx = 0;
@@ -1212,41 +1390,39 @@ public class ReviewDetail extends JFrame {
 		pnlClassification.add(textField_3, gbc_textField_3);
 		//textField_3.setColumns(10);
 		
-		
-		
-		///////////////////////////////////////////////////////////
+		/////////////////////////////////////
 		
 
 		
 		
 		classApply = new MouseAdapter() {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			try {
-				load_chars(currentFamily.get((String) textField_3.getText()),true, selectedAID);
-			} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-					| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
-					| BadPaddingException | ClassNotFoundException | SQLException | IOException e1) {
-				StringBuilder sb = new StringBuilder(e1.toString());
-			    for (StackTraceElement ste : e1.getStackTrace()) {
-			        sb.append("\n\tat ");
-			        sb.append(ste);
-			    }
-			    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-			            JOptionPane.ERROR_MESSAGE);
-			}
-		}};
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					load_chars(currentFamily.get((String) textField_3.getText()),true, selectedAID);
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
+						| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException
+						| BadPaddingException | ClassNotFoundException | SQLException | IOException e1) {
+					StringBuilder sb = new StringBuilder(e1.toString());
+				    for (StackTraceElement ste : e1.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				}
+			}};
 		
 		btnApplyClassification.addMouseListener(classApply);
 		btnApplyClassification.setFont(new Font("Calibri", Font.PLAIN, 12));
 		btnApplyClassification.setName("btnApplyClassification");
-
+		
 		gbc_btnApplyClassification.insets = new Insets(0, 6, 5, 0);
 		gbc_btnApplyClassification.fill = GridBagConstraints.BOTH;
 		gbc_btnApplyClassification.gridx = 0;
 		gbc_btnApplyClassification.gridy = 5;
 		pnlClassification.add(btnApplyClassification, gbc_btnApplyClassification);
-			
+		
 		btnApplyCancel.setText("CANCEL CLASSIFICATION CHANGE");
 		btnApplyCancel.setFont(new Font("Calibri", Font.PLAIN, 12));
 		btnApplyCancel.setName("btnCancelClassification");
@@ -1266,7 +1442,7 @@ public class ReviewDetail extends JFrame {
 		gbc_lblNewLabel_5.gridy = 7;
 		pnlClassification.add(lblNewLabel_5, gbc_lblNewLabel_5);
 		
-		
+
 		textField_4.setSelectionColor(Color.LIGHT_GRAY);
 
 		gbc_textField_4.insets = new Insets(0, 6, 5, 0);
@@ -1285,7 +1461,7 @@ public class ReviewDetail extends JFrame {
 		gbc_lblNewLabel_6.gridy = 9;
 		pnlClassification.add(lblNewLabel_6, gbc_lblNewLabel_6);
 		
-		
+
 		textField_5.setSelectionColor(Color.LIGHT_GRAY);
 
 		gbc_textField_5.insets = new Insets(0, 6, 5, 0);
@@ -1294,6 +1470,8 @@ public class ReviewDetail extends JFrame {
 		gbc_textField_5.gridy = 10;
 		pnlClassification.add(textField_5, gbc_textField_5);
 		textField_5.setColumns(10);
+		
+
 		lblNewLabel_7.setText("Source URL");
 		lblNewLabel_7.setFont(new Font("Calibri", Font.BOLD, 16));
 
@@ -1337,21 +1515,21 @@ public class ReviewDetail extends JFrame {
 
 		scrollPane.setViewportView(panelCharVals);
 		panelCharVals.setName("panelCharVals");
-		
+
 		gbl_panelCharVals.columnWidths = new int[]{0,0};
 		gbl_panelCharVals.rowHeights = new int[]{0,0};
 		gbl_panelCharVals.columnWeights = new double[]{1.0,1.0};
 		gbl_panelCharVals.rowWeights = new double[]{1.0,1.0};
 		panelCharVals.setLayout(gbl_panelCharVals);
 		
-
-
+		
+		
 		gbc_panel_1.insets = new Insets(0, 0, 5, 5);
 		gbc_panel_1.fill = GridBagConstraints.BOTH;
 		gbc_panel_1.gridx = 0;
 		gbc_panel_1.gridy = 0;
 		panelCharVals.add(panel_1, gbc_panel_1);
-		
+
 		gbl_panel_1.columnWidths = new int[]{350, 0};
 		gbl_panel_1.rowHeights = new int[]{16, 0, 0};
 		gbl_panel_1.columnWeights = new double[]{0.0, Double.MIN_VALUE};
@@ -1381,7 +1559,7 @@ public class ReviewDetail extends JFrame {
 		panel_1.add(lblNewLabel_9, gbc_lblNewLabel_9);
 		
 
-
+		
 		gbc_panel_2.insets = new Insets(0, 0, 5, 5);
 		gbc_panel_2.fill = GridBagConstraints.BOTH;
 		gbc_panel_2.gridx = 1;
@@ -1409,7 +1587,7 @@ public class ReviewDetail extends JFrame {
 		lblNewLabel_12.setText("Value complement");
 		lblNewLabel_12.setForeground(new Color(68, 84, 105));
 		lblNewLabel_12.setFont(new Font("Calibri", Font.BOLD, 12));
-
+		
 		gbc_lblNewLabel_12.anchor = GridBagConstraints.NORTH;
 		gbc_lblNewLabel_8.insets = new Insets(0, 0, 5, 0);
 		gbc_lblNewLabel_12.gridx = 1;
@@ -1417,7 +1595,7 @@ public class ReviewDetail extends JFrame {
 		panel_2.add(lblNewLabel_12, gbc_lblNewLabel_12);
 		
 		pnlCharacLeft.setName("pnlCharacLeft");
-
+		
 		gbc_pnlCharacLeft.anchor = GridBagConstraints.NORTH;
 		gbc_pnlCharacLeft.insets = new Insets(0, 0, 0, 5);
 		gbc_pnlCharacLeft.fill = GridBagConstraints.HORIZONTAL;
@@ -1432,7 +1610,7 @@ public class ReviewDetail extends JFrame {
 		pnlCharacLeft.setLayout(gbl_pnlCharacLeft);
 		
 		pnlCharacRigth.setName("pnlCharacRigth");
-		
+
 		gbc_pnlCharacRigth.anchor = GridBagConstraints.NORTH;
 		gbc_pnlCharacRigth.fill = GridBagConstraints.HORIZONTAL;
 		gbc_pnlCharacRigth.gridx = 1;
@@ -1446,7 +1624,7 @@ public class ReviewDetail extends JFrame {
 		pnlCharacRigth.setLayout(gbl_pnlCharacRigth);
 		
 		
-		
+
 		pnlComment.setName("pnlComment");
 
 		gbc_pnlComment.fill = GridBagConstraints.BOTH;
@@ -1459,27 +1637,29 @@ public class ReviewDetail extends JFrame {
 		gbl_pnlComment.columnWeights = new double[]{1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gbl_pnlComment.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		pnlComment.setLayout(gbl_pnlComment);
+		lblQuestion.setText("Question");
 		
 		lblQuestion.setForeground(new Color(68, 84, 105));
 		lblQuestion.setFont(new Font("Calibri", Font.BOLD, 12));
-		
+
 		gbc_lblQuestion.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblQuestion.insets = new Insets(0, 0, 5, 5);
 		gbc_lblQuestion.gridx = 0;
 		gbc_lblQuestion.gridy = 0;
 		pnlComment.add(lblQuestion, gbc_lblQuestion);
 		
-		
+
 		lblNewLabel_11.setText("Comment");
 		lblNewLabel_11.setForeground(new Color(68, 84, 105));
 		lblNewLabel_11.setFont(new Font("Calibri", Font.BOLD, 12));
-		
+
 		gbc_lblNewLabel_11.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblNewLabel_11.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel_11.gridx = 1;
 		gbc_lblNewLabel_11.gridy = 0;
 		pnlComment.add(lblNewLabel_11, gbc_lblNewLabel_11);
 		
+
 		textField_6.setSelectionColor(Color.LIGHT_GRAY);
 
 		gbc_textField_6.insets = new Insets(0, 0, 0, 5);
@@ -1490,7 +1670,8 @@ public class ReviewDetail extends JFrame {
 		textField_6.setColumns(10);
 		
 		textArea_4.setSelectionColor(Color.LIGHT_GRAY);
-		
+		gbc_textArea_4.gridwidth = 12;
+
 		gbc_textArea_4.insets = new Insets(0, 0, 0, 5);
 		gbc_textArea_4.fill = GridBagConstraints.BOTH;
 		gbc_textArea_4.gridx = 1;
@@ -1510,38 +1691,36 @@ public class ReviewDetail extends JFrame {
 		textArea_2.setText(rs.getString("po"));
 		//textField.setEditable(false);
 		
-
-
+		
+		
 		textArea.setLineWrap(true);
 		textArea_1.setLineWrap(true);
 		textArea_2.setLineWrap(true);
 		textArea_3.setLineWrap(true);
 		
+		
 
-		
-		lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
+		//lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
+		//System.out.println("Classification: "+currentFamily.get((String) textField_3.getText()));
 		btnApplyClassification.setVisible(false);
-		
 		
 	}
 
-	
-
-	private void load_item_data(/*Connection conn, String url, Properties props, PreparedStatement st,*/ String selectedAID/*, ResultSet rs*/) throws SQLException {
-		conn = DriverManager.getConnection(url, props);
+	private void load_item_data(/*Connection conn, String url, Properties props, PreparedStatement st, String selectedAID, ResultSet rs, Date fedate*/String selectedAID,Date fedate) throws SQLException {
+    	conn = DriverManager.getConnection(url, props);
 		st = conn.prepareStatement("select * from public.\"items\" WHERE \"aid\" = ?");
 		st.setString(1, selectedAID);
 		rs = st.executeQuery();
 		rs.next();
+		status=rs.getString("status");
+		fedate = rs.getDate("fedate");
+		//ledate = rs.getDate("ledate");
+		
 	}
 
-	
-
-
-
-	private void load_static_data(/*String url, Properties props,*/ String selectedAID,JOptionPane pane) throws SQLException {
-		Connection conn9 = DriverManager.getConnection(url, props);
-		PreparedStatement st9 = conn9.prepareStatement("select * from public.\"data\" WHERE \"aid\" = ?");
+	private void load_static_data(/*String url, Properties props, */String selectedAID, JOptionPane pane) throws SQLException {
+    	Connection conn9 = DriverManager.getConnection(url, props);
+		PreparedStatement st9 = conn9.prepareStatement("select * from public.\"data\" WHERE \"aid\" = ? ");
 		//st9.setString(2, "REVIEW");
 		st9.setString(1, selectedAID);
 		ResultSet rs9 = st9.executeQuery();
@@ -1565,11 +1744,11 @@ public class ReviewDetail extends JFrame {
 			}
 			
 			rs.close();
-			rs1.close();
+			
 			st.close();
-			st1.close();
+			
 			conn.close();
-			conn1.close();
+			
 			setVisible(true);
 			currentFamily.clear();
 			currentFamily.put(originalclass, originalcid);
@@ -1584,6 +1763,8 @@ public class ReviewDetail extends JFrame {
     	List<CharacValue> characValues = characService.getCharacValues(string);
     	if(characValues.isEmpty()) {
     		pnlCharacLeft.removeAll();
+    		modelLeft.clear();
+    		modelRight.clear();
     		pnlCharacRigth.removeAll();
     		pnlCharacLeft.repaint();
     		pnlCharacRigth.repaint();
@@ -1592,12 +1773,13 @@ public class ReviewDetail extends JFrame {
     		}
     		return;
     	}
+
     	characValues.get(0).stat=false;
     	for(CharacValue cv:characValues) {
-    		cv.setVal(selectedAID,false,string);
+    		cv.setVal(selectedAID,false, string);
     	}
     	
-    	Map<String,List<CharacValue>> listModels = toLeftOrRigthList(characValues);
+		Map<String,List<CharacValue>> listModels = toLeftOrRigthList(characValues);
 		
 		modelLeft = listModels.get("LEFT");
 		modelRight = listModels.get("RIGTH");
@@ -1633,5 +1815,200 @@ public class ReviewDetail extends JFrame {
 		result.put("LEFT", characValuesLeft);
 		
 		return result;
+	}
+
+	@SuppressWarnings("unlikely-arg-type")
+	protected String allow_next(/*List<CharacValue> modelLeft, List<CharacValue> modelRight, */String question, String cid, String status) throws HeadlessException, SQLException {
+    	LinkedHashSet<String> critics = new LinkedHashSet<String>();
+    	LinkedHashSet<String> nus = new LinkedHashSet<String>();
+    	HashSet<String> allowed = new HashSet<String>(Arrays.asList("0", "1","2","3","4","5","6","7","8","9","-",","));
+    	this.completedVals=0;
+    	if(modelLeft == null) {
+    		this.isStub=true;
+    		if (status.contains("REWORK:")){
+    			this.allwnxt="REWORK:PENDING";
+    			return "REWORK:PENDING";
+    		}
+    		this.allwnxt="PENDING";
+    		return "PENDING";
+    	}
+		for(CharacValue element:modelLeft) {
+			if(element.isCritical) {
+				if(element.getType()==CharacType.FT) {
+					if(element.getvalue().length()==0) {
+						critics.add(element.getId().split("\\.")[4]);
+					}
+				}else {
+					if(element.getType()==CharacType.NU) {
+						
+						if(element.getComp().length() == 0 || element.getvalue().length()==0) {
+							critics.add(element.getId().split("\\.")[4]);
+						}
+					}else {
+						if(element.getvalue().length()==0) {
+							critics.add(element.getId().split("\\.")[4]);
+						}
+					}
+					
+				}
+			}
+			if(element.getType()==CharacType.FT) {
+				if( !element.getvalue().equals("Inconnu&&Unknown") && !element.getvalue().replace(" ", "").equals("&&") ) {
+					this.completedVals=this.completedVals+1;
+			}
+			}
+			else {
+				if(element.getType()==CharacType.NU) {
+					for (int i = 0; i < element.getvalue().replace("&&", "").length(); i++){
+						//System.out.println(element.getvalue().charAt(i));
+					    if(!allowed.contains(Character.toString(element.getvalue().replace("&&", "").charAt(i)))){
+					    	nus.add(element.getId().split("\\.")[4]);
+					    	break;
+					    }
+					}
+					if( !element.getvalue().replace("---","").replace(" ", "").equals("&&") && element.getComp().replace("---","").replaceAll(" ", "").length()!=0) {
+						this.completedVals=this.completedVals+1;
+					}
+				}else {
+					if(element.getvalue().length()!=0 && !element.getvalue().equals("Inconnu/Unknown")) {
+						this.completedVals=this.completedVals+1;
+					}
+				}
+			}
+				
+		}
+		for(CharacValue element:modelRight) {
+			if(element.isCritical) {
+				if(element.getType()==CharacType.FT) {
+					if(element.getvalue().length()==0) {
+						critics.add(element.getId().split("\\.")[4]);
+					}
+				}else {
+					if(element.getType()==CharacType.NU) {
+						
+						if(element.getComp().length() == 0 || element.getvalue().length()==0) {
+							critics.add(element.getId().split("\\.")[4]);
+						}
+					}else {
+						if(element.getvalue().length()==0) {
+							critics.add(element.getId().split("\\.")[4]);
+						}
+					}
+					
+				}
+			}
+			if(element.getType()==CharacType.FT) {
+				if( !element.getvalue().equals("Inconnu&&Unknown") && !element.getvalue().replace(" ", "").equals("&&") ) {
+					this.completedVals=this.completedVals+1;
+			}
+			}
+			else {
+				if(element.getType()==CharacType.NU) {
+					for (int i = 0; i < element.getvalue().replace("&&", "").length(); i++){
+						//System.out.println(element.getvalue().charAt(i));
+					    if(!allowed.contains(Character.toString(element.getvalue().replace("&&", "").charAt(i)))){
+					    	nus.add(element.getId().split("\\.")[4]);
+					    	break;
+					    }
+					}
+					if( !element.getvalue().replace("---","").replace(" ", "").equals("&&") && element.getComp().replace("---","").replaceAll(" ", "").length()!=0) {
+						this.completedVals=this.completedVals+1;
+					}
+				}else {
+					if(element.getvalue().length()!=0 && !element.getvalue().equals("Inconnu/Unknown")) {
+						this.completedVals=this.completedVals+1;
+					}
+				}
+			}
+		}
+		
+		
+		if(!nus.isEmpty()) {
+			JOptionPane.showMessageDialog(null, new JLabel(
+				    "<html><h2><font color='red'>Non numeric data in fields: \n ("+String.join(" et ", nus)+") \n Use : [0-9]  '/'  '-'  ',' or (space) or '@' (Unknown)</font></h2></html>")); 
+			this.allwnxt="KO";
+			return "KO";
+		}
+		
+		
+		if(!critics.isEmpty()) {
+			//CC manquants
+			
+			if(question.replace(" ","").length() ==0) {
+				//Question Vide
+				JOptionPane.showMessageDialog(null, new JLabel(
+					    "<html><h2><font color='red'>Missing critical Fields."
+					    + "\n ("+String.join(" et ", critics)+") \n . Not allowed in Review Screen</font></h2></html>")); 
+				this.allwnxt="KO";
+				return "KO";
+				/*if (status.contains("REWORK:")){
+					this.allwnxt="REWORK:PENDING";
+					return "REWORK:PENDING";
+				}
+				this.allwnxt="PENDING";
+				return "PENDING";*/
+				
+			}else {
+				//Question Non Vide
+				JOptionPane.showMessageDialog(null, new JLabel(
+					    "<html><h2><font color='red'>Warning:PENDING: Missing critical fields. Not allowed in Review Screen.</font></h2></html>")); 
+				if (status.contains("REWORK:")){
+					this.allwnxt="REWORK:PENDING";
+					return "REWORK:PENDING";
+				}
+				this.allwnxt="PENDING";
+	    		return "PENDING";
+			}
+		}
+		//CC OK
+
+		if(question.replace(" ","").length() !=0) {
+			//Question non vide
+			JOptionPane.showMessageDialog(null, new JLabel(
+				    "<html><h2><font color='red'>Warning:PENDING: Question Written. Not allowed in Review Screen</font></h2></html>")); 
+			if (status.contains("REWORK:")){
+				this.allwnxt="REWORK:PENDING";
+	    		return "REWORK:PENDING";
+			}
+			this.allwnxt="PENDING";
+    		return "PENDING";
+		}
+		
+		if(isEphem(cid)) {
+			//Classe ephemere
+			JOptionPane.showMessageDialog(null, new JLabel(
+				    "<html><h2><font color='red'>Warning:PENDING: Temporary Class. Not allowed in Review Screen</font></h2></html>")); 
+			if (status.contains("REWORK:")){
+				this.allwnxt="REWORK:PENDING";
+	    		return "REWORK:PENDING";
+			}
+			this.allwnxt="PENDING";
+    		return "PENDING";
+		}
+		
+		if (status.contains("REWORK:")){
+			this.allwnxt="REWORK:REVIEWED";
+    		return "REWORK:REVIEWED";
+		}
+		this.allwnxt="REVIEWED";
+		return "REVIEWED";
+		
+		
+	}
+
+	private boolean isEphem(String cid) throws SQLException {
+		if(classesTemp.size()==0) {
+			Connection conn999 = DriverManager.getConnection(url, props);
+			PreparedStatement st999 = conn999.prepareStatement("select classes_temp from public.\"ephemere\"");
+			ResultSet rs999 = st999.executeQuery();
+			while(rs999.next()) {
+				classesTemp.add(rs999.getString("classes_temp"));
+			}
+			return classesTemp.contains(cid);
+		}
+		if(classesTemp.contains(cid)) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -38,6 +39,8 @@ import ntdw.views.AutoComplete;
 
 public class CharacValueRenderer {
 
+	protected boolean refresh = true;
+
 	public void rendererComponents(JPanel pnlParent, List<CharacValue> characValues) {
 		pnlParent.removeAll();
 		int i = 1;
@@ -45,7 +48,7 @@ public class CharacValueRenderer {
 			JPanel pnlName = new JPanel((LayoutManager) new FlowLayout(FlowLayout.LEFT));
 			JLabel jlabelName = new JLabel(characValue.getName().toString());
 			Rectangle area = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-			jlabelName.setPreferredSize(new Dimension((int) (200 * (area.width/1366.0)), 10));
+			jlabelName.setPreferredSize(new Dimension((int) (400 * (area.width/1366.0)), 10));
 			jlabelName.setForeground(new Color(68, 84, 105));
 			jlabelName.setFont(new Font("Calibri", Font.BOLD, 12));
 			pnlName.add(jlabelName);
@@ -106,10 +109,13 @@ public class CharacValueRenderer {
 			        };
 			        valG.getDocument().addDocumentListener(subDoc_NU);
 			        valD.getDocument().addDocumentListener(subDoc_NU);
-			        if(characValue.oldVal!=null && characValue.oldVal.contains("&&")) {
+			        try {
 			        	valG.setText(characValue.oldVal.split("&&")[0]);
 						valD.setText(characValue.oldVal.split("&&")[1]);
-					}
+			        }catch(Exception e) {
+			        	valG.setText("");
+						valD.setText("");
+			        }
 			        valG.setPreferredSize(new Dimension((int) (124 * (area.width/1366.0)), 20));
 			        valD.setPreferredSize(new Dimension((int) (124 * (area.width/1366.0)), 20));
 			        textFieldNU.setVisible(false);
@@ -117,6 +123,7 @@ public class CharacValueRenderer {
 			        pnl.add(valD);
 			        
 			        JButton UKN = new JButton("?");
+			        UKN.setFocusable(false);
 					UKN.setPreferredSize(new Dimension((int) (8 * (area.width/1366.0)), 20));
 					UKN.setForeground(Color.decode("#445469"));
 					UKN.setOpaque(true);
@@ -145,6 +152,7 @@ public class CharacValueRenderer {
 					}
 					pnl.add(textFieldNU);
 					JButton UKN = new JButton("?");
+					UKN.setFocusable(false);
 					UKN.setPreferredSize(new Dimension((int) (8 * (area.width/1366.0)), 20));
 					UKN.setForeground(Color.decode("#445469"));
 					UKN.setOpaque(true);
@@ -202,25 +210,34 @@ public class CharacValueRenderer {
 				AutoCompleteModel modelG = new AutoCompleteModel();
 				AutoCompleteModel modelD = new AutoCompleteModel();
 				//modelG.addAll(new ArrayList<String>(characValue.hist));
-				HashSet<String> listG = new HashSet<String>();
-				HashSet<String> listD = new HashSet<String>();
+				HashMap<String,String> dicoD = new HashMap<String,String>();
+				HashMap<String,String> dicoG= new HashMap<String,String>();
+				List<String> listG = new ArrayList<String>();
+				List<String> listD = new ArrayList<String>();
+				characValue.hist.remove("Inconnu&&Unknown");
 				for(String val:characValue.hist) {
-					if(val!=null && val.contains("&&")){
-					String valG=val.split("&&")[0];
-					listG.add(valG);
-					String valD=val.split("&&")[1];
-					listD.add(valD);	
+					try {
+						String valG=val.split("&&")[0];
+						listG.add(valG);
+						String valD=val.split("&&")[1];
+						listD.add(valD);
+						
+						dicoG.put(valG, valD);
+						dicoD.put(valD, valG);
+					}catch(Exception e) {
+						
 					}
+					
+					
 				}
-				listG.remove("Inconnu");
-				listD.remove("Unknown");
+				
 				modelG.addAll(new ArrayList<String>(listG));
 				modelD.addAll(new ArrayList<String>(listD));
 				
 				AutoComplete textG = new AutoComplete(modelG);
 				AutoComplete textD = new AutoComplete(modelD);
 				
-				DocumentListener subDoc = new DocumentListener() {
+				DocumentListener subDocG = new DocumentListener() {
 
 		            @Override
 		            public void changedUpdate(DocumentEvent e) {
@@ -238,22 +255,64 @@ public class CharacValueRenderer {
 		            }
 
 		            private void updateLabel(DocumentEvent e) {
-		                java.awt.EventQueue.invokeLater(new Runnable() {
-
-		                    @Override
-		                    public void run() {
-		                    	textFieldTypeFT.setText(textG.zoneTexte.getText()+"&&"+textD.zoneTexte.getText());
-		                    }
-		                });
+		            	
+		            	textFieldTypeFT.setText(textG.zoneTexte.getText()+"&&"+textD.zoneTexte.getText());
+                    	if(refresh) {
+                    		if(dicoG.containsKey(textG.zoneTexte.getText())) {
+                    			refresh = false;
+                    			textD.zoneTexte.setText(dicoG.get(textG.zoneTexte.getText()));
+                    			refresh=true;
+                    		}
+                    	}
+		                
 		            }
 		        };
-				textG.zoneTexte.getDocument().addDocumentListener(subDoc);
-				textD.zoneTexte.getDocument().addDocumentListener(subDoc);
+		        DocumentListener subDocD = new DocumentListener() {
+
+		            @Override
+		            public void changedUpdate(DocumentEvent e) {
+		                updateLabel(e);
+		            }
+
+		            @Override
+		            public void insertUpdate(DocumentEvent e) {
+		                updateLabel(e);
+		            }
+
+		            @Override
+		            public void removeUpdate(DocumentEvent e) {
+		                updateLabel(e);
+		            }
+
+		            private void updateLabel(DocumentEvent e) {
+		            	
+		            	textFieldTypeFT.setText(textG.zoneTexte.getText()+"&&"+textD.zoneTexte.getText());
+                    	if(refresh) {
+                    		if(dicoD.containsKey(textD.zoneTexte.getText())) {
+                    			refresh = false;
+                    			textG.zoneTexte.setText(dicoD.get(textD.zoneTexte.getText()));
+                    			refresh=true;
+                    		}
+                    	}
+		                
+		            }
+		        };
+		        
+		        
+		        
+				textG.zoneTexte.getDocument().addDocumentListener(subDocG);
+				textD.zoneTexte.getDocument().addDocumentListener(subDocD);
 				
 				if(characValue.oldVal!=null && characValue.oldVal.contains("&&")) {
 					//textFieldTypeFT.setText(characValue.oldVal);
-					textG.zoneTexte.setText(characValue.oldVal.split("&&")[0]);
-					textD.zoneTexte.setText(characValue.oldVal.split("&&")[1]);
+					try {
+						textG.zoneTexte.setText(characValue.oldVal.split("&&")[0]);
+						textD.zoneTexte.setText(characValue.oldVal.split("&&")[1]);
+					}catch(Exception e) {
+						textG.zoneTexte.setText("");
+						textD.zoneTexte.setText("");
+					}
+					
 				}
 				characValue.text=textFieldTypeFT;
 				characValue.box=null;
@@ -264,6 +323,7 @@ public class CharacValueRenderer {
 				textD.setPreferredSize(new Dimension((int) (124 * (area.width/1366.0)), 20));
 				if(true) {
 					JButton UKN = new JButton("?");
+					UKN.setFocusable(false);
 					UKN.setPreferredSize(new Dimension((int) (8 * (area.width/1366.0)), 20));
 					UKN.setForeground(Color.decode("#445469"));
 					UKN.setOpaque(true);
@@ -310,11 +370,12 @@ public class CharacValueRenderer {
 				characValue.text=null;
 				patternList.setPreferredSize(new Dimension((int) (250 * (area.width/1366.0)), 20));
 				pnl.add(patternList);
-				ComboBoxActionListner lst = new ComboBoxActionListner(pnl);
+				ComboBoxActionListner lst = new ComboBoxActionListner(pnl,characValue.hist,area);
 				patternList.addItemListener(lst);
 				characValue.comp=lst.textField;
 
 				JButton UKN = new JButton("?");
+				UKN.setFocusable(false);
 				UKN.setPreferredSize(new Dimension((int) (8 * (area.width/1366.0)), 20));
 				UKN.setForeground(Color.decode("#445469"));
 				UKN.setOpaque(true);

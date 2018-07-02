@@ -310,7 +310,7 @@ public class ItemList extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				service.stat=false;
 				dispose();
-				Home home = new Home(login, null);
+				Home home = new Home(login, clock);
 			}
 		});
 		panel_4.add(button);

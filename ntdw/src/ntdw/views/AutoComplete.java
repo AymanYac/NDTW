@@ -2,9 +2,14 @@ package ntdw.views;
 
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -67,30 +72,27 @@ public class AutoComplete extends JPanel {
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if(zoneTexte.getText()==null || zoneTexte.getText().length()==0){
-					fenetreRecherche.setVisible(false);
-				}
 				if(e.getKeyCode()==KeyEvent.VK_ESCAPE) {
 					fenetreRecherche.setVisible(false);
 				}
 				else if(e.getKeyCode()==KeyEvent.VK_DOWN){
 					if(resultats.getSelectedIndex()<resultats.getModel().getSize()){
 						resultats.setSelectedIndex(resultats.getSelectedIndex()+1);
-						resultats.setSelectionBackground(Color.red);
+						resultats.setSelectionBackground(Color.LIGHT_GRAY);
 					}
 					else {
 						resultats.setSelectedIndex(0);
-						resultats.setSelectionBackground(Color.red);
+						resultats.setSelectionBackground(Color.LIGHT_GRAY);
 					}
 				}
 				else if(e.getKeyCode()==KeyEvent.VK_UP){
 					if(resultats.getSelectedIndex()!=resultats.getModel().getSize()){
 						resultats.setSelectedIndex(resultats.getSelectedIndex()-1);
-						resultats.setSelectionBackground(Color.red);
+						resultats.setSelectionBackground(Color.LIGHT_GRAY);
 					}
 					else {
 						resultats.setSelectedIndex(resultats.getModel().getSize());
-						resultats.setSelectionBackground(Color.red);
+						resultats.setSelectionBackground(Color.LIGHT_GRAY);
 					}
 				}
 				else if(e.getKeyCode()==KeyEvent.VK_ENTER){
@@ -111,6 +113,66 @@ public class AutoComplete extends JPanel {
 		            e.consume(); 
 		    }  
 		});
+		zoneTexte.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+                List<String> correspondants = model.getToutesChaines();
+                modelListe.clear();
+                if(correspondants.size()==0){
+                	fenetreRecherche.setVisible(false);
+                	//modelListe.addElement("(No-match)");
+                }
+                else{
+                	for(String s : correspondants){
+                		modelListe.addElement(s);
+                		
+                	}
+                	fenetreRecherche.setBounds((int)getLocationOnScreen().getX(), (int)getLocationOnScreen().getY()+zoneTexte.getHeight(), getWidth(), 3*zoneTexte.getHeight());
+            		fenetreRecherche.setVisible(true);
+                	resultats.setSelectedIndex(0);
+            		resultats.setSelectionBackground(Color.LIGHT_GRAY);
+                }
+            }});
+		
+		
+		FocusListener l = new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// TODO Auto-generated method stub
+				List<String> correspondants = new ArrayList<String>();
+				if(zoneTexte.getText().length()>0) {
+					correspondants = model.getChainesCorrespondates(zoneTexte.getText());
+				}else {
+					correspondants = model.getToutesChaines();
+				}
+				
+                modelListe.clear();
+                if(correspondants.size()==0){
+                	fenetreRecherche.setVisible(false);
+                	//modelListe.addElement("(No-match)");
+                }
+                else{
+                	for(String s : correspondants){
+                		modelListe.addElement(s);
+                		
+                	}
+                	fenetreRecherche.setBounds((int)getLocationOnScreen().getX(), (int)getLocationOnScreen().getY()+zoneTexte.getHeight(), getWidth(), 3*zoneTexte.getHeight());
+            		fenetreRecherche.setVisible(true);
+                	resultats.setSelectedIndex(0);
+            		resultats.setSelectionBackground(Color.LIGHT_GRAY);
+                }
+				
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				fenetreRecherche.setVisible(false);
+				
+			}
+			
+		};
+		zoneTexte.addFocusListener(l);
 		setLayout(new GridLayout(1, 0));
 		add(zoneTexte);
 	}
@@ -130,8 +192,8 @@ public class AutoComplete extends JPanel {
 				modelListe.addElement(s);
 				fenetreRecherche.setBounds((int)getLocationOnScreen().getX(), (int)getLocationOnScreen().getY()+zoneTexte.getHeight(), getWidth(), 3*zoneTexte.getHeight());
 				fenetreRecherche.setVisible(true);
-				resultats.setSelectedIndex(0);
-				resultats.setSelectionBackground(Color.red);
+				resultats.setSelectedIndex(1);
+				resultats.setSelectionBackground(Color.LIGHT_GRAY);
 			}
 		}
 		

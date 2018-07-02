@@ -50,6 +50,17 @@ public class AutoCompleteModel {
 		}
 		return res;
 	}
+
+	public List<String> getToutesChaines() {
+		List<String> res = new ArrayList<String>();
+		for(String s : mots){
+			if(s.length()>0) {
+				res.add(s);	
+			}
+			}
+		return res;
+			
+	}
 	
 
 }

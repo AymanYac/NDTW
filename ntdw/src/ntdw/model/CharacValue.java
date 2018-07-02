@@ -157,12 +157,13 @@ public class CharacValue {
 		st.close();
 		conn.close();
 		Connection conn1 = DriverManager.getConnection(url, props);
-		PreparedStatement st1 = conn1.prepareStatement("select * from public.\"data\" WHERE \"chid\" LIKE ? and type = ?");
+		PreparedStatement st1 = conn1.prepareStatement("select * from public.\"data\" WHERE \"chid\" LIKE ? and (type = ? or type =?)");
 		st1.setString(1,cid+ "%");
 		st1.setString(2, "FT");
+		st1.setString(3, "VL");
 		ResultSet rs1 = st1.executeQuery();
 		while(rs1.next()) {
-			add_hists(histVals ,rs1.getString("chid"),rs1.getString("value"));
+			add_hists(histVals ,rs1.getString("chid"),rs1.getString("value"),rs1.getString("type"),rs1.getString("comp"));
 		}
 		
 		if(histVals.containsKey(this.getId())) {
@@ -176,16 +177,56 @@ public class CharacValue {
 		conn1.close();
 		
 	}
-	private void add_hists(HashMap<String, HashSet<String>> histVals, String chid, String val) {
-		if(histVals.keySet().contains(chid)) {
-			HashSet<String> tmp = histVals.get(chid);
-			tmp.add(val);
-			histVals.put(chid, tmp);
+	private void add_hists(HashMap<String, HashSet<String>> histVals, String chid, String val, String type, String comp) {
+		if (type.equals("FT")) {
+			if(histVals.keySet().contains(chid)) {
+				HashSet<String> tmp = histVals.get(chid);
+				tmp.add(val);
+				histVals.put(chid, tmp);
+			}else {
+				HashSet<String> tmp = new HashSet<String>();
+				tmp.add(val);
+				histVals.put(chid, tmp);
+			}
 		}else {
-			HashSet<String> tmp = new HashSet<String>();
-			tmp.add(val);
-			histVals.put(chid, tmp);
+			if(histVals.keySet().contains(chid)) {
+				HashSet<String> tmp = histVals.get(chid);
+				if(val.startsWith("Autre / Other")) {
+					try {
+						val=val.split(":")[1].trim();
+					}catch (Exception e) {
+						try {
+							val=comp;
+						}catch (Exception f) {
+							val="";
+						}
+					}
+				}else {
+					return;
+				}
+				tmp.add(val);
+				histVals.put(chid, tmp);
+			}else {
+				HashSet<String> tmp = new HashSet<String>();
+				if(val.startsWith("Autre / Other")) {
+					try {
+						val=val.split(":")[1].trim();
+					}catch (Exception e) {
+						try {
+							val=comp;
+						}catch (Exception f) {
+							val="";
+						}
+					}
+				}else {
+					return;
+				}
+				tmp.add(val);
+				histVals.put(chid, tmp);
+			
 		}
+		
+	}
 	}
 
 }

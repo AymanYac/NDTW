@@ -112,82 +112,16 @@ public class ReviewList extends JFrame {
 		setTitle("TECHNICAL ITEM DESCRIPTION WIZARD");
 		setMinimumSize(new Dimension(500, 300));
 		
+		
 		try {
 			initComponents(login);
-		} catch (ClassNotFoundException | SQLException e) {
-			StringBuilder sb = new StringBuilder(e.toString());
-		    for (StackTraceElement ste : e.getStackTrace()) {
-		        sb.append("\n\tat ");
-		        sb.append(ste);
-		    }
-		    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-		            JOptionPane.ERROR_MESSAGE);
-		} catch (InvalidKeyException e) {
-			StringBuilder sb = new StringBuilder(e.toString());
-		    for (StackTraceElement ste : e.getStackTrace()) {
-		        sb.append("\n\tat ");
-		        sb.append(ste);
-		    }
-		    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-		            JOptionPane.ERROR_MESSAGE);
-		} catch (NoSuchAlgorithmException e) {
-			StringBuilder sb = new StringBuilder(e.toString());
-		    for (StackTraceElement ste : e.getStackTrace()) {
-		        sb.append("\n\tat ");
-		        sb.append(ste);
-		    }
-		    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-		            JOptionPane.ERROR_MESSAGE);
-		} catch (NoSuchProviderException e) {
-			StringBuilder sb = new StringBuilder(e.toString());
-		    for (StackTraceElement ste : e.getStackTrace()) {
-		        sb.append("\n\tat ");
-		        sb.append(ste);
-		    }
-		    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-		            JOptionPane.ERROR_MESSAGE);
-		} catch (NoSuchPaddingException e) {
-			StringBuilder sb = new StringBuilder(e.toString());
-		    for (StackTraceElement ste : e.getStackTrace()) {
-		        sb.append("\n\tat ");
-		        sb.append(ste);
-		    }
-		    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-		            JOptionPane.ERROR_MESSAGE);
-		} catch (ShortBufferException e) {
-			StringBuilder sb = new StringBuilder(e.toString());
-		    for (StackTraceElement ste : e.getStackTrace()) {
-		        sb.append("\n\tat ");
-		        sb.append(ste);
-		    }
-		    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-		            JOptionPane.ERROR_MESSAGE);
-		} catch (IllegalBlockSizeException e) {
-			StringBuilder sb = new StringBuilder(e.toString());
-		    for (StackTraceElement ste : e.getStackTrace()) {
-		        sb.append("\n\tat ");
-		        sb.append(ste);
-		    }
-		    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-		            JOptionPane.ERROR_MESSAGE);
-		} catch (BadPaddingException e) {
+		} catch (InvalidKeyException | ClassNotFoundException | NoSuchAlgorithmException | NoSuchProviderException
+				| NoSuchPaddingException | ShortBufferException | IllegalBlockSizeException | BadPaddingException
+				| SQLException | IOException e1) {
 			// TODO Auto-generated catch block
-			StringBuilder sb = new StringBuilder(e.toString());
-		    for (StackTraceElement ste : e.getStackTrace()) {
-		        sb.append("\n\tat ");
-		        sb.append(ste);
-		    }
-		    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-		            JOptionPane.ERROR_MESSAGE);
-		} catch (IOException e) {
-			StringBuilder sb = new StringBuilder(e.toString());
-		    for (StackTraceElement ste : e.getStackTrace()) {
-		        sb.append("\n\tat ");
-		        sb.append(ste);
-		    }
-		    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
-		            JOptionPane.ERROR_MESSAGE);
+			e1.printStackTrace();
 		}
+		
 	}
 
 	private void initComponents(String login) throws SQLException, ClassNotFoundException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, ShortBufferException, IllegalBlockSizeException, BadPaddingException, IOException {
@@ -347,6 +281,25 @@ public class ReviewList extends JFrame {
 		        //System.out.println(dll.nextselected);
 		        dispose();
 		        service.stat=false;
+		        
+		        
+		        try {
+					SynthLookAndFeel laf = new SynthLookAndFeel();
+					laf.load(ReviewDetail.class.getResourceAsStream("/ntdw/resources/detail_laf.xml"), ReviewDetail.class);
+					UIManager.setLookAndFeel(laf);
+
+				} catch (Exception e33) {
+					StringBuilder sb = new StringBuilder(e33.toString());
+				    for (StackTraceElement ste : e33.getStackTrace()) {
+				        sb.append("\n\tat ");
+				        sb.append(ste);
+				    }
+				    JOptionPane.showMessageDialog(new JFrame(), sb.toString(), "Dialog",
+				            JOptionPane.ERROR_MESSAGE);
+				}
+		        
+		        
+		        
 		        try {
 		        	JOptionPane pane = new JOptionPane(new JLabel(
 						    "<html><h2><font color='red'>\"Loading item, please wait\"</font></h2></html>"));

@@ -213,7 +213,6 @@ public class PartDetail extends JFrame {
 	private boolean isStub;
 	private boolean classchange;
 	private HashSet<String> classesTemp = new HashSet<String>();
-	protected Clock clock2;
 	
 	
 
@@ -259,7 +258,6 @@ public class PartDetail extends JFrame {
 	 */
 	public PartDetail(DLL dll, String selectedAID, String login, JOptionPane pane, Clock clock) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, ShortBufferException, IllegalBlockSizeException, BadPaddingException, IOException, ClassNotFoundException, SQLException {
 		if(selectedAID!=null) {
-			this.clock2=clock;
 			this.completedVals=0;
 			this.allwnxt="";
 			this.isStub=false;
@@ -290,6 +288,18 @@ public class PartDetail extends JFrame {
 			
 			
 			load_item_data(/*conn, url, props, st, url, rs, fedate*/ selectedAID, fedate);
+			if(status.contains("COMPLET")) {
+				dispose();
+				pane.setVisible(false);
+				if(dll.lastcall.equals("PREV")) {
+					PartDetail partdetail = new PartDetail(dll,dll.getprevID(selectedAID),login,pane, clock);
+				}else {
+					PartDetail partdetail = new PartDetail(dll,dll.getnextID(selectedAID),login,pane, clock);
+				}
+				return;
+				
+			}
+			
 			load_class(/*url, props, conn1*/selectedAID);
 			
 			load_ui_elements(selectedAID/*btnApplyClassification,btnArrowRigth,btnArrowLeft,lblNewLabel_1,dll, url,gbl_contentPane,pnl_controlflex,gbc_pnl_controlflex,lblNewLabel,panelCenter,gbc_panelCenter,lblVal,panelRigth,gbc_panelRigth,lblFlexor,pnlDescription,gbc_pnlDescription,gbl_pnlDescription,panel,gbc_panel,gl_panel,pnlClassification,gbc_pnlClassification,gbl_pnlClassification,lblNewLabel_4,gbc_textField,gbc_lblNewLabel_4,gbc_textField_1,gbc_textField_2,gbc_textField_3*/);
@@ -298,7 +308,7 @@ public class PartDetail extends JFrame {
 			
 			load_static_data(/*url, props,*/ selectedAID, pane);
 
-			closing_procedure(login, pane, selectedAID, start);
+			closing_procedure(login, pane, selectedAID, start,clock,dll);
 			previous_procedure(login, selectedAID, clock, start, dll, pane);
 			next_procedure(login, selectedAID, clock, dll, start, pane);
 			lblNewLabel_4.setText("Classification: "+currentFamily.get((String) textField_3.getText()));
@@ -330,6 +340,20 @@ public class PartDetail extends JFrame {
 					}
 					return;
 				}
+				if( (textField_5.getText()!=null && textField_5.getText().replace(" ", "").length()==0) && (textArea_2.getText().toUpperCase().contains(" REF") || textArea_2.getText().toUpperCase().contains(" TYPE ")) ) {
+					String[] options = new String[] {"Write Ref.", "Ignore"};
+				    int response = JOptionPane.showOptionDialog(null, new JLabel(
+						    "<html><h2><font color='red'>Possible Ref. in description fields, Enter Manufacturer Reference?</font></h2></html>"), "Empty Manufacturer Ref.",
+				        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+				        null, options, options[0]);
+				    if(response==0) {
+				    	return;
+				    }
+				}
+				
+				
+				
+				
 				String allow="";
 				try {
 					allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
@@ -339,6 +363,15 @@ public class PartDetail extends JFrame {
 				}
 				if(allow.equals("KO")){
 					return;
+				}
+				
+				if(hasChangedNow(currentFamily.get((String) textField_3.getText()))) {
+					if(textArea_4.getText() == null || textArea_4.getText().replace(" ", "").length() == 0) {
+						JOptionPane.showMessageDialog(null, new JLabel(
+							    "<html><h2><font color='red'>Class change detected, please write comment !</font></h2></html>"));
+						return;
+					}
+				
 				}
 				dispose();
 				pane.setVisible(false);
@@ -355,11 +388,18 @@ public class PartDetail extends JFrame {
 					props.setProperty("socketTimeout", "0");
 					//props.setProperty("ssl","true");
 					
+					
+						
+						
+					
+					
 					///////////////Fonctionnel
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);        
 					PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.data (aid, chid, value, comp,type) VALUES ( ?, ?, ?, ?,?)"
 							+ " ON CONFLICT (aid,chid) DO UPDATE SET value=EXCLUDED.value, comp=EXCLUDED.comp;");
+					
+					
 					
 					save_chars(prepStmt, conn0, selectedAID, login,start,allow);
 					
@@ -368,7 +408,7 @@ public class PartDetail extends JFrame {
 					conn0.setAutoCommit(false);        
 					prepStmt = conn0.prepareStatement("INSERT INTO public.wal (aid, chid, value,phase, comp,time) VALUES (?,?, ?, ?, ?, ?)");
 					
-					save_chars(prepStmt, conn0,clock, selectedAID, login);
+					save_chars(prepStmt, conn0,clock, selectedAID, login,dll);
 					
 					
 					
@@ -420,14 +460,15 @@ public class PartDetail extends JFrame {
 		});
 	}
 
-	protected void log_progress(Connection conn0,String login,String selectedAID,Clock clock) throws SQLException {
+	protected void log_progress(Connection conn0,String login,String selectedAID,Clock clock,DLL dll) throws SQLException {
 		if(this.allwnxt.contains("COMPLET")) {
+			dll.remove(selectedAID);
 			conn0 = DriverManager.getConnection(url, props);
 			PreparedStatement prepStmt = conn0.prepareStatement("INSERT INTO public.progress (login,aid,status,card,time) VALUES (?,?,?,?,?)");
 			prepStmt.setString(1, login);
 			prepStmt.setString(2, selectedAID);
 			if(this.allwnxt.contains("REWORK")) {
-				prepStmt.setString(3,"REWORK");
+				prepStmt.setString(3,"REWORK:COMPLET");
 			}else {
 				prepStmt.setString(3, "COMPLET");
 			}
@@ -504,6 +545,24 @@ public class PartDetail extends JFrame {
 					}
 					return;
 				}
+				
+				if( (textField_5.getText()!=null && textField_5.getText().replace(" ", "").length()==0) && (textArea_2.getText().toUpperCase().contains(" REF") || textArea_2.getText().toUpperCase().contains(" TYPE ")) ) {
+					String[] options = new String[] {"Write Ref.", "Ignore"};
+				    int response = JOptionPane.showOptionDialog(null, new JLabel(
+						    "<html><h2><font color='red'>Possible Ref. in description fields, Enter Manufacturer Reference?</font></h2></html>"), "Empty Manufacturer Ref.",
+				        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+				        null, options, options[0]);
+				    if(response==0) {
+				    	return;
+				    }
+				}
+				
+				
+				
+				
+				
+				
+				
 				String allow="";
 				try {
 					allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
@@ -513,6 +572,15 @@ public class PartDetail extends JFrame {
 				}
 				if(allow.equals("KO")){
 					return;
+				}
+				if(hasChangedNow(currentFamily.get((String) textField_3.getText()))) {
+					if(textArea_4.getText() == null || textArea_4.getText().replace(" ", "").length() == 0) {
+						JOptionPane.showMessageDialog(null, new JLabel(
+							    "<html><h2><font color='red'>Class change detected, please write comment !</font></h2></html>"));
+						return;
+					}
+					
+					
 				}
 				
 				dispose();
@@ -529,6 +597,8 @@ public class PartDetail extends JFrame {
 					props.setProperty("socketTimeout", "0");
 					//props.setProperty("ssl","true");
 					
+					
+					
 					/////////////Fonctionnel
 					Connection conn0 = DriverManager.getConnection(url, props);
 					conn0.setAutoCommit(false);        
@@ -543,7 +613,7 @@ public class PartDetail extends JFrame {
 					conn0.setAutoCommit(false);        
 					prepStmt = conn0.prepareStatement("INSERT INTO public.wal (aid, chid, value,phase, comp,time) VALUES (?, ?, ?, ?, ?,?)");
 							
-					save_chars(prepStmt, conn0,clock, selectedAID, login);
+					save_chars(prepStmt, conn0,clock, selectedAID, login,dll);
 					
 					PartDetail partdetail = new PartDetail(dll,dll.getprevID(selectedAID),login,pane, clock);
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
@@ -601,13 +671,13 @@ public class PartDetail extends JFrame {
 	
 	
 	
-	private void closing_procedure(String login,JOptionPane pane,String selectedAID,Date start) {
+	private void closing_procedure(String login,JOptionPane pane,String selectedAID,Date start,Clock clock, DLL dll) {
     	addWindowListener(new WindowAdapter() {
 	        public void windowClosing(WindowEvent event) {
 	        	pane.setVisible(false);
 	            dispose();
 	            if(login.equals("Corinne")) {
-	            	Home home = new Home(login, clock2);
+	            	Home home = new Home(login, clock);
 	            	return;
 	            }
 	            try {
@@ -620,6 +690,17 @@ public class PartDetail extends JFrame {
 					props.setProperty("socketTimeout", "0");
 					//props.setProperty("ssl","true");
 					
+					if(hasChangedNow(currentFamily.get((String) textField_3.getText()))) {
+						if(textArea_4.getText() == null || textArea_4.getText().replace(" ", "").length() == 0) {
+							JOptionPane.showMessageDialog(null, new JLabel(
+								    "<html><h2><font color='red'>WARNING: Data not Saved : Class change detected & No comment written.</font></h2></html>"));
+							return;
+						}
+						
+						
+					}
+					
+					
 					
 					///////////////Fonctionnel
 					Connection conn0 = DriverManager.getConnection(url, props);
@@ -629,7 +710,7 @@ public class PartDetail extends JFrame {
 					
 					String allow = allow_next(/*modelLeft,modelRight,*/textField_6.getText(),currentFamily.get((String) textField_3.getText()),status);
 					if(allow.equals("KO")) {
-						Home home = new Home(login, clock2);
+						Home home = new Home(login, clock);
 						return;
 					}
 					save_chars(prepStmt, conn0, selectedAID, login,start,allow);
@@ -639,8 +720,8 @@ public class PartDetail extends JFrame {
 					conn0.setAutoCommit(false);        
 					prepStmt = conn0.prepareStatement("INSERT INTO public.wal (aid, chid, value,phase, comp,time) VALUES (?,?, ?, ?, ?, ?)");
 							
-					save_chars(prepStmt, conn0,clock2, selectedAID, login);
-					Home home = new Home(login, clock2);
+					save_chars(prepStmt, conn0,clock, selectedAID, login,dll);
+					Home home = new Home(login, clock);
 					
 					
 					
@@ -839,7 +920,7 @@ public class PartDetail extends JFrame {
 			prepStmt.close();
 			conn0.close();
 	}
-	private void save_chars(PreparedStatement prepStmt,Connection conn0,Clock clock,String selectedAID,String login) throws SQLException {
+	private void save_chars(PreparedStatement prepStmt,Connection conn0,Clock clock,String selectedAID,String login, DLL dll) throws SQLException {
 		if(modelLeft!=null) {
 			for(CharacValue element:modelLeft) {
 				prepStmt.setString(1,selectedAID);
@@ -907,7 +988,7 @@ public class PartDetail extends JFrame {
 			conn0.close();
 			
 			log_classif(conn0,login,selectedAID,originalcid,currentFamily.get((String) textField_3.getText()),clock);
-			log_progress(conn0,login,selectedAID,clock);
+			log_progress(conn0,login,selectedAID,clock,dll);
 			
 
 	}
@@ -1059,11 +1140,21 @@ public class PartDetail extends JFrame {
 		if(this.classchange) {
 			return true;
 		}
-		if(!currentCID.equals(currentFamily.get((String) textField_3.getText()))) {
+		if(!currentCID.equals(originalcid)) {
 			return true;
 		}
 		return false;
 	}
+	private boolean hasChangedNow(String currentCID) {
+		if(!currentCID.equals(originalcid)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+	
 
 	private void load_ui_elements(/*JButton btnApplyClassification ,JButton btnArrowRigth, JButton btnArrowLeft, JLabel lblNewLabel_1, DLL dll, String selectedAID,GridBagLayout gbl_contentPane,JPanel pnl_controlflex,GridBagConstraints gbc_pnl_controlflex,JLabel lblNewLabel,JPanel panelCenter,GridBagConstraints gbc_panelCenter,JLabel lblVal,JPanel panelRigth,GridBagConstraints gbc_panelRigth,JLabel lblFlexor,JPanel pnlDescription,GridBagConstraints gbc_pnlDescription,GridBagLayout gbl_pnlDescription,JPanel panel,GridBagConstraints gbc_panel,GroupLayout gl_panel,JPanel pnlClassification,GridBagConstraints gbc_pnlClassification,GridBagLayout gbl_pnlClassification,JLabel lblNewLabel_4,GridBagConstraints gbc_textField,GridBagConstraints gbc_lblNewLabel_4,GridBagConstraints gbc_textField_1,GridBagConstraints gbc_textField_2,GridBagConstraints gbc_textField_3*/String selectedAID) throws SQLException {
     	
@@ -1580,6 +1671,7 @@ public class PartDetail extends JFrame {
 		textField_6.setColumns(10);
 		
 		textArea_4.setSelectionColor(Color.LIGHT_GRAY);
+		gbc_textArea_4.gridwidth = 12;
 
 		gbc_textArea_4.insets = new Insets(0, 0, 0, 5);
 		gbc_textArea_4.fill = GridBagConstraints.BOTH;
@@ -1730,7 +1822,7 @@ public class PartDetail extends JFrame {
 	protected String allow_next(/*List<CharacValue> modelLeft, List<CharacValue> modelRight, */String question, String cid, String status) throws HeadlessException, SQLException {
     	LinkedHashSet<String> critics = new LinkedHashSet<String>();
     	LinkedHashSet<String> nus = new LinkedHashSet<String>();
-    	HashSet<String> allowed = new HashSet<String>(Arrays.asList("0", "1","2","3","4","5","6","7","8","9","-","/",",","@"));
+    	HashSet<String> allowed = new HashSet<String>(Arrays.asList("0", "1","2","3","4","5","6","7","8","9","-",","));
     	this.completedVals=0;
     	if(modelLeft == null) {
     		this.isStub=true;
@@ -1807,7 +1899,7 @@ public class PartDetail extends JFrame {
 				}
 			}
 			if(element.getType()==CharacType.FT) {
-				if(!element.getvalue().equals("Inconnu|Unknown") && element.getvalue().length()!=0) {
+				if( !element.getvalue().equals("Inconnu&&Unknown") && !element.getvalue().replace(" ", "").equals("&&") ) {
 					this.completedVals=this.completedVals+1;
 			}
 			}
@@ -1820,11 +1912,11 @@ public class PartDetail extends JFrame {
 					    	break;
 					    }
 					}
-					if(element.getvalue().length()!=0 && element.getComp().length()!=0) {
+					if( !element.getvalue().replace("---","").replace(" ", "").equals("&&") && element.getComp().replace("---","").replaceAll(" ", "").length()!=0) {
 						this.completedVals=this.completedVals+1;
 					}
 				}else {
-					if(element.getvalue().length()!=0 && !element.getvalue().equals("Inconnu")) {
+					if(element.getvalue().length()!=0 && !element.getvalue().equals("Inconnu/Unknown")) {
 						this.completedVals=this.completedVals+1;
 					}
 				}
@@ -1846,18 +1938,21 @@ public class PartDetail extends JFrame {
 			if(question.replace(" ","").length() ==0) {
 				//Question Vide
 				JOptionPane.showMessageDialog(null, new JLabel(
-					    "<html><h2><font color='red'>Warning:PENDING: Missing critical Fields."
-					    + "\n ("+String.join(" et ", critics)+") \n .</font></h2></html>")); 
-				if (status.contains("REWORK:")){
+					    "<html><h2><font color='red'>Missing critical Fields."
+					    + "\n ("+String.join(" et ", critics)+") \n . Fill data or write Question !</font></h2></html>")); 
+				this.allwnxt="KO";
+				return "KO";
+				/*if (status.contains("REWORK:")){
 					this.allwnxt="REWORK:PENDING";
 					return "REWORK:PENDING";
 				}
 				this.allwnxt="PENDING";
-				return "PENDING";
+				return "PENDING";*/
+				
 			}else {
 				//Question Non Vide
 				JOptionPane.showMessageDialog(null, new JLabel(
-					    "<html><h2><font color='red'>Warning:PENDING: Question Written.</font></h2></html>")); 
+					    "<html><h2><font color='red'>Warning:PENDING: Missing critical fields but question Written.</font></h2></html>")); 
 				if (status.contains("REWORK:")){
 					this.allwnxt="REWORK:PENDING";
 					return "REWORK:PENDING";

@@ -79,10 +79,18 @@ public class ArticleMockDataService {
 			Connection conn = DriverManager.getConnection(url, props);
 			PreparedStatement st = null;
 			if(login.equals("Elise") || login.equals("Corinne")) {
-				st = conn.prepareStatement("WITH articles as (select items.aid,sd,items.cid,value AS manuf,classifier,prio,target,status,ques,ledate from public.items LEFT JOIN public.data ON items.aid=data.aid AND data.chid=? ) select articles.aid,sd,family,articles.cid,class,manuf,prio,target,status,ques,ledate from articles,public.class_hierarchy WHERE articles.cid=class_hierarchy.cid");
+				st = conn.prepareStatement("WITH articles as (select items.aid,sd,items.cid,value AS manuf,classifier,prio,target,status,ques,ledate from public.items LEFT JOIN public.data ON items.aid=data.aid AND data.chid=? AND items.status NOT IN (?,?,?,?)) select articles.aid,sd,family,articles.cid,class,manuf,prio,target,status,ques,ledate from articles,public.class_hierarchy WHERE articles.cid=class_hierarchy.cid");
+				st.setString(2, "COMPLET");
+				st.setString(3, "REVIEWED");
+				st.setString(4, "REWORK:COMPLET");
+				st.setString(5, "REWORK:REVIEWED");
 			}else {
-				st = conn.prepareStatement("WITH articles as (select items.aid,sd,items.cid,value AS manuf,classifier,prio,target,status,ques,ledate from public.items LEFT JOIN public.data ON items.aid=data.aid AND data.chid=? WHERE items.classifier=?) select articles.aid,sd,family,articles.cid,class,manuf,prio,target,status,ques,ledate from articles,public.class_hierarchy WHERE articles.cid=class_hierarchy.cid");
+				st = conn.prepareStatement("WITH articles as (select items.aid,sd,items.cid,value AS manuf,classifier,prio,target,status,ques,ledate from public.items LEFT JOIN public.data ON items.aid=data.aid AND data.chid=? WHERE items.classifier=? AND items.status NOT IN (?,?,?,?)) select articles.aid,sd,family,articles.cid,class,manuf,prio,target,status,ques,ledate from articles,public.class_hierarchy WHERE articles.cid=class_hierarchy.cid");
 				st.setString(2, login);
+				st.setString(3, "COMPLET");
+				st.setString(4, "REVIEWED");
+				st.setString(5, "REWORK:COMPLET");
+				st.setString(6, "REWORK:REVIEWED");
 			}
 			st.setString(1, "MANUF");
 			ResultSet rs = st.executeQuery();
@@ -161,15 +169,19 @@ public class ArticleMockDataService {
 			Connection conn = DriverManager.getConnection(url, props);
 			PreparedStatement st = null;
 			if(login.equals("Elise") || login.equals("Corinne")) {
-				st = conn.prepareStatement("select items.aid,sd,family,items.cid,class,prio,target,status,classifier,reviewer, ques from public.items,public.class_hierarchy WHERE items.cid=class_hierarchy.cid AND ( \"status\" = ? OR \"status\" = ?)");
+				st = conn.prepareStatement("select items.aid,sd,family,items.cid,class,prio,target,status,classifier,reviewer, ques from public.items,public.class_hierarchy WHERE items.cid=class_hierarchy.cid AND  \"status\" IN (?,?,?,?) ");
 				st.setString(1, "COMPLET");
 				st.setString(2, "REVIEWED");
+				st.setString(3, "REWORK:COMPLET");
+				st.setString(4, "REWORK:REVIEWED");
 				
 			}else {
-				st = conn.prepareStatement("select items.aid,sd,family,items.cid,class,prio,target,status,classifier,reviewer, ques from public.items,public.class_hierarchy WHERE items.cid=class_hierarchy.cid AND \"reviewer\" = ? AND ( \"status\" = ? OR \"status\" = ?)");
+				st = conn.prepareStatement("select items.aid,sd,family,items.cid,class,prio,target,status,classifier,reviewer, ques from public.items,public.class_hierarchy WHERE items.cid=class_hierarchy.cid AND \"reviewer\" = ? AND  \"status\" IN (?,?,?,?)");
 				st.setString(1, login);
 				st.setString(2, "COMPLET");
 				st.setString(3, "REVIEWED");
+				st.setString(4, "REWORK:COMPLET");
+				st.setString(5, "REWORK:REVIEWED");
 				
 			}
 			ResultSet rs = st.executeQuery();
