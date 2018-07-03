@@ -77,6 +77,7 @@ import ntdw.common.ButtonColumn;
 import ntdw.common.MotionPanel;
 import ntdw.model.Article;
 import ntdw.model.Target;
+import ntdw.models.FixedColumnTable;
 import ntdw.service.ArticleMockDataService;
 import ntdw.service.DLL;
 import ntdw.service.Node;
@@ -224,6 +225,10 @@ public class Report extends JFrame {
 		//JLabel lblNewLabel_2 = new JLabel(service.getCompWeek(login));
 		//lblNewLabel_2.setName("lbl_completed_week_value");
 		//panel_2.add(lblNewLabel_2);
+		
+		
+		JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
 
 		JPanel panel_3 = new JPanel();
 		panel_3.setName("pnl_completed_day");
@@ -302,7 +307,7 @@ public class Report extends JFrame {
 		        				java.sql.Timestamp ts =  new java.sql.Timestamp(lundi.getTime());
 			        			st.setTimestamp(2,ts);
 	        				}else {
-	        					st = conn.prepareStatement("select login, count(*) AS COUNT from progress where classifier = ? AND time >= ? AND time < ? group by login");
+	        					st = conn.prepareStatement("select login, count(*) AS COUNT from progress where classifier = ? AND time > ? AND time < ? group by login");
 		        				st.setString(1, login);
 		        				java.sql.Timestamp ts =  new java.sql.Timestamp(lundi.getTime());
 			        			st.setTimestamp(2,ts);
@@ -343,6 +348,9 @@ public class Report extends JFrame {
         		//table.getColumnModel().getColumn(0).setWidth(Double.valueOf(width/6).intValue());
         		resizeColumnWidth( table);
         		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        		
+        		FixedColumnTable fct = new FixedColumnTable(1, scrollPane);
+        		
         		
             	
             }
@@ -555,7 +563,6 @@ public class Report extends JFrame {
 		//ButtonColumn articleIdButton = new ButtonColumn(table, articleIdClickAction, 0);
 		
 		
-		JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.gridheight = 3;
 		gbc_scrollPane.gridwidth = 2;
