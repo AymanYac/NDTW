@@ -22,9 +22,9 @@ import javax.swing.table.*;
  */
 public class FixedColumnTable implements ChangeListener, PropertyChangeListener
 {
-	private JTable main;
-	private JTable fixed;
-	private JScrollPane scrollPane;
+	public JTable main;
+	public JTable fixed;
+	public JScrollPane scrollPane;
 
 	/*
 	 *  Specify the number of columns to be fixed and the scroll pane
@@ -35,7 +35,7 @@ public class FixedColumnTable implements ChangeListener, PropertyChangeListener
 		this.scrollPane = scrollPane;
 
 		main = ((JTable)scrollPane.getViewport().getView());
-		main.setAutoCreateColumnsFromModel( false );
+		main.setAutoCreateColumnsFromModel( true );
 		main.addPropertyChangeListener( this );
 
 		//  Use the existing table to create a new table sharing
@@ -56,7 +56,7 @@ public class FixedColumnTable implements ChangeListener, PropertyChangeListener
 		{
 	        TableColumnModel columnModel = main.getColumnModel();
 	        TableColumn column = columnModel.getColumn( 0 );
-    	    columnModel.removeColumn( column );
+	        columnModel.removeColumn( column );
 			fixed.getColumnModel().addColumn( column );
 		}
 
