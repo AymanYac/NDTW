@@ -165,16 +165,6 @@ public class Report extends JFrame {
 	        	Home home = new Home(login, clock);
 	        	save_targets();
 	        }});
-		
-		
-		
-		table = new JTable(){
-	        private static final long serialVersionUID = 1L;
-
-	        public boolean isCellEditable(int row, int column) {                
-	                return (row%2!=0 && (login.equals("Elise")|| login.equals("Corinne")));               
-	        };
-	    };
 		setLocationRelativeTo(null);
 		setBounds(0, 0,0,0);
 		contentPane = new MotionPanel(this);
@@ -246,13 +236,6 @@ public class Report extends JFrame {
 		JDatePanelImpl datePanel = new JDatePanelImpl(model,p);
 		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel,new DateLabelFormatter());
 		panel_2.add(datePicker);
-
-		//JLabel lblNewLabel_2 = new JLabel(service.getCompWeek(login));
-		//lblNewLabel_2.setName("lbl_completed_week_value");
-		//panel_2.add(lblNewLabel_2);
-		
-		
-		JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 
 		JPanel panel_3 = new JPanel();
@@ -270,9 +253,17 @@ public class Report extends JFrame {
 		panel_3.add(lblCompletedThisDay);
 		DefaultTableModel modeldata = new DefaultTableModel();
 		
+		JOptionPane pane = new JOptionPane(new JLabel("Loading Data"));
+		JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JDialog dialog = pane.createDialog(scrollPane, "Loading Data");
+    	
 		panel_3.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+            	
+	        	 dialog.setModal(false);
+	        	 dialog.setVisible(true);
+	        	 
             	save_targets();
 
             	java.util.Date depart = get_prev_monday(model1.getValue());
@@ -383,7 +374,7 @@ public class Report extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
+        		dialog.setVisible(false);
         		
         		if(!click) {
         			click=true;
@@ -462,24 +453,6 @@ public class Report extends JFrame {
             public void mouseReleased(MouseEvent e) {
             }
         });
-		//JLabel lblNewLabel_1 = new JLabel(service.getCompDay(login));
-		//lblNewLabel_1.setName("lbl_completed_day_value");
-		//panel_3.add(lblNewLabel_1);
-		
-		
-		
-		JPanel panel_5 = new JPanel();
-		GridBagConstraints gbc_panel_5 = new GridBagConstraints();
-		gbc_panel_5.insets = new Insets(5, 5, 5, 5);
-		gbc_panel_5.gridx = 0;
-		gbc_panel_5.gridy = 1;
-		contentPane.add(panel_5, gbc_panel_5);
-
-		JLabel lblNewLabel_3 = new JLabel("");
-		panel_5.add(lblNewLabel_3);
-
-		JLabel lblNewLabel_4 = new JLabel();
-		panel_5.add(lblNewLabel_4);
 
 		JPanel panel_4 = new JPanel();
 		GridBagConstraints gbc_panel_4 = new GridBagConstraints();
@@ -500,7 +473,7 @@ public class Report extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 
 				dispose();
-				Home home = new Home(login, null);
+				Home home = new Home(login, clock);
 			}
 		});
 		panel_4.add(button);
@@ -513,90 +486,37 @@ public class Report extends JFrame {
 		this. width = screenSize.width;
 		setPreferredSize(new Dimension(width, height));
 		
-		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.gridheight = 5;
-		gbc_scrollPane.gridwidth = 2;
-		gbc_scrollPane.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane.insets = new Insets(8, 8, 8, 8);
-		gbc_scrollPane.gridx = 0;
-		gbc_scrollPane.gridy = 3;
-
-		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(6, Integer.MAX_VALUE));
-		
 		JLabel label_1 = new JLabel("New label");
 		GridBagConstraints gbc_label_1 = new GridBagConstraints();
 		gbc_label_1.insets = new Insets(5, 5, 5, 5);
 		gbc_label_1.gridx = 0;
 		gbc_label_1.gridy = 2;
 		contentPane.add(label_1, gbc_label_1);
-		contentPane.add(scrollPane, gbc_scrollPane);
-		
-		scrollPane.setViewportView(table);
 		Dimension d = gbl_contentPane.minimumLayoutSize(contentPane);
 		
-		JScrollPane scrollPane_2 = new JScrollPane();
 		
-		Class.forName("org.postgresql.Driver");
-		String url = "jdbc:postgresql://"+Tools.load_ip()+":5432/northwind";
-		Properties props = new Properties();
-		props.setProperty("user","postgres");
-		props.setProperty("password","Neonec");
-		props.setProperty("loginTimeout", "20");
-		props.setProperty("connectTimeout", "0");
-		props.setProperty("socketTimeout", "0");
-		//props.setProperty("ssl","true");
-		Connection conn = DriverManager.getConnection(url, props);
-		PreparedStatement st = conn.prepareStatement("select * from progress");
-		ResultSet rs = st.executeQuery();
-		
-		JTable table2 = new JTable(buildTableModel(rs));
-		scrollPane_2.setViewportView(table2);
-		
-		
-		rs.close();
-		st.close();
-		conn.close();
 		
 		JScrollPane scrollPane_3 = new JScrollPane();
 		GridBagConstraints gbc_scrollPane_3 = new GridBagConstraints();
-		gbc_scrollPane_3.gridwidth = 2;
+		gbc_scrollPane_3.gridwidth = 4;
 		gbc_scrollPane_3.insets = new Insets(5, 5, 5, 5);
 		gbc_scrollPane_3.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_3.gridx = 2;
+		gbc_scrollPane_3.gridx = 0;
 		gbc_scrollPane_3.gridy = 3;
 		contentPane.add(scrollPane_3, gbc_scrollPane_3);
 		
-		JScrollPane scrollPane_4 = new JScrollPane();
-		GridBagConstraints gbc_scrollPane_4 = new GridBagConstraints();
-		gbc_scrollPane_4.gridwidth = 2;
-		gbc_scrollPane_4.insets = new Insets(5, 5, 5, 5);
-		gbc_scrollPane_4.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_4.gridx = 2;
-		gbc_scrollPane_4.gridy = 5;
-		contentPane.add(scrollPane_4, gbc_scrollPane_4);
+		JScrollPane scrollPane_2 = new JScrollPane();
 		
-		JScrollPane scrollPane_5 = new JScrollPane();
-		GridBagConstraints gbc_scrollPane_5 = new GridBagConstraints();
-		gbc_scrollPane_5.gridwidth = 2;
-		gbc_scrollPane_5.insets = new Insets(5, 5, 5, 5);
-		gbc_scrollPane_5.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_5.gridx = 2;
-		gbc_scrollPane_5.gridy = 7;
-		contentPane.add(scrollPane_5, gbc_scrollPane_5);
 		
-		JLabel label = new JLabel("New label");
-		GridBagConstraints gbc_label = new GridBagConstraints();
-		gbc_label.insets = new Insets(5, 5, 5, 5);
-		gbc_label.gridx = 0;
-		gbc_label.gridy = 8;
-		contentPane.add(label, gbc_label);
 		
-		JLabel lblNewLabel_1 = new JLabel("New label");
-		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
-		gbc_lblNewLabel_1.insets = new Insets(5, 5, 5, 5);
-		gbc_lblNewLabel_1.gridx = 2;
-		gbc_lblNewLabel_1.gridy = 8;
-		contentPane.add(lblNewLabel_1, gbc_lblNewLabel_1);
+		JTable table2 = new JTable(){
+	        private static final long serialVersionUID = 1L;
+
+	        public boolean isCellEditable(int row, int column) {  
+	        	return false;
+	        };
+	    };
+		scrollPane_2.setViewportView(table2);
 		
 		
 		
@@ -611,45 +531,77 @@ public class Report extends JFrame {
 		gbc_scrollPane_2.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane_2.insets = new Insets(5, 5, 5, 5);
 		gbc_scrollPane_2.gridx = 0;
-		gbc_scrollPane_2.gridy = 9;
+		gbc_scrollPane_2.gridy = 5;
 		contentPane.add(scrollPane_2, gbc_scrollPane_2);
 		
-		Class.forName("org.postgresql.Driver");
+		JScrollPane scrollPane_5 = new JScrollPane();
+		GridBagConstraints gbc_scrollPane_5 = new GridBagConstraints();
+		gbc_scrollPane_5.insets = new Insets(5, 5, 5, 5);
+		gbc_scrollPane_5.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane_5.gridx = 3;
+		gbc_scrollPane_5.gridy = 7;
+		contentPane.add(scrollPane_5, gbc_scrollPane_5);
+		
+		JLabel label = new JLabel("New label");
+		GridBagConstraints gbc_label = new GridBagConstraints();
+		gbc_label.insets = new Insets(5, 5, 5, 5);
+		gbc_label.gridx = 0;
+		gbc_label.gridy = 8;
+		contentPane.add(label, gbc_label);
+		
+		
+		
+		JTable table1 = new JTable(){
+	        private static final long serialVersionUID = 1L;
 
-		props.setProperty("user","postgres");
-		props.setProperty("password","Neonec");
-		props.setProperty("loginTimeout", "20");
-		props.setProperty("connectTimeout", "0");
-		props.setProperty("socketTimeout", "0");
-		//props.setProperty("ssl","true");
-		conn = DriverManager.getConnection(url, props);
-		st = null;
-		if(login.equals("Elise") || login.equals("Corinne")) {
-		
+	        public boolean isCellEditable(int row, int column) {  
+	        	return false;
+	        };
+	    };
 
-		st = conn.prepareStatement("select * from progress");
-		rs=st.executeQuery();
-		
-		JTable table1 = new JTable(buildTableModel(rs));
-		rs.close();
-		st.close();
-		conn.close();
-		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setViewportView(table1);
 		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
-		gbc_scrollPane_1.gridwidth = 2;
+		gbc_scrollPane_1.gridwidth = 4;
 		gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_1.gridx = 2;
+		gbc_scrollPane_1.gridx = 0;
 		gbc_scrollPane_1.gridy = 7;
 		gbc_scrollPane_1.insets= new Insets(5, 5, 5, 5);
 		contentPane.add(scrollPane_1, gbc_scrollPane_1);
+		
+		
+		
+		table = new JTable(){
+	        private static final long serialVersionUID = 1L;
+
+	        public boolean isCellEditable(int row, int column) {                
+	                return (row%2!=0 && (login.equals("Elise")|| login.equals("Corinne")));               
+	        };
+	    };
+		
+				//JLabel lblNewLabel_2 = new JLabel(service.getCompWeek(login));
+				//lblNewLabel_2.setName("lbl_completed_week_value");
+				//panel_2.add(lblNewLabel_2);
+				
+				
+				
+				
+				GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+				gbc_scrollPane.gridwidth = 4;
+				gbc_scrollPane.fill = GridBagConstraints.BOTH;
+				gbc_scrollPane.insets = new Insets(5, 5, 5, 5);
+				gbc_scrollPane.gridx = 0;
+				gbc_scrollPane.gridy = 9;
+				
+						scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(6, Integer.MAX_VALUE));
+						contentPane.add(scrollPane, gbc_scrollPane);
+						
+						scrollPane.setViewportView(table);
 		setMinimumSize(new Dimension(Double.valueOf(d.getWidth()).intValue(),
 				Double.valueOf(400).intValue()));
 		
 		pack();
 		setVisible(true);
-		}
 	}
 
 	protected Vector perf_row_without_user(LinkedHashMap<String, HashMap<String, String>> week_perfs, String user, boolean actual) {
