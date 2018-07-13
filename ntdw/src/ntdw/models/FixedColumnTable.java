@@ -1,108 +1,114 @@
-package ntdw.models;
+/*     */ package ntdw.models;
+/*     */ 
+/*     */ import java.awt.Point;
+/*     */ import java.beans.PropertyChangeEvent;
+/*     */ import java.beans.PropertyChangeListener;
+/*     */ import javax.swing.JScrollBar;
+/*     */ import javax.swing.JScrollPane;
+/*     */ import javax.swing.JTable;
+/*     */ import javax.swing.JViewport;
+/*     */ import javax.swing.event.ChangeEvent;
+/*     */ import javax.swing.event.ChangeListener;
+/*     */ import javax.swing.table.TableColumn;
+/*     */ import javax.swing.table.TableColumnModel;
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ public class FixedColumnTable
+/*     */   implements ChangeListener, PropertyChangeListener
+/*     */ {
+/*     */   public JTable main;
+/*     */   public JTable fixed;
+/*     */   public JScrollPane scrollPane;
+/*     */   
+/*     */   public FixedColumnTable(int fixedColumns, JScrollPane scrollPane)
+/*     */   {
+/*  35 */     this.scrollPane = scrollPane;
+/*     */     
+/*  37 */     this.main = ((JTable)scrollPane.getViewport().getView());
+/*  38 */     this.main.setAutoCreateColumnsFromModel(true);
+/*  39 */     this.main.addPropertyChangeListener(this);
+/*     */     
+/*     */ 
+/*     */ 
+/*     */ 
+/*  44 */     int totalColumns = this.main.getColumnCount();
+/*     */     
+/*  46 */     this.fixed = new JTable();
+/*  47 */     this.fixed.setAutoCreateColumnsFromModel(false);
+/*  48 */     this.fixed.setModel(this.main.getModel());
+/*  49 */     this.fixed.setSelectionModel(this.main.getSelectionModel());
+/*  50 */     this.fixed.setFocusable(false);
+/*     */     
+/*     */ 
+/*     */ 
+/*     */ 
+/*  55 */     for (int i = 0; i < fixedColumns; i++)
+/*     */     {
+/*  57 */       TableColumnModel columnModel = this.main.getColumnModel();
+/*  58 */       TableColumn column = columnModel.getColumn(0);
+/*  59 */       columnModel.removeColumn(column);
+/*  60 */       this.fixed.getColumnModel().addColumn(column);
+/*     */     }
+/*     */     
+/*     */ 
+/*     */ 
+/*  65 */     this.fixed.setPreferredScrollableViewportSize(this.fixed.getPreferredSize());
+/*  66 */     scrollPane.setRowHeaderView(this.fixed);
+/*  67 */     scrollPane.setCorner("UPPER_LEFT_CORNER", this.fixed.getTableHeader());
+/*     */     
+/*     */ 
+/*     */ 
+/*  71 */     scrollPane.getRowHeader().addChangeListener(this);
+/*     */   }
+/*     */   
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */   public JTable getFixedTable()
+/*     */   {
+/*  79 */     return this.fixed;
+/*     */   }
+/*     */   
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */   public void stateChanged(ChangeEvent e)
+/*     */   {
+/*  88 */     JViewport viewport = (JViewport)e.getSource();
+/*  89 */     this.scrollPane.getVerticalScrollBar().setValue(viewport.getViewPosition().y);
+/*     */   }
+/*     */   
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */   public void propertyChange(PropertyChangeEvent e)
+/*     */   {
+/*  98 */     if ("selectionModel".equals(e.getPropertyName()))
+/*     */     {
+/* 100 */       this.fixed.setSelectionModel(this.main.getSelectionModel());
+/*     */     }
+/*     */     
+/* 103 */     if ("model".equals(e.getPropertyName()))
+/*     */     {
+/* 105 */       this.fixed.setModel(this.main.getModel());
+/*     */     }
+/*     */   }
+/*     */ }
 
-import java.beans.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
 
-/*
- *  Prevent the specified number of columns from scrolling horizontally in
- *  the scroll pane. The table must already exist in the scroll pane.
- *
- *  The functionality is accomplished by creating a second JTable (fixed)
- *  that will share the TableModel and SelectionModel of the main table.
- *  This table will be used as the row header of the scroll pane.
- *
- *  The fixed table created can be accessed by using the getFixedTable()
- *  method. will be returned from this method. It will allow you to:
- *
- *  You can change the model of the main table and the change will be
- *  reflected in the fixed model. However, you cannot change the structure
- *  of the model.
+/* Location:              C:\Users\Deathshadow\Desktop\Neonec_Specification_Wizard\back up\1.3.9\NTDW_V1.3.9_Paris_TEST.jar!\ntdw\models\FixedColumnTable.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       0.7.1
  */
-public class FixedColumnTable implements ChangeListener, PropertyChangeListener
-{
-	public JTable main;
-	public JTable fixed;
-	public JScrollPane scrollPane;
-
-	/*
-	 *  Specify the number of columns to be fixed and the scroll pane
-	 *  containing the table.
-	 */
-	public FixedColumnTable(int fixedColumns, JScrollPane scrollPane)
-	{
-		this.scrollPane = scrollPane;
-
-		main = ((JTable)scrollPane.getViewport().getView());
-		main.setAutoCreateColumnsFromModel( true );
-		main.addPropertyChangeListener( this );
-
-		//  Use the existing table to create a new table sharing
-		//  the DataModel and ListSelectionModel
-
-		int totalColumns = main.getColumnCount();
-
-		fixed = new JTable();
-		fixed.setAutoCreateColumnsFromModel( false );
-		fixed.setModel( main.getModel() );
-		fixed.setSelectionModel( main.getSelectionModel() );
-		fixed.setFocusable( false );
-
-		//  Remove the fixed columns from the main table
-		//  and add them to the fixed table
-
-		for (int i = 0; i < fixedColumns; i++)
-		{
-	        TableColumnModel columnModel = main.getColumnModel();
-	        TableColumn column = columnModel.getColumn( 0 );
-	        columnModel.removeColumn( column );
-			fixed.getColumnModel().addColumn( column );
-		}
-
-		//  Add the fixed table to the scroll pane
-
-        fixed.setPreferredScrollableViewportSize(fixed.getPreferredSize());
-		scrollPane.setRowHeaderView( fixed );
-		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, fixed.getTableHeader());
-
-		// Synchronize scrolling of the row header with the main table
-
-		scrollPane.getRowHeader().addChangeListener( this );
-	}
-
-	/*
-	 *  Return the table being used in the row header
-	 */
-	public JTable getFixedTable()
-	{
-		return fixed;
-	}
-//
-//  Implement the ChangeListener
-//
-	public void stateChanged(ChangeEvent e)
-	{
-		//  Sync the scroll pane scrollbar with the row header
-
-		JViewport viewport = (JViewport) e.getSource();
-		scrollPane.getVerticalScrollBar().setValue(viewport.getViewPosition().y);
-	}
-//
-//  Implement the PropertyChangeListener
-//
-	public void propertyChange(PropertyChangeEvent e)
-	{
-		//  Keep the fixed table in sync with the main table
-
-		if ("selectionModel".equals(e.getPropertyName()))
-		{
-			fixed.setSelectionModel( main.getSelectionModel() );
-		}
-
-		if ("model".equals(e.getPropertyName()))
-		{
-			fixed.setModel( main.getModel() );
-		}
-	}
-}

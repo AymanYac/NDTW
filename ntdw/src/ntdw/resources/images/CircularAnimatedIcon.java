@@ -1,100 +1,106 @@
-package ntdw.resources.images;
+/*    */ package ntdw.resources.images;
+/*    */ 
+/*    */ import javax.swing.Icon;
+/*    */ import javax.swing.JComponent;
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ public class CircularAnimatedIcon
+/*    */   extends AnimatedIcon
+/*    */ {
+/* 13 */   private int direction = 1;
+/*    */   
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */   public CircularAnimatedIcon(JComponent component, Icon... icons)
+/*    */   {
+/* 24 */     super(component, icons);
+/*    */   }
+/*    */   
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */   public CircularAnimatedIcon(JComponent component, int delay, Icon... icons)
+/*    */   {
+/* 36 */     super(component, delay, icons);
+/*    */   }
+/*    */   
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */   public CircularAnimatedIcon(JComponent component, int delay, int cycles, Icon... icons)
+/*    */   {
+/* 49 */     super(component, delay, cycles, icons);
+/*    */   }
+/*    */   
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */   protected int getNextIconIndex(int currentIndex, int iconCount)
+/*    */   {
+/* 64 */     if (iconCount == 1) { return 0;
+/*    */     }
+/* 66 */     currentIndex += this.direction;
+/*    */     
+/*    */ 
+/*    */ 
+/* 70 */     if (currentIndex == iconCount)
+/*    */     {
+/* 72 */       currentIndex -= 2;
+/* 73 */       this.direction = -1;
+/*    */     }
+/*    */     
+/*    */ 
+/*    */ 
+/* 78 */     if (currentIndex == 0)
+/*    */     {
+/* 80 */       currentIndex = 0;
+/* 81 */       this.direction = 1;
+/*    */     }
+/*    */     
+/* 84 */     return currentIndex;
+/*    */   }
+/*    */   
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */   protected boolean isCycleCompleted(int currentIndex, int iconCount)
+/*    */   {
+/* 98 */     return (currentIndex == 0) && (this.direction == 1);
+/*    */   }
+/*    */ }
 
-import java.awt.*;
-import javax.swing.*;
 
-/**
- *  The CircularAnimatedIcon will display a series of Icons in a circular
- *  sequence. That is, the cycle will be completed when the Icons have been
- *  displayed from first to last and then back down to the first again.
+/* Location:              C:\Users\Deathshadow\Desktop\Neonec_Specification_Wizard\back up\1.3.9\NTDW_V1.3.9_Paris_TEST.jar!\ntdw\resources\images\CircularAnimatedIcon.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       0.7.1
  */
-public class CircularAnimatedIcon extends AnimatedIcon
-{
-	private int direction = 1;
-
-	/**
-	 *  Create a CircularAnimatedIcon that will continuously cycle with the
-	 *  default delay (500ms).
-	 *
-	 *  @param component  the component the icon will be painted on
-	 *  @param icons	  the Icons to be painted as part of the animation
-	 */
-	public CircularAnimatedIcon(JComponent component, Icon... icons)
-	{
-		super(component, icons);
-	}
-
-	/**
-	 *  Create an CircularAnimatedIcon that will continuously cycle
-	 *
-	 *  @param component  the component the icon will be painted on
-	 *  @param delay      the delay between painting each icon, in milli seconds
-	 *  @param icons	  the Icons to be painted as part of the animation
-	 */
-	public CircularAnimatedIcon(JComponent component, int delay, Icon... icons)
-	{
-		super(component, delay, icons);
-	}
-
-	/**
-	 *  Create an CircularAnimatedIcon specifying all the properties.
-	 *
-	 *  @param component  the component the icon will be painted on
-	 *  @param delay      the delay between painting each icon, in milli seconds
-	 *  @param cycles     the number of times to repeat the animation sequence
-	 *  @param icons	  the Icons to be painted as part of the animation
-	 */
-	public CircularAnimatedIcon(JComponent component, int delay, int cycles, Icon... icons)
-	{
-		super(component, delay, cycles, icons);
-	}
-
-	/**
-	 *  Get the index of the next Icon to be displayed.
-	 *
-	 *  The cycle starts at the first Icon, continues to the last and then
-	 *  continues back down to the first.
-	 *
-	 *  @param index  the index of the Icon currently displayed
-	 *  @param iconCount the number of Icons to be displayed
-	 *  @return  the index of the next Icon to be displayed
-	 */
-	protected int getNextIconIndex(int currentIndex, int iconCount)
-	{
-		if (iconCount == 1) return 0;
-
-		currentIndex += direction;
-
-		//  Reached the end, head back towards the start
-
-		if (currentIndex == iconCount)
-		{
-			currentIndex -= 2;
-			direction = -1;
-		}
-
-		//  Reached the start, head back toward the end
-
-		if (currentIndex == 0)
-		{
-			currentIndex = 0;
-			direction = 1;
-		}
-
-		return currentIndex;
-	}
-
-	/**
-	 *  This implemention checks if the first icon is currently displayed.
-	 *  If so this indicates all icons have been displayed in a forwards and
-	 *  reverse order so the cycle is complete.
-	 *
-	 *  @param index  the index of the Icon currently displayed
-	 *  @param iconCount the number of Icons to be displayed
-	 *  @return  the index of the next Icon to be displayed
-	 */
-	protected boolean isCycleCompleted(int currentIndex, int iconCount)
-	{
-		return ((currentIndex == 0) && (direction == 1));
-	}
-}

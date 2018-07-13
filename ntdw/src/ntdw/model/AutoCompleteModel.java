@@ -1,66 +1,69 @@
-package ntdw.model;
-import java.util.ArrayList;
-import java.util.List;
+/*    */ package ntdw.model;
+/*    */ 
+/*    */ import java.util.ArrayList;
+/*    */ import java.util.List;
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ public class AutoCompleteModel
+/*    */ {
+/*    */   private List<String> mots;
+/*    */   
+/*    */   public AutoCompleteModel()
+/*    */   {
+/* 17 */     this.mots = new ArrayList();
+/*    */   }
+/*    */   
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */   public void add(String mot)
+/*    */   {
+/* 26 */     this.mots.add(mot);
+/*    */   }
+/*    */   
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */   public void addAll(List<String> mots)
+/*    */   {
+/* 35 */     this.mots.addAll(mots);
+/*    */   }
+/*    */   
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */   public List<String> getChainesCorrespondates(String debut)
+/*    */   {
+/* 45 */     List<String> res = new ArrayList();
+/* 46 */     for (String s : this.mots) {
+/* 47 */       if ((debut != null) && (s.length() >= debut.length()) && (s.toUpperCase().substring(0, debut.length()).equals(debut.toUpperCase()))) {
+/* 48 */         res.add(s);
+/*    */       }
+/*    */     }
+/* 51 */     return res;
+/*    */   }
+/*    */   
+/*    */   public List<String> getToutesChaines() {
+/* 55 */     List<String> res = new ArrayList();
+/* 56 */     for (String s : this.mots) {
+/* 57 */       if (s.length() > 0) {
+/* 58 */         res.add(s);
+/*    */       }
+/*    */     }
+/* 61 */     return res;
+/*    */   }
+/*    */ }
 
 
-public class AutoCompleteModel {
-	
-	/**
-	 * La liste dans laquelle on recherche
-	 */
-	private List<String> mots;
-	
-	/**
-	 * Constructeur du modele
-	 */
-	public AutoCompleteModel(){
-		mots = new ArrayList<String>();
-	}
-	
-	/**
-	 * Fonction qui permet d'ajouter un mot a la liste des recherches
-	 * @param mot
-	 * 	Le mot a ajouter
-	 */
-	public void add(String mot){
-		mots.add(mot);
-	}
-	
-	/**
-	 * Fonction qui permet d'ajouter une liste de mots à la liste des recherches
-	 * @param mots
-	 * 	La liste des mots à ajouter
-	 */
-	public void addAll(List<String> mots){
-		this.mots.addAll(mots);
-	}
-	
-	/**
-	 * Fonction qui permet de retourner la liste de chauines correspondant à un debut de mot
-	 * @param debut
-	 * 	Le debut de mot
-	 * @return La liste des chaines correspondantes
-	 */
-	public List<String> getChainesCorrespondates(String debut){
-		List<String> res = new ArrayList<String>();
-		for(String s : mots){
-			if(debut!=null && s.length()>=debut.length() && s.substring(0, debut.length()).equals(debut)){
-				res.add(s);
-			}
-		}
-		return res;
-	}
-
-	public List<String> getToutesChaines() {
-		List<String> res = new ArrayList<String>();
-		for(String s : mots){
-			if(s.length()>0) {
-				res.add(s);	
-			}
-			}
-		return res;
-			
-	}
-	
-
-}
+/* Location:              C:\Users\Deathshadow\Desktop\Neonec_Specification_Wizard\back up\1.3.9\NTDW_V1.3.9_Paris_TEST.jar!\ntdw\model\AutoCompleteModel.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       0.7.1
+ */

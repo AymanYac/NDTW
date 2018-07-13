@@ -1,43 +1,49 @@
-package ntdw.model;
+/*    */ package ntdw.model;
+/*    */ 
+/*    */ import javax.swing.JTable;
+/*    */ import javax.swing.JViewport;
+/*    */ import javax.swing.table.TableModel;
+/*    */ 
+/*    */ public class FrozenTablePane extends javax.swing.JScrollPane
+/*    */ {
+/*    */   public FrozenTablePane(JTable table, int colsToFreeze)
+/*    */   {
+/* 11 */     super(table);
+/* 12 */     TableModel model = table.getModel();
+/*    */     
+/* 14 */     TableModel frozenModel = new javax.swing.table.DefaultTableModel(
+/* 15 */       model.getRowCount(), 
+/* 16 */       colsToFreeze);
+/*    */     
+/* 18 */     for (int i = 0; i < model.getRowCount(); i++) {
+/* 19 */       for (int j = 0; j < colsToFreeze; j++) {
+/* 20 */         String value = (String)model.getValueAt(i, j);
+/* 21 */         frozenModel.setValueAt(value, i, j);
+/*    */       }
+/*    */     }
+/*    */     
+/* 25 */     JTable frozenTable = new JTable(frozenModel);
+/*    */     
+/* 27 */     for (int j = 0; j < colsToFreeze; j++)
+/* 28 */       table.removeColumn(table.getColumnModel().getColumn(0));
+/* 29 */     table.setAutoResizeMode(0);
+/*    */     
+/* 31 */     javax.swing.table.JTableHeader header = table.getTableHeader();
+/* 32 */     frozenTable.setBackground(header.getBackground());
+/* 33 */     frozenTable.setAutoResizeMode(0);
+/* 34 */     frozenTable.setEnabled(false);
+/*    */     
+/* 36 */     JViewport viewport = new JViewport();
+/* 37 */     viewport.setView(frozenTable);
+/* 38 */     viewport.setPreferredSize(frozenTable.getPreferredSize());
+/* 39 */     setRowHeaderView(viewport);
+/* 40 */     setCorner("UPPER_LEFT_CORNER", 
+/* 41 */       frozenTable.getTableHeader());
+/*    */   }
+/*    */ }
 
-import javax.swing.JScrollPane; 
-import javax.swing.JTable; 
-import javax.swing.JViewport; 
-import javax.swing.table.DefaultTableModel; 
-import javax.swing.table.JTableHeader; 
-import javax.swing.table.TableModel;   
-public class FrozenTablePane extends JScrollPane{     
-    public FrozenTablePane(JTable table, int colsToFreeze){     
-        super(table);       
-        TableModel model = table.getModel();       
-        //create a frozen model     
-        TableModel frozenModel = new DefaultTableModel(                                 
-                model.getRowCount(),                                 
-                colsToFreeze);       
-        //populate the frozen model     
-        for (int i = 0; i < model.getRowCount(); i++) {       
-            for (int j = 0; j < colsToFreeze; j++) {         
-                String value = (String) model.getValueAt(i, j);         
-                frozenModel.setValueAt(value, i, j);       
-            }     
-        }
-    //create frozen table
-    JTable frozenTable = new JTable(frozenModel);
-    //remove the frozen columns from the original table
-    for (int j = 0; j < colsToFreeze; j++) {
-    table.removeColumn(table.getColumnModel().getColumn(0));
-    }     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-    //format the frozen table     
-    JTableHeader header = table.getTableHeader();     
-    frozenTable.setBackground(header.getBackground());     
-    frozenTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);    
-    frozenTable.setEnabled(false);     
-    //set frozen table as row header view   
-    JViewport viewport = new JViewport();    
-    viewport.setView(frozenTable); 
-    viewport.setPreferredSize(frozenTable.getPreferredSize());   
-    setRowHeaderView(viewport);   
-    setCorner(JScrollPane.UPPER_LEFT_CORNER, 
-            frozenTable.getTableHeader()); 
-    }
-}
+
+/* Location:              C:\Users\Deathshadow\Desktop\Neonec_Specification_Wizard\back up\1.3.9\NTDW_V1.3.9_Paris_TEST.jar!\ntdw\model\FrozenTablePane.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       0.7.1
+ */
