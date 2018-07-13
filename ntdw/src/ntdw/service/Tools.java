@@ -184,45 +184,45 @@ public class Tools
 
 	public static Timestamp maintenant(Clock clock)
 	{
-		/* 140 */     Instant instant = Instant.now(clock);
-		/* 141 */     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss.SSSSSSSSS").withZone(ZoneId.of("UTC"));
-		/* 142 */     String timePoint = formatter.format(instant);
-		/* 143 */     return Timestamp.valueOf(timePoint);
+		     Instant instant = Instant.now(clock);
+		     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss.SSSSSSSSS").withZone(ZoneId.of("UTC"));
+		     String timePoint = formatter.format(instant);
+		     return Timestamp.valueOf(timePoint);
 	}
 
 	public static Timestamp toTimestamp(ZonedDateTime dateTime)
 	{
-		/* 148 */     return new Timestamp(dateTime.toInstant().getEpochSecond() * 1000L);
+		     return new Timestamp(dateTime.toInstant().getEpochSecond() * 1000L);
 	}
 
 	public static Boolean checkpass(String ip, String login, String pass) throws SQLException, ClassNotFoundException {
-		/* 152 */     Boolean ret = Boolean.valueOf(false);
-		/* 153 */     Class.forName("org.postgresql.Driver");
-		/* 154 */     String url = "jdbc:postgresql://" + ip + ":5432/" + getDatabaseName();
-		/* 155 */     Properties props = new Properties();
-		/* 156 */     props.setProperty("user", "postgres");
-		/* 157 */     props.setProperty("password", "Neonec");
-		/* 158 */     props.setProperty("loginTimeout", "20");
-		/* 159 */     props.setProperty("connectTimeout", "0");
-		/* 160 */     props.setProperty("socketTimeout", "0");
+		     Boolean ret = Boolean.valueOf(false);
+		     Class.forName("org.postgresql.Driver");
+		     String url = "jdbc:postgresql://" + ip + ":5432/" + getDatabaseName();
+		     Properties props = new Properties();
+		     props.setProperty("user", "postgres");
+		     props.setProperty("password", "Neonec");
+		     props.setProperty("loginTimeout", "20");
+		     props.setProperty("connectTimeout", "0");
+		     props.setProperty("socketTimeout", "0");
 
 
-		/* 163 */     Connection conn = DriverManager.getConnection(url, props);
-		/* 164 */     PreparedStatement st = conn.prepareStatement("select * from public.\"auth\" WHERE \"login\" = ?");
-		/* 165 */     st.setString(1, login);
-		/* 166 */     ResultSet rs = st.executeQuery();
-		/* 167 */     if (rs.next())
+		     Connection conn = DriverManager.getConnection(url, props);
+		     PreparedStatement st = conn.prepareStatement("select * from public.\"auth\" WHERE \"login\" = ?");
+		     st.setString(1, login);
+		     ResultSet rs = st.executeQuery();
+		     if (rs.next())
 		{
-			/* 169 */       ret = Boolean.valueOf(pass.equals(rs.getString(2)));
+			       ret = Boolean.valueOf(pass.equals(rs.getString(2)));
 		}
-		/* 171 */     rs.close();
-		/* 172 */     st.close();
-		/* 173 */     conn.close();
-		/* 174 */     return ret;
+		     rs.close();
+		     st.close();
+		     conn.close();
+		     return ret;
 	}
 
 	public static String getDatabaseName() {
-		/* 178 */     return "northwindA";
+		     return "northwindA";
 	}
 }
 

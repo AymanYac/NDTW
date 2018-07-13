@@ -1,96 +1,96 @@
-/*    */ package ntdw.common;
-/*    */ 
-/*    */ import java.util.ArrayList;
-/*    */ import java.util.List;
-/*    */ import javax.swing.table.AbstractTableModel;
-/*    */ import ntdw.model.Article;
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ public class ArticleTableModel2
-/*    */   extends AbstractTableModel
-/*    */ {
-/*    */   private static final long serialVersionUID = 1L;
-/* 15 */   private List<Article> articles = new ArrayList();
-/* 16 */   private String[] columnNames = { "Article ID", "Short description", "Family", "Class", "Descriptor", "Prio.", "Quest.", "Status" };
-/*    */   
-/*    */   public ArticleTableModel2(List<Article> articles) {
-/* 20 */     this.articles = articles;
-/*    */   }
-/*    */   
-/*    */ 
-/*    */ 
-/*    */   public ArticleTableModel2(List<Article> articles2, String login) {}
-/*    */   
-/*    */ 
-/*    */   public boolean isCellEditable(int row, int col)
-/*    */   {
-/* 30 */     return col==0;
-/*    */   }
-/*    */   
-/*    */   public String getColumnName(int columnIndex)
-/*    */   {
-/* 35 */     return this.columnNames[columnIndex];
-/*    */   }
-/*    */   
-/*    */   public int getRowCount()
-/*    */   {
-/* 40 */     return this.articles.size();
-/*    */   }
-/*    */   
-/*    */   public int getColumnCount()
-/*    */   {
-/* 45 */     return 8;
-/*    */   }
-/*    */   
-/*    */   public Object getValueAt(int rowIndex, int columnIndex)
-/*    */   {
-/* 50 */     Article article = (Article)this.articles.get(rowIndex);
-/* 51 */     switch (columnIndex) {
-/*    */     case 0: 
-/* 53 */       return article.getId();
-/*    */     case 1: 
-/* 55 */       return article.getDescription();
-/*    */     case 2: 
-/* 57 */       return article.getFamily();
-/*    */     case 3: 
-/* 59 */       return article.getArtClass();
-/*    */     case 4: 
-/* 61 */       return article.getManufact();
-/*    */     case 5: 
-/* 63 */       return Integer.valueOf(article.getPrio());
-/*    */     case 6: 
-/* 67 */       return article.getQuestion();
-/*    */     case 7: 
-/* 69 */       return article.getStatus();
-/*    */     }
-/* 71 */     return null;
-/*    */   }
-/*    */   
-/*    */   public Class<?> getColumnClass(int columnIndex)
-/*    */   {
-/* 76 */     switch (columnIndex) {
-/*    */     case 0: 
-/* 78 */       return ButtonColumn.class;
-/*    */     case 1: 
-/* 80 */       return String.class;
-/*    */     case 2: 
-/* 82 */       return String.class;
-/*    */     case 3: 
-/* 84 */       return String.class;
-/*    */     case 4: 
-/* 86 */       return String.class;
-/*    */     case 5: 
-/* 88 */       return Integer.TYPE;
-/*    */     case 6: 
-/* 90 */       return String.class;
-/*    */     case 7: 
-/* 92 */       return String.class;
-/*    */     }
-/* 96 */     return null;
-/*    */   }
-/*    */ }
+ package ntdw.common;
+ 
+ import java.util.ArrayList;
+ import java.util.List;
+ import javax.swing.table.AbstractTableModel;
+ import ntdw.model.Article;
+ 
+ 
+ 
+ 
+ public class ArticleTableModel2
+   extends AbstractTableModel
+ {
+   private static final long serialVersionUID = 1L;
+   private List<Article> articles = new ArrayList();
+   private String[] columnNames = { "Article ID", "Short description", "Family", "Class", "Descriptor", "Prio.", "Quest.", "Status" };
+   
+   public ArticleTableModel2(List<Article> articles) {
+     this.articles = articles;
+   }
+   
+ 
+ 
+   public ArticleTableModel2(List<Article> articles2, String login) {}
+   
+ 
+   public boolean isCellEditable(int row, int col)
+   {
+     return col==0;
+   }
+   
+   public String getColumnName(int columnIndex)
+   {
+     return this.columnNames[columnIndex];
+   }
+   
+   public int getRowCount()
+   {
+     return this.articles.size();
+   }
+   
+   public int getColumnCount()
+   {
+     return 8;
+   }
+   
+   public Object getValueAt(int rowIndex, int columnIndex)
+   {
+     Article article = (Article)this.articles.get(rowIndex);
+     switch (columnIndex) {
+     case 0: 
+       return article.getId();
+     case 1: 
+       return article.getDescription();
+     case 2: 
+       return article.getFamily();
+     case 3: 
+       return article.getArtClass();
+     case 4: 
+       return article.getManufact();
+     case 5: 
+       return Integer.valueOf(article.getPrio());
+     case 6: 
+       return article.getQuestion();
+     case 7: 
+       return article.getStatus();
+     }
+     return null;
+   }
+   
+   public Class<?> getColumnClass(int columnIndex)
+   {
+     switch (columnIndex) {
+     case 0: 
+       return ButtonColumn.class;
+     case 1: 
+       return String.class;
+     case 2: 
+       return String.class;
+     case 3: 
+       return String.class;
+     case 4: 
+       return String.class;
+     case 5: 
+       return Integer.TYPE;
+     case 6: 
+       return String.class;
+     case 7: 
+       return String.class;
+     }
+     return null;
+   }
+ }
 
 
 /* Location:              C:\Users\Deathshadow\Desktop\Neonec_Specification_Wizard\back up\1.3.9\NTDW_V1.3.9_Paris_TEST.jar!\ntdw\common\ArticleTableModel2.class
